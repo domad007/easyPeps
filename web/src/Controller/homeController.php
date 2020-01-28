@@ -148,5 +148,22 @@ class homeController extends AbstractController {
         );
     }
 
+    /**
+     * @Route("/descriptionOutilsGestion", name="descriptionOutilsGestion")
+     */
+    public function descriptionOutilsGestion(){
+        return $this->render(
+            '/contenu/outilsGestionClasse.html.twig'
+        );
+    }
+
+    /**
+     * @Route("/descriptionVMA", name="descriptionVMA")
+     */
+    public function descriptionVMA(){
+        return $this->render(
+            '/contenu/outilsVMA.html.twig'
+        );
+    }
 
 }

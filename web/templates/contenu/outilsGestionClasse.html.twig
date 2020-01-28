@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+{% block title %} -Outils gestion de classe {% endblock %}
+
+{% block header %}
+    <!-- Jumbotron Header -->
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">Outils gestion de classe</h1>
+        <h3 class="display-7" style="text-align: center">Journal de classe - cahier de cotes - agenda - compétences - paramètres - planning annuel</h3>
+    </header>
+{% endblock %}
+
+{% block container %}
+    <div class="outilsGestionClasse">
+        <h3 class="display-3">Rentrons dans le vif du sujet</h3>
+        <div class="jumbotron" style="font-size: 1.3em;">
+            <p>Dans cette section, je vais vous présenter les outils "de base"* que sont :</p>
+            <ul>
+                <ol>
+                    <li>Le Journal de Classe</li>
+                    <li>Le Cahier de Cotes Automatisé & Compétences évaluées</li>
+                    <li>L'Agenda et sa synchronisation avec Google Agenda</li>
+                    <li>Les Paramètres</li>
+                    <li>La Planification Annuelle</li>
+                </ol>
+            </ul>
+            <p>Tous ces outils se présentent donc sous la forme d'un fichier Google Sheets ou une feuille est dédiée à un outil.</p>
+            <br>
+            <p>* par outils de base, j'entends ceux qui sont nécessaires pour avoir des documents administratifs en ordre au regard du programme d'éducation physique.</p>
+        </div>
+        <h3 class="display-3">Une mise au point quand au fonctionnement de notre école</h3>
+        <div class="jumbotron" style="font-size: 1.3em;">
+            <p>Comme je le disais, l'outil est de plus en plus malléable et permet d'être intégré par la plupart des établissements scolaires. Toutefois, il me semble important de vous expliquer la façon dont nous fonctionnons à la Providence de Wavre.</p>
+
+            <p>Nos élèves sont évalués après chaque période de cours. Sans rentrer dans les détails, cela nous fourni le "TJ".</p>
+
+            <p>Tout au long de l'année, nous réalisons des évaluations. Toutes ces évaluations entre dans des "Champs" dont leur moyenne correspondra au "BILAN". 
+            Il n'y a donc pas de session d'examens en EP, la matière étant différente tout au long de l'année, 
+            chaque évaluation finale est certificative et entre dans la moyenne totale de l'année pour attester de la réussite ou de l'échec de l'élève.</p>
+
+            <p>Le premier semestre sera la moyenne entre le TJ de ce premier semestre et le Bilan de Noël. Les ont une pondération de 50%. Le second semestre fonctionne sur le même principe.</p>
+
+            <p>Pour obtenir le résultat final (ANNEE) de l'élève, nous faisons une moyenne pondérée entre le Semestre 1 et le Semestre 2.</p>
+        </div>
+    </div>
+{% endblock %}  
