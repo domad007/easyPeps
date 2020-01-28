@@ -1,16 +1,62 @@
 {% extends 'base.html.twig' %}
-{% block title %} -Qui suis-je ? {% endblock %}
+{% block title %} -Courses d'orientation {% endblock %}
 
 {% block header %}
     !-- Jumbotron Header -->
     <header class="jumbotron my-4">
-        <h1 class="display-3" style="text-align: center">Qui suis-je ?</h1>
+        <h1 class="display-3" style="text-align: center">Courses d'orientation</h1>
     </header>
 {% endblock %}
 
 {% block container %}
-    <div class="quiSuisJe">
-        <h3 class="display-3">Présentations</h3>
+    <div class="courseOrientation">
+        <h3 class="display-3">CO & VMA</h3>
         <div class="jumbotron" style="font-size: 1.3em;">
+            <p>
+                Toutes les courses d'orientation sont basées sur les vma des élèves. Ils sont donc répartis en groupes vma. Un tableau de répartition automatique des élèves en fonction de leur niveau de vma est présent pour faciliter la formation des groupes.
+            </p>
+            <p>
+                En me basant sur ce principe, j'ai mis en place 3 types de courses d'orientation où les élèves sont à chaque fois évalués par rapport à leur niveau vma. Comme toujours, ces évaluations sont automatisées. Il suffit de rentrer la performance des groupes (temps de course) pour obtenir une évaluation /10.
+            </p>
+            <p>
+                A savoir, les smartphones des élèves sont utilisés pour prendre des photos ou réaliser un petit film aux balises. Je demande aux élèves qu'ils prennent leurs photos/vidéos en mode "selfie" de façon à voir l'ensemble du groupe.            
+            </p>
         </div>
+        <h3 class="display-3">CO - Paramètres</h3>
+        <div class="jumbotron" style="font-size: 1.3em;">
+            <p>Pour chaque CO, il y aura certains paramètres à choisir :</p>
+            <ul>
+                <li>nombre de balises,</li>
+                <li>temps de bonus par balise (temps pour prendre la photo ou le film),</li>
+                <li>temps de malus en cas d'erreur de balise,</li>
+                <li>distance à parcourir (CO2 & CO3),</li>
+                <li>temps de course (CO1),</li>
+                <li>temps entre chaque équipe (CO2) si celui-ci n'est pas calculé (CO3),</li>
+                <li>% VMA pour juger l'effort.  </li>
+            </ul>            
+        </div>
+        <h3 class="display-3">Les 3 types de CO sont</h3>
+        <div class="jumbotron" style="font-size: 1.3em;">
+            <h3>CO 1 - COURSE DE TEMPS</h3>
+            <p>L'évaluation est définie par la différence de % entre le temps de course fixé et le temps de course réalisé par l'équipe. Les groupes démarrent tous en même temps.</p>
+
+            <p>Ici, le travail de préparation est plus long car les groupes auront chacun une carte différente dont la longueur du parcours sera dépendante de leur niveau de vma et du temps de course désiré.</p>
+
+            <p>Etant donné que les distance de courses sont dépendantes du niveau des équipes, l'objectif de toutes les équipes sera d'arriver première à l'école.</p>
+            <br>
+
+            <h3>CO2 - DISTANCE 1</h3>
+            <p>Dans cette CO, tous les groupes ont la même carte et doivent accomplir la CO le plus vite possible.</p>
+
+            <p>L'évaluation est basée sur le % de différence entre le temps de course théorique et réel. Les groupes démarrent avec un temps d'écart fixé par le professeur.</p>
+            <br>
+            
+            <h3>CO3 - DISTANCE 2</h3>
+            <p>Pour cette CO, toutes les équipes ont également la même CO à réaliser mais par contre, les temps de départ sont différés et ce, en fonction des vma de chaque groupe.</p>
+
+            <p>L'évaluation est basée sur la vitesse moyenne. Attention que les groupes avec une vma importante devront donc mettre le paquet pour rattraper leur retard. En effet, durant le temps d'attente, leur vitesse moyenne est de 0 km/h...</p>
+
+            <p>Ici, comme en CO1, l'objectif des équipes sera d'être la première à l'école. </p>      
+        </div>
+    </div>    
 {% endblock %}        

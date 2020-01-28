@@ -140,12 +140,22 @@ class homeController extends AbstractController {
     }
 
     /**
-     * @Route("/formation", name="formation")
+     * @Route("/formations", name="formations")
      */
     public function formation(){
         return $this->render(
             '/contenu/formation.html.twig'
         );
     }
+
+    /**
+     * @Route("/contact", name="contact")
+     */
+    public function contact(){
+        return $this->render(
+            '/contenu/contact.html.twig'
+        );
+    }
+
 
 }

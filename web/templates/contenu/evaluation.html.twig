@@ -1,16 +1,30 @@
 {% extends 'base.html.twig' %}
-{% block title %} -Qui suis-je ? {% endblock %}
+{% block title %} -Evaluations multiples {% endblock %}
 
 {% block header %}
-    !-- Jumbotron Header -->
+    <!-- Jumbotron Header -->
     <header class="jumbotron my-4">
-        <h1 class="display-3" style="text-align: center">Qui suis-je ?</h1>
+        <h1 class="display-3" style="text-align: center">Evaluations multiples</h1>
     </header>
 {% endblock %}
 
 {% block container %}
-    <div class="quiSuisJe">
-        <h3 class="display-3">Présentations</h3>
+    <div class="evaluationsMultiples">
         <div class="jumbotron" style="font-size: 1.3em;">
+            <p>L'EM est un petit outil qui permet d'évaluer dans deux situations différentes :</p>
+            <ul>
+                <ol>
+                    <li>Vous avez plusieurs critères pour une même évaluation. Par exemple, vous décidez d'évaluer la passe haute en volley et vous désirez indiquer précisément chaque critère d'évaluation.</li>
+                    <li>Vous voulez réaliser plusieurs évaluations pour une même compétence. Par exemple, vous avez 5 ateliers à évaluer en gymnastique ou audace. Vous pourrez préciser lesquels et sur combien évaluer. </li>
+                </ol>
+            </ul>
+
+            <p>
+                Dans chaque situation, la moyenne totale sera calculée automatiquement en fonction de la pondération de 
+                chaque évaluation. De plus, la moyenne sera adaptative en fonction du nombre de critères/évaluation que l'élève est capable de présenter.
+            </p>
+            <p>Des statistiques sont aussi disponibles.</p>
+            <img class="img-fluid" src="/IMG/evaluation.png" alt="evaluation">
         </div>
+    </div>    
 {% endblock %}        

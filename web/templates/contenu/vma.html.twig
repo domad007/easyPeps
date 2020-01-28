@@ -1,16 +1,32 @@
 {% extends 'base.html.twig' %}
-{% block title %} -Qui suis-je ? {% endblock %}
+{% block title %} -Travail VMA {% endblock %}
 
 {% block header %}
     !-- Jumbotron Header -->
     <header class="jumbotron my-4">
-        <h1 class="display-3" style="text-align: center">Qui suis-je ?</h1>
+        <h1 class="display-3" style="text-align: center">Travail VMA</h1>
     </header>
 {% endblock %}
 
 {% block container %}
-    <div class="quiSuisJe">
-        <h3 class="display-3">Présentations</h3>
+    <div class="vma">
+        <h3 class="display-3">Présentation</h3>
         <div class="jumbotron" style="font-size: 1.3em;">
+            <p>Dans cet outil-vma, plusieurs sous-outils apparaissent :</p>
+            <ul>
+                <li>Un tableau de répartition automatique des élèves en groupes de niveau VMA.</li>
+                <li>Deux tableaux pour le travail de la VMA.</li>
+                    <ol>
+                        <li>Tableau %vma + distance à parcourir --> Temps de course à respecter</li>
+                        <li>Tableau %vma + temps de course --> Distance de course à atteindre</li>
+                    </ol>
+                <li>Un tableau de suivi de la VMA au fil des exercices/évaluations.</li>
+                <li>Un tableau de travail avec la fréquence cardiaque des élèves basé sur le %vma et l'âge des élèves.</li>
+                <li>Un tableau pour l'évaluation finale en endurance. L'évaluation se base sur la progression de l'élève. 
+                Il s'agira d'un test de temps avec un objectif de distance à parcourir en fonction du niveau de chaque élève. 
+                L'évaluation est évidemment automatique et directement transférée vers le "Cahier de Cotes".</li>
+                <li>Un tableau "graphique" pour voir l'évolution d'un élève en particulier sur graphique.      </li>
+            </ul>  
         </div>
+    </div>    
 {% endblock %}        

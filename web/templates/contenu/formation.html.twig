@@ -1,16 +1,116 @@
 {% extends 'base.html.twig' %}
-{% block title %} -Qui suis-je ? {% endblock %}
+{% block title %} -Formations {% endblock %}
 
 {% block header %}
     !-- Jumbotron Header -->
     <header class="jumbotron my-4">
-        <h1 class="display-3" style="text-align: center">Qui suis-je ?</h1>
+        <h1 class="display-3" style="text-align: center">Formations</h1>
     </header>
 {% endblock %}
 
 {% block container %}
-    <div class="quiSuisJe">
-        <h3 class="display-3">Présentations</h3>
+    <div class="infoFormation" style="font-size: 1.3em;">
+        <p>
+            Dans cette partie, j'aborde l'ensemble des formations que je propose.
+        </p>
+        <p>
+            Le contenu global est principalement identique à la formation numérique ForFor que j'ai la chance d'animer depuis 2015.
+        </p>
+    </div>
+    <div class="formations">
+        <h3 class="display-3">F1 : Outils de gestion de classe</h3>
         <div class="jumbotron" style="font-size: 1.3em;">
+            <h3>Présentation</h3>
+            <p>La formation est répartie comme suit :</p>
+            <ul>
+                <li>Description des objectifs du programme "Gestion de Classe", de son esprit et de sa genèse.</li>
+                <li>Présentation des possibilités offertes par l'outil et de son mode de fonctionnement.</li>
+                <li>Démonstrations en fonction des situations : cours sans évaluations, cours avec évaluations.</li>
+                <li>Partage des Outils.</li>
+                <li>Discussion afin de paramétrer les outils en fonction de votre mode de fonctionnement en lien avec le fonctionnement
+                de votre établissement scolaire, du document d'intention pédagogique et du programme d'Education Physique. </li>
+                <li>Application des outils à vos classes et utilisation.</li>
+            </ul>
+
+            <h3>Durée</h3>
+            <p>
+                Pour apprendre à utiliser le programme de "Gestion de Classe", 
+                il faut compter 2h à 3h de formation individuelle ou de groupe. Cette formation vous apprend à utiliser : 
+            </p>
+            <ul>
+                <li>le journal de classe,</li>
+                <li>le cahier de cotes,</li>
+                <li>les paramètres,</li>
+                <li>les échelles d'évaluation.</li>
+            </ul>
+
+            <h3>Prérequis</h3>
+            <ul>
+                <li>Des bases en Excel sont conseillées : ajouter des colonnes, cacher des colonnes, déplacer des lignes, remplir des cases, étirer, ...</li>
+                <li>Avoir des notions d'utilisation d'un "Cloud" (cf.F3 si besoin).</li>
+                <li>Être à l'aise face à un smartphone, un PC et une tablette sont un plus. </li>
+                <li>Posséder un compte Google est indispensable. </li>
+            </ul>
         </div>
+        <h3 class="display-3">F2 : Outils VMA - CO - EMC - IPW Trophy</h3>
+        <div class="jumbotron" style="font-size: 1.3em;">
+            <h3>Formation</h3>
+            <p>
+                Une fois l'outil de Gestion de Classe maîtrisé, 
+                nous pouvons passer à l'étape suivante en y intégrant les outils complémentaires aux outils de gestion de classe :
+            </p>
+            <ul>
+                <li>VMA : présentation d'un cycle d'endurance en utilisant la VMA des élèves. Leur évaluation de fin d'année sera basée sur leur progression.</li> 
+                <li>CO : l'outil de course d'orientation propose trois façons de procéder pour les CO. Toutes les CO sont basées sur la VMA des élèves ainsi que l'évaluation. </li>
+                <li>EMC : présentation de l'outil qui vous permet d'évaluer un test en utilisant un grand nombre de critères.</li>
+                <li>IPW Trophy : présentation d'un outil qui permet l'organisation d'un événement de type "rhéto trophée" dans son école. Les classements & évaluations sont automatiques, le choix des épreuves et CO est libre.</li>
+            </ul>
+
+            <h3>Durée</h3>
+            <p>1h à 2h de formation seront nécessaires. </p>
+
+            <h3>Prérequis </h3>
+            <p>Il est indispensable de bien maîtriser F1.</p>
+            <p>IPW Trophy est un "bonus" indépendant des autres outils. </p>            
+        </div>
+        <h3 class="display-3">F3 : Cloud - Tablettes - Applicatons Android/iOS pour l'EP</h3>
+        <div class="jumbotron" style="font-size: 1.3em;">
+            <h3>Présentation</h3>
+            <ul>
+                <li>Présentation du Cloud Computing et de son utilité pour nous les enseignants ; le tout dans le cadre d'un cours d'EP.</li> 
+                <li>Installation de Google Drive, Google Sheets et Google Docs sur l'ensemble de vos supports et utilisation du Cloud.</li>
+                <li>Quel est le rôle et l'utilité d'un smartphone et/ou d'une tablette pour le professeur d'éducation physique et ses élèves.</li>
+                <li>Présentation de quelques applications android/iOs intéressantes à utiliser en tant que professeur d'EP. Pistes d'utilisation pour les courses d'orientation, les sports co, l'audace,... </li>
+            </ul>
+
+            <h3>Durée</h3>
+            <p>Une demi journée est suffisante pour aborder tous ces thèmes.</p>
+            <p>Attention, le fait d'utiliser des tablettes ne doit pas nous "forcer" à les utiliser à chaque cours !</p>
+
+            <h3>Prérequis</h3>
+            <p>Pas de prérequis particuliers.</p>
+        </div>
+        <h3 class="display-3">F4 : Documents pédagogiques & liens avec mes outils</h3>
+        <div class="jumbotron" style="font-size: 1.3em;">
+            <h3>Présentation</h3>
+            <p>
+                Dans cette formation, nous nous intéressons aux liens qui existent entre mes outils 
+                et tous les documents officiels à posséder pour une préparation à l'inspection :
+            </p>
+            <ul>
+                <li>journal de classe,</li>
+                <li>cahier de cotes,</li>
+                <li>planification annuelle,</li>
+                <li>document d'intention pédagogique,</li>
+                <li>séquences d'apprentissage.</li>
+            </ul>
+            <p>Tous ces documents vous seront présentés et partagés.</p>
+
+            <h3>Durée</h3>
+            <p>Il faut compter 1h à 2h de formation. </p>
+
+            <h3>Prérequis</h3>
+            <p>Pour plus de facilité et de cohérence, il faut déjà avoir suivi les formations F1 & F2. </p>
+        </div>
+    </div>            
 {% endblock %}        
