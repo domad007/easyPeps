@@ -2,13 +2,14 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}easyPEPs{% endblock %}</title>
+        <title>easyPEPs{% block title %}{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
         
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <link rel="shortcut icon" href="/IMG/favicon.png" type="image/x-icon">
     </head>
     <body>
           <!-- Navigation -->
@@ -22,29 +23,28 @@
                     <ul class="navbar-nav ml-auto">
                         <div class="dropdown">
                             <li class="nav-item active">
-                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#acceuil">Acceuil
+                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">Acceuil
                                 <span class="sr-only">(current)</span>
                                 </a>
                                 <div class="dropdown-menu">
-                                    <a href="#introduction" class="dropdown-item">Introduction</a>
-                                    <a href="#genese" class="dropdown-item">Genèse du programme</a>
-                                    <a href="#qui" class="dropdown-item">Qui suis-je</a>
+                                    <a href="introduction" class="dropdown-item">Introduction</a>
+                                    <a href="genese" class="dropdown-item">Genèse du programme</a>
+                                    <a href="qui-suis-je" class="dropdown-item">Qui suis-je</a>
                                 </div>
                             </div>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#objectifs">Objectifs</a>
+                            <a class="nav-link" href="objectifs">Objectifs</a>
                         </li>
                         <li class="nav-item">
                             <div class="dropdown">                      
                                 <a class="nav-link dropdown-toggle" href="#outilsGestion" data-toggle="dropdown">Outils Gestion de classe</a>
                                 <div class="dropdown-menu">
-                                    <a href="#journal" class="dropdown-item">Journal de classe</a>
-                                    <a href="#agenda" class="dropdown-item">Agenda</a>
-                                    <a href="#cahier" class="dropdown-item">Cahier de cotes</a>
-                                    <a href="#planning" class="dropdown-item">Planning Annuel</a>
-                                    <a href="#journal" class="dropdown-item">Journal de classe</a>
-                                    <a href="#parametres" class="dropdown-item">Paramètres et échelle</a>
+                                    <a href="journalClasse" class="dropdown-item">Journal de classe</a>
+                                    <a href="agenda" class="dropdown-item">Agenda</a>
+                                    <a href="cahierCotes" class="dropdown-item">Cahier de cotes</a>
+                                    <a href="planning" class="dropdown-item">Planning Annuel</a>
+                                    <a href="parametres" class="dropdown-item">Paramètres et échelle</a>
                                 </div>
                             </div>
                         </li>
@@ -52,9 +52,9 @@
                             <div class="dropdown">
                                 <a class="nav-link dropdown-toggle" href="#outilsVMA" data-toggle="dropdown">Outils VMA-CO-EM</a>
                                 <div class="dropdown-menu">
-                                    <a href="#vma" class="dropdown-item">Travail VMA</a>
-                                    <a href="#course" class="dropdown-item">Course d'orientation</a>
-                                    <a href="#evaluation" class="dropdown-item">Evaluation à multiples critères</a>
+                                    <a href="vma" class="dropdown-item">Travail VMA</a>
+                                    <a href="course" class="dropdown-item">Course d'orientation</a>
+                                    <a href="evaluation" class="dropdown-item">Evaluation à multiples critères</a>
                                 </div>
                             </div>
                         </li>
@@ -68,10 +68,10 @@
                             </div>
                         </li>
                          <li class="nav-item">
-                            <a class="nav-link" href="#application">Application</a>
+                            <a class="nav-link" href="application">Application</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#formations">Formations</a>
+                            <a class="nav-link" href="formations">Formations</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#contact">Contact</a>
@@ -83,22 +83,118 @@
 
         <!-- Page Content -->
         <div class="container">
-
+            {% block header %}
             <!-- Jumbotron Header -->
             <header class="jumbotron my-4">
                 <h1 class="display-3" style="text-align: center">EASYPEPS</h1>
-                <p class="lead" style="text-align: center">DES OUTILS NUMÉRIQUES AU SERVICE DE L'EDUCATION PHYSIQUE</p>
+                <h3 class="display-7" style="text-align: center">DES OUTILS NUMÉRIQUES AU SERVICE DE L'EDUCATION PHYSIQUE</h3>
                 <div style="text-align: center">
                     <a href="inscription" class="btn btn-primary btn-lg">Inscription</a>
                     <a href="connexion" class="btn btn-primary btn-lg">Connexion</a>
                 </div>
             </header>
-
+            {% endblock %}
         </div>
-        <script>
-            $('a[href="#acceuil"],  a[href="#outilsGestion"], a[href="#outilsVMA"], a[href="#didacticiels"]').mouseover(function(){
-                $(this).dropdown('toggle');
-            });
-        </script>    
+
+        <div class="container">
+        {% block container %}
+            <div class="bienvenue">
+                <h3 class="display-3">Bienvenue</h3>
+                <div class="jumbotron" style="font-size: 1.3em;">
+                    <p> 
+                        Par l'intermédiaire de ce site, j'aimerais vous présenter mon programme de gestion de classe et toute une batterie d'outils mis au point afin de répondre 
+                        à des besoins personnels, à la réalité du terrain et à la plupart des situations rencontrées durant mes années de pratique en tant que professeur d'Education Physique.
+                    </p>
+                    <p>
+                        Peut-être vont-ils vous intéresser, vous inspirer ou vous fournir de nouvelles 
+                        pistes à explorer. Si c'est le cas et que vous désirez en savoir plus, n'hésitez 
+                        pas à vous diriger vers la page "Contact".
+                    </p>
+                        Les outils créés utilisent tous la suite Google et principalement "Google Sheets". 
+                        Cette suite est gratuite, utilise un Cloud et permet ainsi la synchronisation entre tous les supports de travail. 
+                        L'ensemble des documents peuvent aussi être disponibles "hors ligne" dans le cas où votre abonnement 4G & le Wifi de votre école seraient limités.
+                    <p>
+                        Il est donc nécessaire de posséder un compte Google et idéalement un Agenda google afin de bénéficier de toutes les fonctionnalités proposées.
+                    </p>
+                    <p>
+                        Ci-dessous, un schéma reprenant tous les éléments contenus dans mes différents outils :
+                    </p>
+                    <img class="img-fluid" src="/IMG/plannification.png" alt="plannificaton">
+                </div>
+            </div>
+
+            <div class="planSite">
+                <h3 class="display-3">Plan du site</h3>
+                <div class="jumbotron" style="font-size: 1.3em;">
+                <p>
+                    En plus de vous présenter tous mes outils, je prends également un peu d'espace pour me présenter, 
+                    c'est la moindre des choses.
+                </p>
+
+                <h3>Introduction</h3>
+                <ul>
+                    <li>Présentation de l'esprit du programme & ses origines. </li>
+                </ul>
+
+                <h3>Objectifs</h3>
+                <ul>
+                    <li>Présentation des objectifs.</li>
+                </ul>
+
+                <h3>Présentation des Outils de Gestion de Classe</h3>
+                <ul>
+                    <ol>
+                        <li>Journal de Classe.</li>
+                        <li>Cahier de Cotes "Automatisé" & Compétences évaluées.</li>
+                        <li>Agenda</li>
+                        <li>Planning Annuel.</li>
+                        <li>Paramètres & Échelles d'Évaluation.</li>
+                    </ol>
+                </ul>
+
+                <h3>Outils supplémentaires</h3>
+                <ul>
+                    <ol>
+                        <li>Outil - VMA.</li>
+                        <li>Outil - CO (course d'orientation).</li>
+                        <li>Outil - EM (évaluations à multiples critères).</li>
+                    </ol>
+                </ul>
+
+                <h3>Didacticiel</h3>
+                <ul>
+                    <li>Jeter un oeil sur le didacticiel du programme (actuellement en travaux).</li>
+                </ul>
+
+                <h3>Obtenir les outils</h3>
+                <ul>
+                    <li>Si vous désirez obtenir ces outils, cette page est là pour vous !</li>
+                </ul>
+
+                <h3>Applis et Sites Web</h3>
+                <ul>
+                    <li>Présentation de quelques applications et sites web intéressants.</li>
+                </ul>
+
+                <h3>Formations</h3>
+                <ul>
+                    <li>Cet onglet vous donne un rapide aperçu des possibilités de formations.</li>
+                </ul>
+
+                <br>
+                <p>
+                    Ce site et son contenu sont sans prétentions aucunes. 
+                    Nous savons que le monde de l'enseignement est dépendant de trop nombreux facteurs que pour prétendre posséder LA solution. Mes outils répondent à un besoin personnel dans un environnement et un fonctionnement qui sont miens. 
+                    Ils me facilitent énormément la vie et me permettent d'être encore plus efficace dans mon métier.
+                </p>
+                <p>
+                    Mes outils sont pensés et travaillés de façon à les rendre le plus compatible possible.
+                </p>
+                <p>
+                    Je reste à votre disposition si vous désirez des informations supplémentaires, obtenir les outils ou tout simplement un peu d'aide.
+                </p>
+            </div>
+        {% endblock %}    
+        </div>  
     </body>
 </html>

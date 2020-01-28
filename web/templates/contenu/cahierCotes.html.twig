@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+{% block title %} -Cahier de cotes {% endblock %}
+
+{% block header %}
+    <!-- Jumbotron Header -->
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">Cahier de cotes automatisé</h1>
+    </header>
+{% endblock %}
+
+{% block container %}
+    <div class="cahierCotes">
+        <h3 class="display-3">Le cahier de cotes</h3>
+        <div class="jumbotron" style="font-size: 1.3em;">
+            <p>
+                Le "Cahier de Cotes" est totalement automatisé.
+            </p>
+            <p>
+                Si le "Journal de Classe" est complété correctement, toutes les évaluations apparaîtront ici.
+            </p>
+            <p>
+                De la même façon, toutes les moyennes pondérées (champs, bilans, semestres, année) seront calculées automatiquement.
+            </p>
+            <p>
+                La pondération sera directement liée au nombre d'heures consacrée à une matière précise (compétences).
+            </p>
+            <p>
+                Des statistique par classes sont aussi disponibles.
+            </p>
+            <img class="img-fluid" src="/IMG/cahier.png" alt="cahierCotes" >
+        </div>
+
+        <h3 class="display-3">Compétences évaluées</h3>
+        <div class="jumbotron" style="font-size: 1.3em;">
+            <p>
+                L'ensemble des compétences évaluées apparaissent automatiquement sur cette feuille.
+            </p>
+            <p>
+                Elle vous permet de voir, en un coup d’œil, combien de fois chaque compétence a été évaluée par Semestre et tout au long de l'année.
+            </p>
+            <p>
+                Ainsi, nous aurons un aperçu des compétences non évaluées de façon à s'y intéresser davantage dans le futur. 
+            </p>
+            <img class="img-fluid" src="/IMG/competences.png" alt="competences" >
+        </div>
+    </div>    
+{% endblock %}        

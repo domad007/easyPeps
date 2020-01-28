@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+{% block title %} -Journal de classe {% endblock %}
+
+{% block header %}
+    !-- Jumbotron Header -->
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">Journal de classe</h1>
+    </header>
+{% endblock %}
+
+{% block container %}
+    <div class="journal">
+        <h3 class="display-3">Au jour le jour</h3>
+        <div class="jumbotron" style="font-size: 1.3em;">
+            <p>Le "Journal de Classe" reste un journal de classe. Son objectif principal est d'y indiquer les matières vues aux cours à une date précise.
+            </p>
+            <p>Mais en plus de cela, les informations suivantes sont également traitées et disponibles :
+            </p>
+            <ul>
+                <li>nom, prénom & classe de l'élève,</li>
+                <li>date de naissance de l'élève --> âge --> utilisation dans la feuille Outil-VMA,</li>
+                <li>les oublis de tenues,</li>
+                <li>les présences, les absences, les excusés, les retards,...</li>
+                <li>les élèves sous certificat médical “CM”,</li>
+                <li>les élèves en stage,</li>
+                <li>les élèves non évalués “NE”,</li>
+                <li>l'achat de t-shirts,</li>
+                <li>la vma des élèves,</li>
+                <li>l’évaluation journalière (tj).</li>
+                <li>...</li>
+            </ul>
+            <p>
+                Un ensemble de statistiques de fréquentation du cours sera également de la partie.
+            </p>
+
+        <h3 class="display-3">Les évaluations</h3>
+        <div class="jumbotron" style="font-size: 1.3em;">
+            <p>
+                Cette feuille "Journal de Classe" possède un espace dédié aux évaluations. En indiquant le champ évalué, la compétence évaluée, sur combien la compétence sera évaluée et le nombre d'heures qui ont été consacrées à cette matière, les évaluations seront alors automatiquement transférées dans le "Cahier de Cotes". Automatiquement, les tj, bilans, semestre et l'année seront pondérés.
+            </p>
+        </div>
+
+        <h3 class="display-3">Un lien automatisé vers les autres outils </h3>
+        <div class="jumbotron" style="font-size: 1.3em;">
+            <p>
+                Un journal de classe correctement complété permet au "Cahier de Cotes Automatisé" et aux "Compétences Évaluées" d'être complétés sans autres interventions.
+            </p>
+        </div>
+    </div>
+{% endblock %}        

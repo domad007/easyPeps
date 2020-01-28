@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+{% block title %} -Planning annuel {% endblock %}
+
+{% block header %}
+    <!-- Jumbotron Header -->
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">Planning Annuel</h1>
+    </header>
+{% endblock %}
+
+{% block container %}
+    <div class="planning annuel">
+        <div class="jumbotron" style="font-size: 1.3em;">
+            <p>
+                Le planning annuel permet de planifier l'année pour chacune de ses classes. Un autre outil est disponible sur un autre fichier Google Sheets où l'ensemble des années peut être planifié. 
+            </p>
+            <p>
+                De la même façon qu'avec la feuille "Compétences Évaluées", un tableau permet de voir quelles compétences ont été travaillées, mais aussi combien de fois par semestre et sur l'ensemble de l'année.
+            </p>
+        </div>
+    </div>    
+{% endblock %}        
