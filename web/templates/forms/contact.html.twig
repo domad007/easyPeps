@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+{% block title %} -Contact {% endblock %}
+
+{% form_theme form _self %}
+
+{% block header %}
+    <!-- Jumbotron Header -->
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">Contactez-Nous !</h1>
+    </header>
+{% endblock %}
+
+{% block container %}
+    <div class="contact">
+        <div class="jumbotron" style="font-size: 1.3em;">
+            {{ form_start(form) }}
+                <div class="form-group">
+              
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>    
+{% endblock %}  
