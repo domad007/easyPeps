@@ -17,8 +17,7 @@ class ContactType extends AbstractType
             'label' => $label,
             'attr' => [
                 'class' => $class,
-                'placeholder' => $placeholder
-
+                'placeholder' => $placeholder, 
             ]
         ];
     }

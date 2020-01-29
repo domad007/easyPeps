@@ -1,37 +1,52 @@
 <?php
 
 namespace App\Controller;
+use App\Entity\User;
 use App\Form\ContactType;
-use App\Form\ConnexionType;
 use App\Form\InscriptionType;
+use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class easyPepsController extends AbstractController {
     
     /**
-     * @Route("/connexion", name="connexion")
+     * @Route("/connexion", name="connexion_user")
      */
-    public function connexion(){
-        $formConnexion = $this->createForm(ConnexionType::class);
+    public function connexion(AuthenticationUtils $utils){
+        
+        $error = $utils->getLastAuthenticationError();
+        $username = $utils->getLastUsername();
         return $this->render(
             'forms/connexion.html.twig',
             [
-                'form' => $formConnexion->createView()
+                'error' => $error !== null,
+                'username' => $username
             ]
         );
     }
 
     /**
-     * @Route("/inscription", name="inscription")
+     * @Route("/deconnexion", name="deconnexion_user")
+     *
+     * @return void
      */
-    public function inscription(){
-        $formInscription = $this->createForm(InscriptionType::class);
+    public function deconnexion(){
+
+    }
+
+    /**
+     * @Route("/inscription", name="inscription_user")
+     */
+    public function inscription(Request $request){
+        $user = new User();
+
+        $formInscription = $this->createForm(InscriptionType::class, $user);
+
+        $form->handleRequest($request);
         return  $this->render(
             'forms/inscription.html.twig', 
             [
