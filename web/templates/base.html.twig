@@ -13,6 +13,7 @@
         <link rel="shortcut icon" href="/IMG/favicon.png" type="image/x-icon">
     </head>
     <body>
+        {% block navbar %}
           <!-- Navigation -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
             <div class="container">
@@ -23,6 +24,21 @@
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
                         <div class="dropdown">
+                            {% if app.user %}
+                                <li class="nav-item">
+                                    <div class="dropdown">                      
+                                        <a class="nav-link dropdown-toggle" href="#monCompte" data-toggle="dropdown">Mon compte</a>
+                                        <div class="dropdown-menu">
+                                            <a href="donnesPerso" class="dropdown-item">Mes données personnelles</a>
+                                            <a href="modifMdp" class="dropdown-item">Modifier votre mot de passe</a>
+                                            <a href="modifDonnes" class="dropdown-item">Modifier vos données personnelles</a>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{path('deconnexion_user')}}">Deconnexion</a>
+                                </li>
+                            {% else %}    
                             <li class="nav-item active">
                                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="/">Acceuil
                                 <span class="sr-only">(current)</span>
@@ -70,14 +86,20 @@
                         <li class="nav-item">
                             <a class="nav-link" href="contact">Contact</a>
                         </li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
         </nav>
-
+        {% endblock %}
         <!-- Page Content -->
         <div class="container">
             {% block header %}
+            {% if app.user %}
+                <header class="jumbotron my-4">
+                    <h1 class="display-3" style="text-align: center">Bienvenue {{ app.user.nomUser }}</h1>
+                </header>
+            {% else %}
             <!-- Jumbotron Header -->
             <header class="jumbotron my-4">
                 <h1 class="display-3" style="text-align: center">EASYPEPS</h1>
@@ -87,6 +109,7 @@
                     <a href="connexion" class="btn btn-primary btn-lg">Connexion</a>
                 </div>
             </header>
+            {% endif %}
             {% endblock %}
         </div>
 

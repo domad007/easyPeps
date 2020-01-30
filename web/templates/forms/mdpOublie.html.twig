@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} - Mot de passe oublié {% endblock %}
+
+{% block header %}
+    <!-- Jumbotron Header -->
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">Récuperez votre mot de passe !</h1>
+    </header>
+{% endblock %}
+
+{% block container %}
+    <div class="mdpOublie">
+        <div class="jumbotron" style="font-size: 1.3em;">
+            {{ form_start(form) }}
+                <div class="form-group">
+                </div>
+        
+            {{ form_end(form) }}
+        </div>
+    </div>    
+{% endblock %}

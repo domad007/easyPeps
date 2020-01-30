@@ -2,11 +2,22 @@
 
 namespace App\Entity;
 
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @UniqueEntity(
+ *  fields={"mail"},
+ *  message="L'adresse mail existe déjà !"
+ * )
+ * 
+ * @UniqueEntity(
+ * fields={"nomUser"},
+ * message="Le nom d'utilisateur existe déjà !"
+ * )
  */
 class User implements UserInterface
 {
@@ -19,31 +30,32 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Veuillez renseigner votre nom")
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Veuillez renseigner votre prénom")
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Veuillez renseigner votre nom d'utilisateur")
      */
     private $nomUser;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $dateNaiss;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Email(message="Veuillez renseigner votre email")
      */
     private $mail;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $mdp;
 
@@ -51,6 +63,16 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=30)
      */
     private $sexe;
+
+    /**
+     * @ORM\Column(type="date")
+     */
+    private $dateNaiss;
+
+    /**
+     * @Assert\EqualTo(propertyPath="mdp", message="Votre mot de passe ne corresponds pas")
+     */
+    public $confMdp;
 
     public function getId(): ?int
     {
@@ -93,17 +115,6 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getDateNaiss(): ?string
-    {
-        return $this->dateNaiss;
-    }
-
-    public function setDateNaiss(string $dateNaiss): self
-    {
-        $this->dateNaiss = $dateNaiss;
-
-        return $this;
-    }
 
     public function getMail(): ?string
     {
@@ -139,6 +150,18 @@ class User implements UserInterface
         $this->sexe = $sexe;
 
         return $this;
+    } 
+      
+    public function getDateNaiss(): ?\DateTimeInterface
+    {
+        return $this->dateNaiss;
+    }
+
+    public function setDateNaiss(\DateTimeInterface $dateNaiss): self
+    {
+        $this->dateNaiss = $dateNaiss;
+
+        return $this;
     }
 
     public function getRoles(){
@@ -154,10 +177,12 @@ class User implements UserInterface
     }
 
     public function getUsername(){
-        return $this->mail;
+        return $this->nomUser;
     }
 
     public function eraseCredentials(){
         
     }
+
+
 }
