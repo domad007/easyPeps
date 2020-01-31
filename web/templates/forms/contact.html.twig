@@ -13,6 +13,11 @@
 {% block container %}
     <div class="contact">
         <div class="jumbotron" style="font-size: 1.3em;">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}  
             {{ form_start(form) }}
                 <div class="form-group">
               

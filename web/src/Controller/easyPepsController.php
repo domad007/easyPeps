@@ -72,6 +72,7 @@ class easyPepsController extends AbstractController {
             $manager->persist($user);
             $manager->flush();
             
+            $this->addFlash('success', "Vous avez été inscrit veuillez passer à la connexion");
             return $this->redirectToRoute("connexion_user");
         }
 
@@ -86,8 +87,27 @@ class easyPepsController extends AbstractController {
     /**
      * @Route("/contact", name="contact")
      */
-    public function contact(){
+    public function contact(Request $request,\Swift_Mailer $mailer){
         $formContact = $this->createForm(ContactType::class);
+
+        $formContact->handleRequest($request);
+        if($formContact->isSubmitted() && $formContact->isValid()){
+            $data = $formContact->getData();
+            dump($data);
+            $message = (new \Swift_Message('Contact avec administrateur'))
+                ->setFrom($data['mail'])
+                ->setTo('dominikfiedorczuk69@gmail.com')
+                ->setBody(
+                    'Nom: ' .$data['nom'].'<br>'. 
+                    'Prénom: '. $data['prenom'] .'<br>'. 
+                    'Adresse de contact: ' . $data['mail'].'<br>'.
+                    'Message: '. $data['commentaire'],
+                    'text/html'
+                );
+
+            $mailer->send($message);
+            $this->addFlash('success', 'Votre message a été envoyé, nous essayerons de vous répondre au plus vite');
+        }
 
         return $this->render(
             'forms/contact.html.twig',

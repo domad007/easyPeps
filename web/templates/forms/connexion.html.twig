@@ -8,9 +8,14 @@
     </header>
 {% endblock %}
 
-{% block container %}
+{% block container %}  
     <div class="connexion">
         <div class="jumbotron" style="font-size: 1.3em;">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}  
             {% if error %}
                 <div class="alert alert-danger">Une erreur est survenue, l'adresse mail ou le mot de passe est incorrect</div>
             {% endif %}
