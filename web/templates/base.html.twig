@@ -4,10 +4,9 @@
         <meta charset="UTF-8">
         <title>easyPEPs{% block title %}{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
-        
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-        <link rel="stylesheet" href="/CSS/style.css">
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="/CSS/style.css">        
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
         <link rel="shortcut icon" href="/IMG/favicon.png" type="image/x-icon">
@@ -23,17 +22,13 @@
             </button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
-                        <div class="dropdown">
                             {% if app.user %}
                                 <li class="nav-item">
-                                    <div class="dropdown">                      
-                                        <a class="nav-link dropdown-toggle" href="#monCompte" data-toggle="dropdown">Mon compte</a>
-                                        <div class="dropdown-menu">
-                                            <a href="donnesPerso" class="dropdown-item">Mes données personnelles</a>
-                                            <a href="modifMdp" class="dropdown-item">Modifier votre mot de passe</a>
-                                            <a href="modifDonnes" class="dropdown-item">Modifier vos données personnelles</a>
-                                        </div>
-                                    </div>
+                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">Votre compte</a>
+                                    <div class="dropdown-menu">
+                                        <a href="{{ path('mon_profil') }}" class="dropdown-item">Modifiez votre profil</a>
+                                        <a href="{{ path('mon_mdp') }}" class="dropdown-item">Modifiez votre mot de passe</a>
+                                    </div>                                                         
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{path('deconnexion_user')}}">Deconnexion</a>
@@ -54,29 +49,29 @@
                             <a class="nav-link" href="objectifs">Objectifs</a>
                         </li>
                         <li class="nav-item">
-                            <div class="dropdown">                      
+                            <div class="dropdown">
                                 <a class="nav-link dropdown-toggle" href="#outils" data-toggle="dropdown">Outils</a>
                                 <div class="dropdown-menu">
-                                    <div class="dropdown-item dropdown-submenu">
-                                        <a href="#outilsGestion" data-toggle="dropdown">Outils Gestion de classe</a>
-                                        <div class="dropdown-menu">                                   
-                                        <a href="descriptionOutilsGestion" class="dropdown-item">Description</a>
-                                        <a href="journalClasse" class="dropdown-item">Journal de classe</a>
-                                        <a href="agenda" class="dropdown-item">Agenda</a>
-                                        <a href="cahierCotes" class="dropdown-item">Cahier de cotes</a>
-                                        <a href="planning" class="dropdown-item">Planning Annuel</a>
-                                        <a href="parametres" class="dropdown-item">Paramètres et échelle</a>
+                                   <div class="dropdown-submenu">
+                                        <a href="#" data-toggle="dropdown" class="dropdown-toggle dropdown-item">Outils de gestion de classe</a>
+                                        <div class="dropdown-menu">
+                                            <a href="descriptionOutilsGestion" class="dropdown-item">Description</a>
+                                            <a href="journalClasse" class="dropdown-item">Journal de classe</a>
+                                            <a href="agenda" class="dropdown-item">Agenda</a>
+                                            <a href="cahierCotes" class="dropdown-item">Cahier de cotes</a>
+                                            <a href="planning" class="dropdown-item">Planning Annuel</a>
+                                            <a href="parametres" class="dropdown-item">Paramètres et échelle</a>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="dropdown-menu dropright">
-                                    <a class="dropdown-item dropdown-toggle" href="#outilsVMA" data-toggle="dropdown">Outils VMA-CO-EM</a>
-                                    <div class="dropdown-menu">
-                                        <a href="descriptionVMA" class="dropdown-item">Description</a>
-                                        <a href="vma" class="dropdown-item">Travail VMA</a>
-                                        <a href="course" class="dropdown-item">Course d'orientation</a>
-                                        <a href="evaluation" class="dropdown-item">Evaluation à multiples critères</a>
-                                    </div>
+                                   </div>
+                                   <div class="dropdown-submenu">
+                                        <a href="#" data-toggle="dropdown" class="dropdown-toggle dropdown-item">Outils VMA-CO-EM</a>
+                                        <div class="dropdown-menu">
+                                            <a href="descriptionVMA" class="dropdown-item">Description</a>
+                                            <a href="vma" class="dropdown-item">Travail VMA</a>
+                                            <a href="course" class="dropdown-item">Course d'orientation</a>
+                                            <a href="evaluation" class="dropdown-item">Evaluation à multiples critères</a>                                        </div>
+                                        
+                                    </div>    
                                 </div>
                             </div>
                         </li>
@@ -100,7 +95,7 @@
             {% block header %}
             {% if app.user %}
                 <header class="jumbotron my-4">
-                    <h1 class="display-3" style="text-align: center">Bienvenue {{ app.user.nomUser }}</h1>
+                    <h1 class="display-3" style="text-align: center">Agenda</h1>
                 </header>
             {% else %}
             <!-- Jumbotron Header -->
@@ -118,6 +113,14 @@
 
         <div class="container">
         {% block container %}
+            {% if app.user %}
+                <div class="agenda">
+                    <h3 class="display-3">Votre agenda</h3>
+                    <div class="jumbotron" style="font-size: 1.3em;">
+                        hello
+                    </div>
+                </div>
+            {% else %}
             <div class="bienvenue">
                 <h3 class="display-3">Bienvenue</h3>
                 <div class="jumbotron" style="font-size: 1.3em;">
@@ -214,6 +217,7 @@
                     Je reste à votre disposition si vous désirez des informations supplémentaires, obtenir les outils ou tout simplement un peu d'aide.
                 </p>
             </div>
+            {% endif %}
         {% endblock %}    
         </div>  
     </body>
