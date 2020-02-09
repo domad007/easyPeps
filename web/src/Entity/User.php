@@ -75,10 +75,6 @@ class User implements UserInterface
      */
     public $confMdp;
 
-    /**
-     *  @ORM\Column(type="string", length=255, nullable=true)
-     */
-    protected $resetToken;
 
     public function getId(): ?int
     {
@@ -189,22 +185,5 @@ class User implements UserInterface
     public function eraseCredentials(){
         
     }
-
-     /**
-     * @return string
-     */
-    public function getResetToken(): string
-    {
-        return $this->resetToken;
-    }
-
-    /**
-     * @param string $resetToken
-     */
-    public function setResetToken(?string $resetToken): void
-    {
-        $this->resetToken = $resetToken;
-    }
-
 
 }

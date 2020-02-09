@@ -40,7 +40,7 @@ class easyPepsController extends AbstractController {
     /**
      * @Route("/mdpOublie", name="mdpOublie")
      */
-    public function mdpOublie(Request $request,\Swift_Mailer $mailer){
+    public function mdpOublie(Request $request, \Swift_Mailer $mailer){
         return $this->render(
             'forms/mdpOublie.html.twig'
         );
