@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>easyPEPs{% block title %}{% endblock %}</title>
+        {% block stylesheets %}{% endblock %}
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="/CSS/style.css">        
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <link rel="shortcut icon" href="/IMG/favicon.png" type="image/x-icon">
+    </head>
+    <body>
+        {% block navbar %}
+          <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+            <div class="container">
+            <img src="/IMG/favicon.png" alt="favicon" style="height: 40px; width:40px;"><a class="navbar-brand" href="/">easyPEPs</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ml-auto">
+                            {% if app.user %}
+                                <li class="nav-item">
+                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">Votre compte</a>
+                                    <div class="dropdown-menu">
+                                        <a href="{{ path('mon_profil') }}" class="dropdown-item">Modifiez votre profil</a>
+                                        <a href="{{ path('mon_mdp') }}" class="dropdown-item">Modifiez votre mot de passe</a>
+                                    </div>                                                         
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{path('deconnexion_user')}}">Deconnexion</a>
+                                </li>
+                            {% else %}    
+                            <li class="nav-item active">
+                                <div class="dropdown">
+                                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="/">Acceuil
+                                    <span class="sr-only">(current)</span>
+                                    </a>
+                                    <div class="dropdown-menu">
+                                        <a href="introduction" class="dropdown-item">Introduction</a>
+                                        <a href="genese" class="dropdown-item">Genèse du programme</a>
+                                        <a href="qui-suis-je" class="dropdown-item">Qui suis-je</a>
+                                    </div> 
+                                </div>                         
+                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="objectifs">Objectifs</a>
+                        </li>
+                        <li class="nav-item">
+                            <div class="dropdown">
+                                <a class="nav-link dropdown-toggle" href="#outils" data-toggle="dropdown">Outils</a>
+                                <div class="dropdown-menu">
+                                   <div class="dropdown-submenu">
+                                        <a href="#" data-toggle="dropdown" class="dropdown-toggle dropdown-item">Outils de gestion de classe</a>
+                                        <div class="dropdown-menu">
+                                            <a href="descriptionOutilsGestion" class="dropdown-item">Description</a>
+                                            <a href="journalClasse" class="dropdown-item">Journal de classe</a>
+                                            <a href="agenda" class="dropdown-item">Agenda</a>
+                                            <a href="cahierCotes" class="dropdown-item">Cahier de cotes</a>
+                                            <a href="planning" class="dropdown-item">Planning Annuel</a>
+                                            <a href="parametres" class="dropdown-item">Paramètres et échelle</a>
+                                        </div>
+                                   </div>
+                                   <div class="dropdown-submenu">
+                                        <a href="#" data-toggle="dropdown" class="dropdown-toggle dropdown-item">Outils VMA-CO-EM</a>
+                                        <div class="dropdown-menu">
+                                            <a href="descriptionVMA" class="dropdown-item">Description</a>
+                                            <a href="vma" class="dropdown-item">Travail VMA</a>
+                                            <a href="course" class="dropdown-item">Course d'orientation</a>
+                                            <a href="evaluation" class="dropdown-item">Evaluation à multiples critères</a>                                        </div>
+                                        
+                                    </div>    
+                                </div>
+                            </div>
+                        </li>
+                         <li class="nav-item">
+                            <a class="nav-link" href="application">Application</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="formations">Formations</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contact">Contact</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        {% endblock %}
+        <!-- Page Content -->
+        <div class="container">
+            {% block header %}
+            {% if app.user %}
+                <header class="jumbotron my-4">
+                    <h1 class="display-3" style="text-align: center">Agenda</h1>
+                </header>
+            {% else %}
+            <!-- Jumbotron Header -->
+            <header class="jumbotron my-4">
+                <h1 class="display-3" style="text-align: center">EASYPEPS</h1>
+                <h3 class="display-7" style="text-align: center">DES OUTILS NUMÉRIQUES AU SERVICE DE L'EDUCATION PHYSIQUE</h3>
+                <div style="text-align: center">
+                    <a href="inscription" class="btn btn-primary btn-lg">Inscription</a>
+                    <a href="connexion" class="btn btn-primary btn-lg">Connexion</a>
+                </div>
+            </header>
+            {% endif %}
+            {% endblock %}
+        </div>
+
+        <div class="container">
+        {% block container %}
+            {% if app.user %}
+                <div class="agenda">
+                    <h3 class="display-3">Votre agenda</h3>
+                    <div class="jumbotron" style="font-size: 1.3em;">
+                        hello
+                    </div>
+                </div>
+            {% else %}
+            <div class="bienvenue">
+                <h3 class="display-3">Bienvenue</h3>
+                <div class="jumbotron" style="font-size: 1.3em;">
+                    <p> 
+                        Par l'intermédiaire de ce site, j'aimerais vous présenter mon programme de gestion de classe et toute une batterie d'outils mis au point afin de répondre 
+                        à des besoins personnels, à la réalité du terrain et à la plupart des situations rencontrées durant mes années de pratique en tant que professeur d'Education Physique.
+                    </p>
+                    <p>
+                        Peut-être vont-ils vous intéresser, vous inspirer ou vous fournir de nouvelles 
+                        pistes à explorer. Si c'est le cas et que vous désirez en savoir plus, n'hésitez 
+                        pas à vous diriger vers la page "Contact".
+                    </p>
+                        Les outils créés utilisent tous la suite Google et principalement "Google Sheets". 
+                        Cette suite est gratuite, utilise un Cloud et permet ainsi la synchronisation entre tous les supports de travail. 
+                        L'ensemble des documents peuvent aussi être disponibles "hors ligne" dans le cas où votre abonnement 4G & le Wifi de votre école seraient limités.
+                    <p>
+                        Il est donc nécessaire de posséder un compte Google et idéalement un Agenda google afin de bénéficier de toutes les fonctionnalités proposées.
+                    </p>
+                    <p>
+                        Ci-dessous, un schéma reprenant tous les éléments contenus dans mes différents outils :
+                    </p>
+                    <img class="img-fluid" src="/IMG/plannification.png" alt="plannificaton">
+                </div>
+            </div>
+
+            <div class="planSite">
+                <h3 class="display-3">Plan du site</h3>
+                <div class="jumbotron" style="font-size: 1.3em;">
+                <p>
+                    En plus de vous présenter tous mes outils, je prends également un peu d'espace pour me présenter, 
+                    c'est la moindre des choses.
+                </p>
+
+                <h3>Introduction</h3>
+                <ul>
+                    <li>Présentation de <a href="introduction"> l'esprit du programme </a> & <a href="genese"> ses origines. </a> </li>
+                </ul>
+
+                <h3>Objectifs</h3>
+                <ul>
+                    <li>Présentation des objectifs.</li>
+                </ul>
+
+                <h3>Présentation des Outils de Gestion de Classe</h3>
+                <ul>
+                    <ol>
+                        <li> <a href="journalClasse"> Journal de Classe. </a></li>
+                        <li><a href="cahierCotes"> Cahier de Cotes "Automatisé" & Compétences évaluées. </a></li>
+                        <li><a href="agenda"> Agenda </a></li>
+                        <li> <a href="planning"> Planning Annuel. </a></li>
+                        <li><a href="parametres"> Paramètres & Échelles d'Évaluation. </a></li>
+                    </ol>
+                </ul>
+
+                <h3>Outils supplémentaires</h3>
+                <ul>
+                    <ol>
+                        <li><a href="vma"> Outil - VMA. </a></li>
+                        <li> <a href="course"> Outil - CO (course d'orientation). </a></li>
+                        <li> <a href="evaluation"> Outil - EM (évaluations à multiples critères). </a></li>
+                    </ol>
+                </ul>
+
+                <h3>Didacticiel</h3>
+                <ul>
+                    <li>Jeter un oeil sur le didacticiel du programme (actuellement en travaux).</li>
+                </ul>
+
+                <h3>Obtenir les outils</h3>
+                <ul>
+                    <li>Si vous désirez obtenir ces outils, cette page est là pour vous !</li>
+                </ul>
+
+                <h3>Applis et Sites Web</h3>
+                <ul>
+                    <li>Présentation de quelques applications et sites web intéressants.</li>
+                </ul>
+
+                <h3>Formations</h3>
+                <ul>
+                    <li><a href="formations"> Cet onglet  </a>vous donne un rapide aperçu des possibilités de formations.</li>
+                </ul>
+
+                <br>
+                <p>
+                    Ce site et son contenu sont sans prétentions aucunes. 
+                    Nous savons que le monde de l'enseignement est dépendant de trop nombreux facteurs que pour prétendre posséder LA solution. Mes outils répondent à un besoin personnel dans un environnement et un fonctionnement qui sont miens. 
+                    Ils me facilitent énormément la vie et me permettent d'être encore plus efficace dans mon métier.
+                </p>
+                <p>
+                    Mes outils sont pensés et travaillés de façon à les rendre le plus compatible possible.
+                </p>
+                <p>
+                    Je reste à votre disposition si vous désirez des informations supplémentaires, obtenir les outils ou tout simplement un peu d'aide.
+                </p>
+            </div>
+            {% endif %}
+        {% endblock %}    
+        </div>  
+    </body>
+</html>

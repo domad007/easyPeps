@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+{% block title %} -Outils VMA {% endblock %}
+
+{% block header %}
+    <!-- Jumbotron Header -->
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">Outils divers</h1>
+        <h3 class="display-7" style="text-align: center">VMA - Courses d'orientation - Evaluations multiples</h3>
+    </header>
+{% endblock %}
+
+{% block container %}
+    <div class="outilsVMA">
+        <h3 class="display-3">Outils</h3>
+        <p style="font-size: 1.3em;">
+            Les outils VMA et CO me permettent de travailler efficacement avec mes élèves en basant les exercices et les évaluations sur leur niveau de VMA. 
+            Chaque élève est donc évalué par rapport à son niveau et non par rapport à des échelles d'évaluations fixes.
+        </p>
+        <div class="jumbotron" style="font-size: 1.3em;">
+            <ul>
+                <ol>
+                    <li>
+                        VMA : Cet outil me permet de travailler l'endurance de mes élèves en me basant sur leur VMA. 
+                        Ils seront automatiquement évalués sur leur progression en fin d'année.
+                    </li>
+                    <br>
+                    <li>
+                        CO : Grâce à cet outil, je peux proposer trois types de CO à mes élèves tout en me basant sur leur VMA. 
+                        L'évaluation des élèves est automatique et basée sur leur vitesse moyenne en fonction d'un % de VMA défini.
+                    </li>
+                    <br>
+                    <li>
+                        EM : Lorsqu'il y a beaucoup de critères ou d'atelier à évaluer, cet outil entre en jeu. Il permet aussi de définir une pondération pour chaque critère ou atelier.
+                    </li>
+                </ol>
+            </ul>
+        </div>
+    </div>
+{% endblock %}        

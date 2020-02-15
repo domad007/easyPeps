@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+{% block title %} -Agenda {% endblock %}
+
+{% block header %}
+    <!-- Jumbotron Header -->
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">Agenda</h1>
+        <h3 class="display-7" style="text-align: center">Synchronisation avec Google Agenda</h3>
+    </header>
+{% endblock %}
+
+{% block container %}
+    <div class="agenda">
+        <div class="jumbotron" style="font-size: 1.3em;">
+            <p>
+                Cet outil va vous inviter à planifier tous vos cycle en avance. 
+            </p>
+            <p>
+                En effet, une fois le cycle planifié ou la séance planifiée, une synchronisation vers l'Agenda de Google pourra être effectuée de façon à voir apparaître l'événement dans son agenda. 
+            </p>
+            <p>
+                Cet événement affichera les informations suivantes : 
+            </p>
+            <ul>
+                <li>classe</li>
+                <li>date et heures de cours</li>
+                <li>salle</li>
+                <li>lien vers le journal de classe</li>
+                <li>compétences sollicitées</li>
+                <li>remarques / préparation de séance</li>
+            </ul>
+
+            <p>
+                L'outil agenda tiendra compte des jours où les cours sont suspendus (vacances, journées pédagogiques, formations, sorties,...) pour n'afficher dans le planning que les heures de cours qui ont lieu durant l'année !
+            </p>
+            <img class="img-fluid" src="/IMG/agenda.png" alt="agenda"> 
+        </div>
+    </div>    
+{% endblock %}        

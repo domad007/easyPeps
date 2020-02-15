@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+{% block title %} -Paramètres & échelles d'évaluation {% endblock %}
+
+{% block header %}
+    !-- Jumbotron Header -->
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">Paramètres & échelles d'évaluation</h1>
+    </header>
+{% endblock %}
+
+{% block container %}
+    <div class="quiSuisJe">
+        <div class="jumbotron" style="font-size: 1.3em;">
+            <h3>Il y'a 7 menus de paramètres qui permettent de rendre ce programme plus malléable et compatible avec des types de fonctionnements liés à votre pratique ou à votre établissement scolaire.</h3>
+            <br>
+            <ul>
+                <ol>
+                    <li>Indiquer le nombre de période sur l'année et le nom des différentes compétences</li>
+                    <br>
+                    <li>Choix des compétences : socles ou terminales. En fonction du choix, elles apparaîtront dans les feuilles "Journal de Classe", "Cahier de cotes", "Compétences Évaluées" et "Planification Annuelle".</li>
+                    <br>
+                    <li>Toutes les options liées au journal de classe :</li>
+                        <ul>
+                            <li>sur combien évaluer le travail journalier,</li>
+                            <li>quels raccourcis utiliser pour son jdc (présences, absences, oublis de tenue,...),</li>
+                            <li>poids de l'oubli de tenue sur le travail journalier,</li>
+                            <li>action en cas de case laissée vide lors des évaluations,</li>
+                        </ul>
+                    <br>
+                    <li>Toute les options liées au cahier de cotes :</li>
+                        <ul>
+                            <li>pondération à appliquer pour les périodes, champs, semestres, périodes/bilans,</li>
+                            <li>préférence entre des points ou appréciations,</li>
+                            <li>tableau pour le passage des points en appréciations,</li>
+                            <li>choix d'arrondir les résultats à 0,5 dans le cahier de cotes.</li>
+                        </ul>
+                    <br>    
+                    <li>Tables & Échelles d'évaluation ainsi qu'un outil permettant d'établir une cohérence entre chaque test d'endurance. 
+                    Grâce à ces échelles d'évaluation, plus besoin d'aller comparer les performances de ses élèves en fonction de tables définies. En entrant le test dans le "Journal de Classe", 
+                    il suffit d'y encoder la performance de l'élève (nombre de tour, distance à atteindre, temps de course) pour que le résultat
+                    sur 10 intègre automatiquement le "Cahier de Cotes" et la moyenne globale de l'élève. Que de temps de gagné !</li>
+                    <br>
+                    <li>Options liées à l'outil Agenda :</li>
+                        <ul>
+                            <li>lien de l'agenda google qui sera utilisé,</li>
+                            <li>indiquer les groupes classes,</li>
+                            <li>définir les heures de cours,</li>
+                            <li>définir les salles utilisées,</li>
+                            <li>éphémérides,</li>
+                            <li>dates des périodes.</li>
+                        </ul>
+                    <br>    
+                    <li>Version du fichier pour savoir quelles modifications ont été apportées d'une version à l'autre.</li>
+                    <br>
+                    <img class="img-fluid" src="/IMG/parametres.png" alt="parametres" >
+                </ol>
+            </ul>
+        </div>
+    </div>  
+{% endblock %}        
