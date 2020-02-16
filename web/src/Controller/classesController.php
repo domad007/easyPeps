@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 use App\Entity\User;
+use App\Entity\Ecole;
 use App\Entity\Classe;
 use App\Form\NewClassType;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,29 +19,43 @@ class classesController extends AbstractController {
      * Affichage des classes selon l'utilisateur
      * @Route("/classes", name="classes")
      */
-    public function classes(){
+    public function classes(UserInterface $user){
+         $classes = $this->getDoctrine()
+        ->getRepository(Classe::class)
+        ->findBy(
+            [
+                'professeur' => $user->getId()
+            ]
+        );
+        dump($classes);
         return $this->render(
-            'classes/mesClasses.html.twig'
+            'classes/mesClasses.html.twig',
+            [
+                'classes' => $classes
+            ]
         );
     }
     /**
      * Formulaire permettant d'ajouter une nouvelle classe
      * @Route("/classes/newClass", name="newClass")
      */
-    public function newClass(Request $request, UserInterface $user){
+    public function newClass(Request $request){
         $class = new Classe();
+        $ecole = new Ecole();
         $user = $this->getUser();
-
         $formNewClass = $this->createForm(NewClassType::class, $class);
         $formNewClass->handleRequest($request);
 
         if($formNewClass->isSubmitted() && $formNewClass->isValid()){
             $manager = $this->getDoctrine()->getManager();
-            $class->setProfesseur($user);
             
+            $class->setProfesseur($user);
+            $ecole->setNomEcole("IPW");
+            $aa = $ecole->getEcole();
+            $class->setEcole($aa);
             $manager->persist($class);
             $manager->flush();
-            
+                       
             $this->addFlash('success', "La classe a été rajouté avec succes");
             return $this->redirectToRoute('classes');
         }

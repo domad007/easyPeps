@@ -17,6 +17,11 @@
         {% endfor %}
             <a href="{{path('newClass')}}" class="btn btn-primary btn-lg text-center" style="text-align: center">Créer une nouvelle classe</a>
         </div>
+        <div class="row">
+            {% for key, value in classes %}
+                {{value.ecole}}
+            {% endfor %}
+        </div>
     </div>
 </div>
 {% endblock %}

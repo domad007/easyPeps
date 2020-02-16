@@ -17,7 +17,7 @@ class Classe
     private $id;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\User", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="classes")
      * @ORM\JoinColumn(nullable=false)
      */
     private $professeur;
@@ -25,7 +25,8 @@ class Classe
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $ecole;
+    private $nomClasse;
+
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -33,9 +34,10 @@ class Classe
     private $titulaire;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="App\Entity\Ecole", inversedBy="ecole")
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $nomClasse;
+    private $ecole;
 
     public function getId(): ?int
     {
@@ -47,33 +49,9 @@ class Classe
         return $this->professeur;
     }
 
-    public function setProfesseur(User $professeur): self
+    public function setProfesseur(?User $professeur): self
     {
         $this->professeur = $professeur;
-
-        return $this;
-    }
-
-    public function getEcole(): ?string
-    {
-        return $this->ecole;
-    }
-
-    public function setEcole(string $ecole): self
-    {
-        $this->ecole = $ecole;
-
-        return $this;
-    }
-
-    public function getTitulaire(): ?string
-    {
-        return $this->titulaire;
-    }
-
-    public function setTitulaire(string $titulaire): self
-    {
-        $this->titulaire = $titulaire;
 
         return $this;
     }
@@ -89,4 +67,30 @@ class Classe
 
         return $this;
     }
+
+
+    public function getTitulaire(): ?string
+    {
+        return $this->titulaire;
+    }
+
+    public function setTitulaire(string $titulaire): self
+    {
+        $this->titulaire = $titulaire;
+
+        return $this;
+    }
+
+    public function getEcole(): ?Ecole
+    {
+        return $this->ecole;
+    }
+
+    public function setEcole(?Ecole $ecole): self
+    {
+        $this->ecole = $ecole;
+
+        return $this;
+    }
+
 }
