@@ -30,6 +30,9 @@
                                         <a href="{{ path('mon_mdp') }}" class="dropdown-item">Modifiez votre mot de passe</a>
                                     </div>                                                         
                                 </li>
+                                 <li class="nav-item">
+                                    <a class="nav-link" href="{{path('classes')}}">Mes classes</a>
+                                </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{path('deconnexion_user')}}">Deconnexion</a>
                                 </li>
@@ -118,7 +121,7 @@
                 <div class="agenda">
                     <h3 class="display-3">Votre agenda</h3>
                     <div class="jumbotron" style="font-size: 1.3em;">
-                        hello
+                        <iframe src="https://calendar.google.com/calendar/embed?src=dominikfiedorczuk69%40gmail.com" style="border: 0" width="100%" height="800" frameborder="0" scrolling="no"></iframe>
                     </div>
                 </div>
             {% else %}

@@ -18,9 +18,10 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
-class easyPepsController extends AbstractController {
+class accountController extends AbstractController {
     
     /**
+     * Formulaire de connexion
      * @Route("/connexion", name="connexion_user")
      */
     public function connexion(AuthenticationUtils $utils){
@@ -29,7 +30,7 @@ class easyPepsController extends AbstractController {
         $username = $utils->getLastUsername();
 
         return $this->render(
-            'forms/connexion.html.twig',
+            'account/connexion.html.twig',
             [
                 'error' => $error !== null,
                 'username' => $username
@@ -38,15 +39,17 @@ class easyPepsController extends AbstractController {
     }
 
     /**
+     * Récuperation du mot de passe en tant que membre déconnecté
      * @Route("/mdpOublie", name="mdpOublie")
      */
     public function mdpOublie(Request $request, \Swift_Mailer $mailer){
         return $this->render(
-            'forms/mdpOublie.html.twig'
+            'account/mdpOublie.html.twig'
         );
     }
 
     /**
+     * Deconnexion de l'utilisateur
      * @Route("/deconnexion", name="deconnexion_user")
      *
      * @return void
@@ -56,6 +59,7 @@ class easyPepsController extends AbstractController {
     }
 
     /**
+     * Inscription de l'utilisateur
      * @Route("/inscription", name="inscription_user")
      */
     public function inscription(Request $request, UserPasswordEncoderInterface $encoder){
@@ -77,7 +81,7 @@ class easyPepsController extends AbstractController {
         }
 
         return  $this->render(
-            'forms/inscription.html.twig', 
+            'account/inscription.html.twig', 
             [
                 'form' => $formInscription->createView()
             ]
@@ -85,6 +89,8 @@ class easyPepsController extends AbstractController {
     }
 
     /**
+     * Formulaire de contact
+     * Envoi un mail chez l'administrateur
      * @Route("/contact", name="contact")
      */
     public function contact(Request $request,\Swift_Mailer $mailer){
@@ -110,7 +116,7 @@ class easyPepsController extends AbstractController {
         }
 
         return $this->render(
-            'forms/contact.html.twig',
+            'account/contact.html.twig',
             [
                 'form' => $formContact->createView()
             ]
@@ -118,7 +124,9 @@ class easyPepsController extends AbstractController {
     }
 
     /**
-     * Undocumented function
+     * Modificaiton du profil
+     * Modifie juste les données personnels 
+     * Ne modifie pas le mot de passe
      *
      * @Route("/compte/profil", name="mon_profil")
      */
@@ -139,13 +147,14 @@ class easyPepsController extends AbstractController {
             );
         }    
         return $this->render(
-           'forms/profile.html.twig', [
+           'account/profile.html.twig', [
                'form' => $profilForm->createView()
            ]
        );
     }
 
     /**
+     * Modification du mot de passe
      * @Route("/compte/mdpOublie", name="mon_mdp")
      */
     public function modifMdp(Request $request, UserPasswordEncoderInterface $encoder){
@@ -179,7 +188,7 @@ class easyPepsController extends AbstractController {
             }
         }
         return $this->render(
-            'forms/modifMdp.html.twig', [
+            'account/modifMdp.html.twig', [
                'form' => $formMdp->createView()
             ]
         );
