@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+{% block title %} -Création d'une classe {% endblock %} 
+{% block header %}
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">Créez votre classe</h1>
+    </header>
+{% endblock %}
+{% block container %}
+<div class="mesClasses">
+    <div class="jumbotron" style="font-size: 1.3em;">
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+        {{form_start(form)}}
+        {{form_end(form)}}
+    </div>
+</div>
+{% endblock %}

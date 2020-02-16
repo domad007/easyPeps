@@ -1,14 +1,9 @@
-.connexion input {
+form {
     text-align: center;
     width: 50%;
     margin-left: 25%;
 }
 
-.inscription form {
-    text-align: center;
-    width: 50%;
-    margin-left: 25%;
-}
 
 #inscription_naissance {
     margin-left: 10%;

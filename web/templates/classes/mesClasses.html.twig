@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+{% block title %} -Mes classes {% endblock %} 
+{% block header %}
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">Mes classes</h1>
+    </header>
+{% endblock %}
+{% block container %}
+<div class="mesClasses">
+    <h3 class="display-3">Vos classes</h3>
+    <div class="jumbotron" style="font-size: 1.3em;">
+        <div class="text-center">
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+            <a href="{{path('newClass')}}" class="btn btn-primary btn-lg text-center" style="text-align: center">Créer une nouvelle classe</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

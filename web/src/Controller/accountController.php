@@ -99,7 +99,6 @@ class accountController extends AbstractController {
         $formContact->handleRequest($request);
         if($formContact->isSubmitted() && $formContact->isValid()){
             $data = $formContact->getData();
-            dump($data);
             $message = (new \Swift_Message('Contact avec administrateur'))
                 ->setFrom($data['mail'])
                 ->setTo('dominikfiedorczuk69@gmail.com')
