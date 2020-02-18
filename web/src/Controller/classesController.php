@@ -41,18 +41,19 @@ class classesController extends AbstractController {
      */
     public function newClass(Request $request){
         $class = new Classe();
-        $ecole = new Ecole();
         $user = $this->getUser();
+        
         $formNewClass = $this->createForm(NewClassType::class, $class);
         $formNewClass->handleRequest($request);
-
+        
         if($formNewClass->isSubmitted() && $formNewClass->isValid()){
             $manager = $this->getDoctrine()->getManager();
-            
+
             $class->setProfesseur($user);
-            $ecole->setNomEcole("IPW");
-            $aa = $ecole->getEcole();
-            $class->setEcole($aa);
+            $manager->persist($class);
+            $manager->flush();
+            $class->setProfesseur($user);
+
             $manager->persist($class);
             $manager->flush();
                        
