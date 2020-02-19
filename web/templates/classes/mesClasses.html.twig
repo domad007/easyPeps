@@ -7,7 +7,6 @@
 {% endblock %}
 {% block container %}
 <div class="mesClasses">
-    <h3 class="display-3">Vos classes</h3>
     <div class="jumbotron" style="font-size: 1.3em;">
         <div class="text-center">
         {% for message in app.flashes('success') %}
@@ -15,10 +14,19 @@
                 {{ message }}
             </div>
         {% endfor %}
-            <a href="{{path('newClass')}}" class="btn btn-primary btn-lg text-center" style="text-align: center">Créer une nouvelle classe</a>
+            <h3 class="display-3">Vos classes</h3> 
+            <br>
+            <a href="{{path('newClass')}}" class="btn btn-primary btn-lg">Créer une nouvelle classe</a>
         </div>
-        <div class="row">
-            
+        <br>
+        <div style="text-align: center">
+            <ul class="list-group">    
+                {% for key, value in classes|sort((a, b) => a.ecole.nomEcole <=> b.ecole.nomEcole) %}               
+                    <li class="list-group-item">
+                        <a href="{{path("class", {nomEcole: value.ecole.nomEcole, nomClasse: value.nomClasse})}}">{{ value.nomClasse|upper }} ({{value.ecole.nomEcole}})</a> 
+                    </li>                   
+                {% endfor %}
+            </ul>    
         </div>
     </div>
 </div>

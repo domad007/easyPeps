@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} -{{nomClasse}} {% endblock %}
+
+{% block header %}
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">{{ nomClasse|upper }}</h1>
+        <h3 class="display-7" style="text-align: center">{{ nomEcole }}</h3>
+    </header>
+{% endblock %}
+{% block container %}
+    <div class="classe">
+        <div class="jumbotron" style="font-size: 1.3em;">
+            <div class="gestion" style="text-align: center">
+                <h3 class="display-8">Gestion de classe: </h3>
+                <a href="#" class="btn btn-primary btn-lg" style="text-align: center">Nouveau cours</a>
+                <a href="#" class="btn btn-primary btn-lg" style="text-align: center">Nouvelle évaluation</a>
+                <a href="#" class="btn btn-primary btn-lg" style="text-align: center">Plannification de cycle</a>
+            </div>
+            <br>
+            <div style="text-align: center">
+                <h3 class="display-3">Liste des élèves</h3>
+                <br>
+                <a href="#" class="btn btn-primary btn-lg" style="text-align: center">Ajouter élève</a>
+            </div>
+            <br>
+            <div class="table">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Date de naissance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Ahmed</td>
+                            <td>bouroudi</td>
+                            <td>15-02-2002</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

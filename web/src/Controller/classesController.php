@@ -27,7 +27,7 @@ class classesController extends AbstractController {
                 'professeur' => $user->getId()
             ]
         );
-        dump($classes);
+
         return $this->render(
             'classes/mesClasses.html.twig',
             [
@@ -73,7 +73,11 @@ class classesController extends AbstractController {
      */
     public function class($nomEcole, $nomClasse){
         return $this->render(
-            'classes/class.html.twig'
+            'classes/class.html.twig', [
+                'nomEcole' => $nomEcole,
+                'nomClasse' => $nomClasse
+            ]
+
         );
     }
 
