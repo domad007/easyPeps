@@ -127,6 +127,11 @@
             {% else %}
             <div class="bienvenue">
                 <h3 class="display-3">Bienvenue</h3>
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success">
+                        {{ message }}
+                    </div>
+                {% endfor %}
                 <div class="jumbotron" style="font-size: 1.3em;">
                     <p> 
                         Par l'intermédiaire de ce site, j'aimerais vous présenter mon programme de gestion de classe et toute une batterie d'outils mis au point afin de répondre 

@@ -16,10 +16,15 @@
                 <div class="alert alert-success">
                     {{ message }}
                 </div>
-            {% endfor %}  
+            {% endfor %}
+             {% for message in app.flashes('danger') %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}    
             <form method="post">
                 <div class="form-group">
-                    <input type="mail" name="mail" id="inputMail" class="form-control" placeholder="Votre email" required>
+                    <input type="email" name="email" id="inputMail" class="form-control" placeholder="Votre email" required>
                 </div>
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">Envoyer le mail de réitinialisation de votre mot de passe!</button>

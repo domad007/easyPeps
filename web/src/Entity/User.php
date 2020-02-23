@@ -76,6 +76,12 @@ class User implements UserInterface
      * @Assert\EqualTo(propertyPath="mdp", message="Votre mot de passe ne corresponds pas")
      */
     public $confMdp;
+    
+    /**
+     * @var string le token qui servira lors de l'oubli de mot de passe
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    protected $resetToken;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Classe", mappedBy="professeur")
@@ -177,6 +183,22 @@ class User implements UserInterface
         $this->dateNaiss = $dateNaiss;
 
         return $this;
+    }
+
+      /**
+     * @return string
+     */
+    public function getResetToken(): string
+    {
+        return $this->resetToken;
+    }
+
+    /**
+     * @param string $resetToken
+     */
+    public function setResetToken(?string $resetToken): void
+    {
+        $this->resetToken = $resetToken;
     }
 
     public function getRoles(){
