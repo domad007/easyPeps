@@ -9,24 +9,14 @@
 {% block container %}
    <div class="confMdp">
         <div class="jumbotron" style="font-size: 1.3em;">
-            {% for message in app.flashes('success') %}
-                <div class="alert alert-success">
-                    {{ message }}
-                </div>
-            {% endfor %}  
             {% for message in app.flashes('danger') %}
                 <div class="alert alert-danger">
                     {{ message }}
                 </div>
             {% endfor %}  
-            <form method="post">
-                <div class="form-group">
-                    <label for="inputPassword">Votre nouveau mot de passe</label>
-                    <input type="password" name="mdp" id="inputPassword" class="form-control" placeholder="Votre nouveau mot de passe" required>
-                </div>
+            {{form_start(form)}}
                 <input type="hidden" name="token" value="{{ token }}">
-                <input type="submit" value="Réinitialiser votre mot de passe" class="btn btn-primary">  
-            </form>  
+            {{form_end(form)}}    
         </div>
     </div>
 {% endblock %}  

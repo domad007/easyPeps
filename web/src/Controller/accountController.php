@@ -7,7 +7,9 @@ use App\Entity\ModifMdp;
 use App\Form\CompteType;
 use App\Form\ContactType;
 use App\Form\ModifMdpType;
+use App\Form\MdpOublieType;
 use App\Form\InscriptionType;
+use App\Entity\ModifMdpOublie;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Response;
@@ -204,8 +206,11 @@ class accountController extends AbstractController {
      * @return void
      */
     public function modifMdpOublie(Request $request, $token, UserPasswordEncoderInterface $passwordEncoder){
-
-        if ($request->isMethod('POST')) {
+        $mdp = new ModifMdp();
+        $formMdpOublie = $this->createForm(MdpOublieType::class, $mdp);
+        $formMdpOublie->handleRequest($request);
+        
+        if ($formMdpOublie->isSubmitted() && $formMdpOublie->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
 
             $user = $entityManager->getRepository(User::class)
@@ -219,7 +224,7 @@ class accountController extends AbstractController {
             }
 
             $user->setResetToken(null);
-            $newMdp = $passwordEncoder->encodePassword($user, $request->request->get('mdp'));
+            $newMdp = $passwordEncoder->encodePassword($user, $mdp->getNewPassword());
             $user->setMdp($newMdp);
 
             $entityManager->flush();
@@ -232,6 +237,7 @@ class accountController extends AbstractController {
         else {
             return $this->render(
                 'account/modifMdpOublie.html.twig', [
+                    'form' => $formMdpOublie->createView(),
                     'token' => $token
                 ]
             );
