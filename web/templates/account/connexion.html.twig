@@ -9,30 +9,32 @@
 {% endblock %}
 
 {% block container %}  
-    <div class="connexion">
-        <div class="jumbotron" style="font-size: 1.3em;">
-            {% for message in app.flashes('success') %}
-                <div class="alert alert-success">
-                    {{ message }}
-                </div>
-            {% endfor %}  
-            {% if error %}
-                <div class="alert alert-danger">Une erreur est survenue, votre pseudo ou le mot de passe est incorrect</div>
-            {% endif %}
-            <form action="{{ path('connexion_user') }}" method="post">
-                <div class="form-group">
-                    <label for="user">Votre nom d'utilisateur</label>
-                    <input type="text" name="_username" id="user" class="form-control" value="{{ username }}">
-                </div>
-                <div class="form-group">
-                    <label for="password">Votre mot de passe</label>
-                    <input type="password" name="_password" id="password" class="form-control">
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Connectez vous !</button>
-                </div>
-            </form>
-            <a href="{{ path('mdpOublie') }}">Mot de passe oublie ?</a>    
-        </div>
+    <div class="row row d-flex justify-content-center">
+        <div class="col-md-6">
+            <div class="jumbotron text-center" style="font-size: 1.3em;">
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success">
+                        {{ message }}
+                    </div>
+                {% endfor %}  
+                {% if error %}
+                    <div class="alert alert-danger">Une erreur est survenue, votre pseudo ou le mot de passe est incorrect</div>
+                {% endif %}
+                <form action="{{ path('connexion_user') }}" method="post">
+                    <div class="form-group">
+                        <label for="user">Votre nom d'utilisateur</label>
+                        <input type="text" name="_username" id="user" class="form-control" value="{{ username }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Votre mot de passe</label>
+                        <input type="password" name="_password" id="password" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Connectez vous !</button>
+                    </div>
+                </form>
+                <a href="{{ path('mdpOublie') }}">Mot de passe oublie ?</a>    
+            </div>
+        </div>    
     </div>    
 {% endblock %}    

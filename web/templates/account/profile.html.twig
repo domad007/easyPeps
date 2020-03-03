@@ -6,17 +6,19 @@
     </header>
 {% endblock %}
 {% block container %}
-    <div class="monProfil">
-        <div class="jumbotron" style="font-size: 1.3em;">
-            {% for message in app.flashes('success') %}
-                <div class="alert alert-success">
-                    {{ message }}
-                </div>
-            {% endfor %}  
-            {{ form_start(form) }}
-                <div class="form-group">
-                </div>
-            {{ form_end(form) }}
-        </div>
+    <div class="row row d-flex justify-content-center">
+        <div class="col-md-6">
+            <div class="jumbotron text-center" style="font-size: 1.3em;">
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success">
+                        {{ message }}
+                    </div>
+                {% endfor %}  
+                {{ form_start(form) }}
+                    <div class="form-group">
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>    
     </div>
 {% endblock %}
