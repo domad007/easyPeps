@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} -{{nomClasse}} {% endblock %}
+{% block title %} -{{nomClasse.nomClasse}} {% endblock %}
 
 {% block header %}
     <header class="jumbotron my-4">
-        <h1 class="display-3" style="text-align: center">{{ nomClasse|upper }}</h1>
-        <h3 class="display-7" style="text-align: center">{{ nomEcole }}</h3>
+        <h1 class="display-3" style="text-align: center">{{ nomClasse.nomClasse|upper }}</h1>
+        <h3 class="display-7" style="text-align: center">{{ nomEcole.nomEcole }}</h3>
     </header>
 {% endblock %}
 {% block container %}
@@ -20,8 +20,6 @@
             <br>
             <div style="text-align: center">
                 <h3 class="display-3">Liste des élèves</h3>
-                <br>
-                <a href="#" class="btn btn-primary btn-lg" style="text-align: center">Ajouter élève</a>
             </div>
             <br>
             <div class="table">
@@ -31,16 +29,36 @@
                             <th>Nom</th>
                             <th>Prénom</th>
                             <th>Date de naissance</th>
+                            <th>Age</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Ahmed</td>
-                            <td>bouroudi</td>
-                            <td>15-02-2002</td>
-                        </tr>
+                            {% for key, value in eleves %}
+                            {% set dateNaissance = date(value.dateNaissance.date) %}
+                            <tr>
+                                <td>{{value.nom}}</td>
+                                <td>{{value.prenom}}</td>
+                                <td>{{dateNaissance | date('d-m-Y')}}</td>
+                                <td></td>
+                            </tr>    
+                            {% endfor %}
                     </tbody>
                 </table>
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success">
+                        {{ message }}
+                    </div>
+                {% endfor %}                 
+                    {{form_start(form)}}
+                        <div class="form-row"> 
+                            <div class="form-group col-md-3">{{form_widget(form.nom)}}</div>
+                            <div class="form-group col-md-3">{{form_widget(form.prenom)}}</div>
+                            <div class="form-group col-md-5">{{form_widget(form.dateNaissance)}}</div>
+                        </div>
+                        <div class="row d-flex justify-content-center">
+                            {{form_widget(form.save)}}
+                        </div>
+                    {{form_end(form)}}
             </div>
         </div>
     </div>

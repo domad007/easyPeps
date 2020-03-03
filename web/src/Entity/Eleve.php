@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\EleveRepository")
@@ -18,21 +19,23 @@ class Eleve
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $prenom;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="date")
      */
     private $dateNaissance;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Classe", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Classe")
      * @ORM\JoinColumn(nullable=false)
      */
     private $classe;
@@ -66,12 +69,12 @@ class Eleve
         return $this;
     }
 
-    public function getDateNaissance(): ?string
+    public function getDateNaissance(): ?\DateTimeInterface
     {
         return $this->dateNaissance;
     }
 
-    public function setDateNaissance(string $dateNaissance): self
+    public function setDateNaissance(\DateTimeInterface $dateNaissance): self
     {
         $this->dateNaissance = $dateNaissance;
 
@@ -83,7 +86,7 @@ class Eleve
         return $this->classe;
     }
 
-    public function setClasse(Classe $classe): self
+    public function setClasse(?Classe $classe): self
     {
         $this->classe = $classe;
 

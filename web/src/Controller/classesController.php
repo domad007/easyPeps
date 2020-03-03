@@ -3,7 +3,9 @@
 namespace App\Controller;
 use App\Entity\User;
 use App\Entity\Ecole;
+use App\Entity\Eleve;
 use App\Entity\Classe;
+use App\Form\EleveType;
 use App\Form\NewClassType;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -69,13 +71,38 @@ class classesController extends AbstractController {
     }
 
     /**
-     * @Route("/classes/{nomEcole}/{nomClasse}", name="class")
+     * @Route("/classes/{idEcole}/{idClasse}", name="class")
      */
-    public function class($nomEcole, $nomClasse){
+    public function class(Request $request, $idEcole, $idClasse){
+        $manager = $this->getDoctrine()->getManager();
+
+        $nomEcole = $manager->getRepository(Ecole::class)
+        ->findOneById($idEcole);
+
+        $nomClasse = $manager->getRepository(Classe::class)
+        ->findOneById($idClasse);
+
+        $eleves = $manager->getRepository(Eleve::class)
+        ->findByClasse($idClasse);
+
+        $eleve = new Eleve();
+        $formAddStudent= $this->createForm(EleveType::class, $eleve);
+        $formAddStudent->handleRequest($request);
+
+        if($formAddStudent->isSubmitted() && $formAddStudent->isValid()){          
+            $eleve->setClasse($nomClasse);
+            $manager->persist($eleve);
+            $manager->flush();
+
+            $this->addFlash('success', "L'élève a été rajouté avec succès");
+            return $this->redirectToRoute('class', ['idEcole' => $idEcole, 'idClasse' => $idClasse]);
+        }
         return $this->render(
             'classes/class.html.twig', [
                 'nomEcole' => $nomEcole,
-                'nomClasse' => $nomClasse
+                'nomClasse' => $nomClasse,
+                'eleves' => $eleves,
+                'form' => $formAddStudent->createView()
             ]
 
         );
