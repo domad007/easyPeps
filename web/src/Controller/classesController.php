@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller;
+use DateTime;
 use App\Entity\User;
 use App\Entity\Ecole;
 use App\Entity\Eleve;
@@ -85,6 +86,7 @@ class classesController extends AbstractController {
         $eleves = $manager->getRepository(Eleve::class)
         ->findByClasse($idClasse);
 
+       
         $eleve = new Eleve();
         $formAddStudent= $this->createForm(EleveType::class, $eleve);
         $formAddStudent->handleRequest($request);

@@ -39,7 +39,7 @@
                                 <td>{{value.nom}}</td>
                                 <td>{{value.prenom}}</td>
                                 <td>{{dateNaissance | date('d-m-Y')}}</td>
-                                <td></td>
+                                <td>{{ dateNaissance | age }}</td>
                             </tr>    
                             {% endfor %}
                     </tbody>
@@ -50,11 +50,12 @@
                     </div>
                 {% endfor %}                 
                     {{form_start(form)}}
-                        <div class="form-row"> 
+                        <div class="form-row" id="form"> 
                             <div class="form-group col-md-3">{{form_widget(form.nom)}}</div>
                             <div class="form-group col-md-3">{{form_widget(form.prenom)}}</div>
                             <div class="form-group col-md-5">{{form_widget(form.dateNaissance)}}</div>
                         </div>
+                        
                         <div class="row d-flex justify-content-center">
                             {{form_widget(form.save)}}
                         </div>
