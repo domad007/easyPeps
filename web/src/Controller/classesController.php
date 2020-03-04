@@ -110,4 +110,29 @@ class classesController extends AbstractController {
         );
     }
 
+    /**
+     * @Route("/modifEleve", name="modif_eleve")
+     */
+    public function modifEleve(Request $request){
+        if($request->isMethod('post')){
+            $manager = $this->getDoctrine()->getManager();
+            $studentData = $request->request->all();
+
+            $student = $this->getDoctrine()
+            ->getRepository(Eleve::class)
+            ->findOneById($studentData['pk']);
+
+            if($studentData['name'] == "nom"){
+                $student->setNom($studentData['value']);
+            }
+            else {
+                $student->setPrenom($studentData['value']);
+            }
+            
+            $manager->persist($student);
+            $manager->flush();
+        }
+        return new Response("");
+    }
+
 }
