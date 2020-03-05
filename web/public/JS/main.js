@@ -1,10 +1,14 @@
 $(document).ready(function(){
-    $('#table a').editable();
+    $('#table p').editable();
     //deleteEleve();
 });
 
-function deleteEleve(data, buton){
-    //console.log(data);
-   $(buton).remove();
-   $('#'+data).remove();
+function deleteEleve(idEleve, button){
+   $(button).remove();
+   $('#'+idEleve).remove();
+   $.ajax({
+       url: '/deleteEleve',
+       method: 'POST',
+       data: 'eleve='+idEleve
+   });
 }

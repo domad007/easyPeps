@@ -8,6 +8,8 @@ use App\Entity\Eleve;
 use App\Entity\Classe;
 use App\Form\EleveType;
 use App\Form\NewClassType;
+use App\Entity\EleveSupprime;
+use App\Form\ChangeClassType;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Response;
@@ -71,6 +73,58 @@ class classesController extends AbstractController {
         );
     }
 
+     /**
+     * @Route("/modifEleve", name="modif_eleve")
+     */
+    public function modifEleve(Request $request){
+        if($request->isMethod('post')){
+            $manager = $this->getDoctrine()->getManager();
+            $studentData = $request->request->all();
+
+            $student = $this->getDoctrine()
+            ->getRepository(Eleve::class)
+            ->findOneById($studentData['pk']);
+
+            if($studentData['name'] == "nom"){
+                $student->setNom($studentData['value']);
+            }
+            else {
+                $student->setPrenom($studentData['value']);
+            }
+            
+            $manager->persist($student);
+            $manager->flush();
+        }
+        return new Response("");
+    }
+
+    /**
+     * @Route("/deleteEleve", name="delete_eleve")
+     */
+    public function deleteEleve(Request $request){
+        $eleveSuppr = new EleveSupprime();
+        if($request->isMethod('post')){
+            $manager = $this->getDoctrine()->getManager();
+            $idEleve = $request->request->all();
+
+            $eleve = $this->getDoctrine()
+            ->getRepository(Eleve::class)
+            ->findOneById($idEleve['eleve']);
+            
+            dump($eleve);
+            $eleveSuppr->setNom($eleve->getNom());
+            $eleveSuppr->setPrenom($eleve->getPrenom());
+            $eleveSuppr->setClasse($eleve->getClasse());
+            $eleveSuppr->setDateNaissance($eleve->getDateNaissance());
+            $eleveSuppr->setEcole($eleve->getClasse()->getEcole());
+            
+            $manager->remove($eleve);
+            $manager->persist($eleveSuppr);
+            $manager->flush();
+        }
+        return new Response("");
+    }
+
     /**
      * @Route("/classes/{idEcole}/{idClasse}", name="class")
      */
@@ -111,28 +165,36 @@ class classesController extends AbstractController {
     }
 
     /**
-     * @Route("/modifEleve", name="modif_eleve")
+     * @Route("/changeClasse/{idEleve}", name="change_class")
      */
-    public function modifEleve(Request $request){
+    public function changeClasse(Request $request, $idEleve){
+
+        $manager = $this->getDoctrine()->getManager();
+
+        $eleve = $manager
+        ->getRepository(Eleve::class)
+        ->findOneById($idEleve);
+
         if($request->isMethod('post')){
-            $manager = $this->getDoctrine()->getManager();
-            $studentData = $request->request->all();
+            $data = $request->request->all();
+            dump($data);
+            //$eleve->setClasse()
 
-            $student = $this->getDoctrine()
-            ->getRepository(Eleve::class)
-            ->findOneById($studentData['pk']);
 
-            if($studentData['name'] == "nom"){
-                $student->setNom($studentData['value']);
-            }
-            else {
-                $student->setPrenom($studentData['value']);
-            }
-            
-            $manager->persist($student);
-            $manager->flush();
+           /* $manager->persist($eleve);
+            $manager->flush();*/
+
+           /* return $this->addFlash('success', "L'élève a bien été changé");
+            return $this->redirectToRoute('class');*/
         }
-        return new Response("");
+        //dump($eleve);
+
+        return $this->render(
+            '/classes/changeClasse.html.twig', [
+                'eleve' => $eleve
+            ]
+        );
     }
+
 
 }

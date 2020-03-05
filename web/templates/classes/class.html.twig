@@ -41,6 +41,7 @@
                             <th>Prénom</th>
                             <th>Date de naissance</th>
                             <th>Age</th>
+                            
                         </tr>
                     </thead>
                     <tbody>
@@ -48,11 +49,12 @@
                             {% set dateNaissance = date(value.dateNaissance.date) %}
                             <tr id="{{value.id}}">
                                 <td>{{ loop.index0 }}</td>
-                                <td><span title="Modifiez le nom de l'élève"><a data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="nom">{{value.nom}}</a></span></td>
-                                <td><span title="Modifiez le prénom de l'élève"><a data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="prenom">{{value.prenom}}</a></span></td>
+                                <td><span title="Modifiez le nom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="nom">{{value.nom}}</p></span></td>
+                                <td><span title="Modifiez le prénom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="prenom">{{value.prenom}}</p></span></td>
                                 <td>{{dateNaissance | date('d-m-Y')}}</td>
                                 <td>{{ dateNaissance | age }}</td>
-                                <td><button id="deleteEleve" class="btn btn-primary" onclick="deleteEleve({{value.id}}, this);">Supprimer élève</button></td>
+                                <td><button id="deleteEleve" class="btn btn-primary btn-sm" onclick="deleteEleve({{value.id}}, this);">Supprimer élève</button></td>
+                                <td><a href="{{path('change_class', {idEleve: value.id})}}" class="btn btn-primary btn-sm">Changer la classe</a></td>
                             </tr>    
                             {% endfor %}
                     </tbody>

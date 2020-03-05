@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} -Changement de classe {% endblock %}
+
+{% block header %}
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">Changement de classe</h1>
+        <h3 class="display-7" style="text-align: center">{{eleve.nom}} {{eleve.prenom}}</h3>
+    </header>
+{% endblock %}
+
+{% block container %}
+<div class="row row d-flex justify-content-center">
+    <div class="col-md-8">
+        <div class="jumbotron text-center" style="font-size: 1.3em;">
+            <form action="{{path('change_class', {idEleve: eleve.id})}}" method="post">
+                <div class="form-group">
+                    <label for="classe">Nom de la nouvelle classe</label>
+                    <input type="text" name="classe" id="classe" class="form-control">
+                </div>
+                <input type="submit" class="btn btn-primary btn-lg" value="Changer de classe à l'élève">
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
