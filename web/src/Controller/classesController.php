@@ -7,6 +7,7 @@ use App\Entity\Ecole;
 use App\Entity\Eleve;
 use App\Entity\Classe;
 use App\Form\EleveType;
+use App\Form\AddEleveType;
 use App\Form\NewClassType;
 use App\Entity\EleveSupprime;
 use App\Form\ChangeClassType;
@@ -139,19 +140,23 @@ class classesController extends AbstractController {
 
         $eleves = $manager->getRepository(Eleve::class)
         ->findByClasse($idClasse);
-
-       
+        
         $eleve = new Eleve();
-        $formAddStudent= $this->createForm(EleveType::class, $eleve);
+       /* $eleve->setNom("Dom");
+        $eleve->setPrenom("Fie");
+        $eleve->setClasse($nomClasse);
+        $eleve->setDateNaissance(new \DateTime());*/
+
+        $formAddStudent= $this->createForm(AddEleveType::class, $eleve);
         $formAddStudent->handleRequest($request);
 
         if($formAddStudent->isSubmitted() && $formAddStudent->isValid()){          
-            $eleve->setClasse($nomClasse);
+            /*$eleve->setClasse($nomClasse);
             $manager->persist($eleve);
             $manager->flush();
 
             $this->addFlash('success', "L'élève a été rajouté avec succès");
-            return $this->redirectToRoute('class', ['idEcole' => $idEcole, 'idClasse' => $idClasse]);
+            return $this->redirectToRoute('class', ['idEcole' => $idEcole, 'idClasse' => $idClasse]);*/
         }
         return $this->render(
             'classes/class.html.twig', [
@@ -180,6 +185,7 @@ class classesController extends AbstractController {
         ->findBy([
            'ecole' => $eleve->getClasse()->getEcole()->getId()
         ]);
+
         if($request->isMethod('post')){
             $data = $request->request->all();
 

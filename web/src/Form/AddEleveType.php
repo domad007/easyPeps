@@ -3,32 +3,26 @@
 namespace App\Form;
 
 use App\Entity\Eleve;
+use App\Form\EleveType;
 use App\Form\ContactType;
-use App\Form\AddElevesType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
-class EleveType extends AbstractType
+class AddEleveType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $contact = new ContactType();
-        
         $builder
-            ->add('nom', TextType::class, $contact->getConfig("Nom de l'élève", "Nom"))
-            ->add('prenom', TextType::class, $contact->getConfig("Pénom de l'élève", "Prénom"))
-            ->add('dateNaissance', DateType::class,
-            [
-                'label'=> "Date de naissance",
-                'format' => 'dd-MM-yyyy',
-                'years' => range(1990, 2020)
-            ]
-            )
+            ->add('eleve', CollectionType::class, [
+                'entry_type' => EleveType::class,
+                'allow_add' => true,
+                'by_reference' => false
+            ])
+            ->add('save', SubmitType::class, $contact->getConfig("Ajouter à la liste des élèves", ""))
         ;
     }
 
