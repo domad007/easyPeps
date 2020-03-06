@@ -15,8 +15,12 @@
         <div class="jumbotron text-center" style="font-size: 1.3em;">
             <form action="{{path('change_class', {idEleve: eleve.id})}}" method="post">
                 <div class="form-group">
-                    <label for="classe">Nom de la nouvelle classe</label>
-                    <input type="text" name="classe" id="classe" class="form-control">
+                    <label for="classe">Sélectionnez la classe</label>
+                    <select name="classe" id="classe" class="custom-select col-md-2">
+                        {% for key, value in classes %}
+                            <option value="{{value.id}}">{{value.nomClasse}}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <input type="submit" class="btn btn-primary btn-lg" value="Changer de classe à l'élève">
             </form>

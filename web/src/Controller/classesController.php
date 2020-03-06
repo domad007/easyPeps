@@ -175,23 +175,35 @@ class classesController extends AbstractController {
         ->getRepository(Eleve::class)
         ->findOneById($idEleve);
 
+        $classes = $manager
+        ->getRepository(Classe::class)
+        ->findBy([
+           'ecole' => $eleve->getClasse()->getEcole()->getId()
+        ]);
         if($request->isMethod('post')){
             $data = $request->request->all();
-            dump($data);
-            //$eleve->setClasse()
 
+            $classe = $manager
+            ->getRepository(Classe::class)
+            ->findOneById($data['classe']);
 
-           /* $manager->persist($eleve);
-            $manager->flush();*/
+            $eleve->setClasse($classe);
 
-           /* return $this->addFlash('success', "L'élève a bien été changé");
-            return $this->redirectToRoute('class');*/
+            $manager->persist($eleve);
+            $manager->flush();
+
+            $this->addFlash('success', "L'élève a bien été changé");
+            return $this->redirectToRoute('class', [
+                'idEcole' => $eleve->getClasse()->getEcole()->getId(),
+                'idClasse' => $eleve->getClasse()->getId()
+            ]);
         }
         //dump($eleve);
 
         return $this->render(
             '/classes/changeClasse.html.twig', [
-                'eleve' => $eleve
+                'eleve' => $eleve,
+                'classes' => $classes
             ]
         );
     }
