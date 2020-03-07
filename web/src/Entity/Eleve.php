@@ -35,11 +35,11 @@ class Eleve
     private $dateNaissance;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Classe")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Classe", inversedBy="eleves")
      * @ORM\JoinColumn(nullable=false)
      */
     private $classe;
-
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -92,4 +92,6 @@ class Eleve
 
         return $this;
     }
+
+   
 }

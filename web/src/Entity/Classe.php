@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -33,11 +35,22 @@ class Classe
      */
     private $titulaire;
 
+
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Ecole", inversedBy="ecole")
+     * @ORM\OneToMany(targetEntity="App\Entity\Eleve", mappedBy="classe", orphanRemoval=true)
+     */
+    private $eleves;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Ecole", inversedBy="classes")
      * @ORM\JoinColumn(nullable=false)
      */
     private $ecole;
+
+    public function __construct()
+    {
+        $this->eleves = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -77,6 +90,37 @@ class Classe
     public function setTitulaire(string $titulaire): self
     {
         $this->titulaire = $titulaire;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Eleve[]
+     */
+    public function getEleves(): Collection
+    {
+        return $this->eleves;
+    }
+
+    public function addElefe(Eleve $elefe): self
+    {
+        if (!$this->eleves->contains($elefe)) {
+            $this->eleves[] = $elefe;
+            $elefe->setClasse($this);
+        }
+
+        return $this;
+    }
+
+    public function removeElefe(Eleve $elefe): self
+    {
+        if ($this->eleves->contains($elefe)) {
+            $this->eleves->removeElement($elefe);
+            // set the owning side to null (unless already changed)
+            if ($elefe->getClasse() === $this) {
+                $elefe->setClasse(null);
+            }
+        }
 
         return $this;
     }

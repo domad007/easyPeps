@@ -28,9 +28,15 @@ class Ecole
      */
     private $nomEcole;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Classe", mappedBy="ecole", orphanRemoval=true)
+     */
+    private $classes;
+
     public function __construct()
     {
         $this->ecole = new ArrayCollection();
+        $this->classes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -77,6 +83,37 @@ class Ecole
     public function setNomEcole(string $nomEcole): self
     {
         $this->nomEcole = $nomEcole;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Classe[]
+     */
+    public function getClasses(): Collection
+    {
+        return $this->classes;
+    }
+
+    public function addClass(Classe $class): self
+    {
+        if (!$this->classes->contains($class)) {
+            $this->classes[] = $class;
+            $class->setEcole($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClass(Classe $class): self
+    {
+        if ($this->classes->contains($class)) {
+            $this->classes->removeElement($class);
+            // set the owning side to null (unless already changed)
+            if ($class->getEcole() === $this) {
+                $class->setEcole(null);
+            }
+        }
 
         return $this;
     }
