@@ -47,6 +47,7 @@ class classesController extends AbstractController {
      */
     public function newClass(Request $request){
         $class = new Classe();
+        $ecole = new Ecole();
         $user = $this->getUser();
         
         $formNewClass = $this->createForm(NewClassType::class, $class);
@@ -54,12 +55,7 @@ class classesController extends AbstractController {
         
         if($formNewClass->isSubmitted() && $formNewClass->isValid()){
             $manager = $this->getDoctrine()->getManager();
-
             $class->setProfesseur($user);
-            $manager->persist($class);
-            $manager->flush();
-            $class->setProfesseur($user);
-
             $manager->persist($class);
             $manager->flush();
                        
@@ -112,12 +108,11 @@ class classesController extends AbstractController {
             ->getRepository(Eleve::class)
             ->findOneById($idEleve['eleve']);
             
-            dump($eleve);
-            $eleveSuppr->setNom($eleve->getNom());
-            $eleveSuppr->setPrenom($eleve->getPrenom());
-            $eleveSuppr->setClasse($eleve->getClasse());
-            $eleveSuppr->setDateNaissance($eleve->getDateNaissance());
-            $eleveSuppr->setEcole($eleve->getClasse()->getEcole());
+            $eleveSuppr->setNom($eleve->getNom())
+            ->setPrenom($eleve->getPrenom())
+            ->setClasse($eleve->getClasse())
+            ->setDateNaissance($eleve->getDateNaissance())
+            ->setEcole($eleve->getClasse()->getEcole());
             
             $manager->remove($eleve);
             $manager->persist($eleveSuppr);
@@ -140,24 +135,25 @@ class classesController extends AbstractController {
 
         $eleves = $manager->getRepository(Eleve::class)
         ->findByClasse($idClasse);
-        
-        $eleve = new Eleve();
-       /* $eleve->setNom("Dom");
-        $eleve->setPrenom("Fie");
-        $eleve->setClasse($nomClasse);
-        $eleve->setDateNaissance(new \DateTime());*/
 
-        $formAddStudent= $this->createForm(AddEleveType::class, $eleve);
+        $classe = new Classe();
+        $eleve = new Eleve();
+
+        $formAddStudent= $this->createForm(AddEleveType::class, $classe);
         $formAddStudent->handleRequest($request);
 
-        if($formAddStudent->isSubmitted() && $formAddStudent->isValid()){          
-            /*$eleve->setClasse($nomClasse);
-            $manager->persist($eleve);
-            $manager->flush();
+        if($formAddStudent->isSubmitted() && $formAddStudent->isValid()){
+            
+            foreach($classe->getEleves() as $eleves){
+                $eleves->setClasse($nomClasse);             
+                $manager->persist($eleves);
+                $manager->flush();
+            }
 
             $this->addFlash('success', "L'élève a été rajouté avec succès");
-            return $this->redirectToRoute('class', ['idEcole' => $idEcole, 'idClasse' => $idClasse]);*/
+            return $this->redirectToRoute('class', ['idEcole' => $idEcole, 'idClasse' => $idClasse]);
         }
+
         return $this->render(
             'classes/class.html.twig', [
                 'nomEcole' => $nomEcole,

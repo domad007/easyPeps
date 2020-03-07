@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Eleve;
+use App\Entity\Classe;
 use App\Form\EleveType;
 use App\Form\ContactType;
 use Symfony\Component\Form\AbstractType;
@@ -17,10 +18,12 @@ class AddEleveType extends AbstractType
     {
         $contact = new ContactType();
         $builder
-            ->add('eleve', CollectionType::class, [
+            ->add('eleves', CollectionType::class, [
                 'entry_type' => EleveType::class,
+                'entry_options' => ['label' => false],
                 'allow_add' => true,
-                'by_reference' => false
+                'label' => false,
+                'by_reference' => true
             ])
             ->add('save', SubmitType::class, $contact->getConfig("Ajouter à la liste des élèves", ""))
         ;
@@ -29,7 +32,7 @@ class AddEleveType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Eleve::class,
+           // 'data_class' => ::class,
         ]);
     }
 }

@@ -2,6 +2,8 @@
 
 {% block title %} -{{nomClasse.nomClasse}} {% endblock %}
 
+{% form_theme form _self %}
+
 {% block header %}
     <header class="jumbotron my-4">
         <h1 class="display-3" style="text-align: center">{{ nomClasse.nomClasse|upper }}</h1>
@@ -47,27 +49,43 @@
                     <tbody>
                             {% for key, value in eleves %}
                             {% set dateNaissance = date(value.dateNaissance.date) %}
-                            <tr id="{{value.id}}">
+                            <tr id="deleteRow_{{value.id}}">
                                 <td>{{ loop.index0 }}</td>
                                 <td><span title="Modifiez le nom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="nom">{{value.nom}}</p></span></td>
                                 <td><span title="Modifiez le prénom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="prenom">{{value.prenom}}</p></span></td>
                                 <td>{{dateNaissance | date('d-m-Y')}}</td>
                                 <td>{{ dateNaissance | age }}</td>
-                                <td><button id="deleteEleve" class="btn btn-primary btn-sm" onclick="deleteEleve({{value.id}}, this);">Supprimer élève</button></td>
-                                <td><a href="{{path('change_class', {idEleve: value.id})}}" class="btn btn-primary btn-sm">Changer la classe</a></td>
+                                <td><a href="{{path('change_class', {idEleve: value.id})}}" class="btn btn-default btn-sm">Changer la classe</a></td>
+                                <td><button id="deleteEleve" class="btn btn-danger btn-sm" onclick="deleteEleve({{value.id}}, this);">Supprimer élève</button></td>
                             </tr>    
                             {% endfor %}
                     </tbody>
-                </table>
-                {% for message in app.flashes('success') %}
-                    <div class="alert alert-success">
-                        {{ message }}
-                    </div>
-                {% endfor %}                 
-                    {{form_start(form)}}
-                        
-                    {{form_end(form)}}
-            </div>
+                </table>                                        
+            </div>           
         </div>
     </div>
+    {{form_start(form)}}    
+    {{form_end(form)}}
+{% endblock %}
+
+{% block _add_eleve_eleves_widget %}
+    <div class="jumbotron" style="font-size: 1.3em;">
+        <div class="row d-flex justify-content-center">
+            <h3 class="display-3">Ajoutez des élèves !</h3>
+        </div>        
+        {{form_widget(form)}}
+        <div class="form-group text-center">
+            <button type="button" id="addEleve" class="btn btn-primary">Ajoutez un autre élève</button>
+        </div>
+    </div>
+{% endblock %}
+{% block _add_eleve_eleves_entry_widget %}
+    <div class="form-row" id="block_{{id}}"> 	
+        <div class="form-group col-md-3">{{form_widget(form.nom)}}</div>	
+        <div class="form-group col-md-3">{{form_widget(form.prenom)}}</div>	
+        <div class="form-group col-5">{{form_widget(form.dateNaissance)}}</div>	
+        <div class="form-group col-sm-1">
+            <button type="button" data-action="delete" data-target="#block_{{id}}" class="btn btn-danger">X</button>
+        </div>
+    </div>	
 {% endblock %}

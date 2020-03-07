@@ -19,60 +19,23 @@ class Ecole
     private $id;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Classe", mappedBy="ecole")
-     */
-    private $ecole;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
     private $nomEcole;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Classe", mappedBy="ecole", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Classe", mappedBy="ecole")
      */
     private $classes;
 
     public function __construct()
     {
-        $this->ecole = new ArrayCollection();
         $this->classes = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    /**
-     * @return Collection|Classe[]
-     */
-    public function getEcole(): Collection
-    {
-        return $this->ecole;
-    }
-
-    public function addEcole(Classe $ecole): self
-    {
-        if (!$this->ecole->contains($ecole)) {
-            $this->ecole[] = $ecole;
-            $ecole->setEcole($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEcole(Classe $ecole): self
-    {
-        if ($this->ecole->contains($ecole)) {
-            $this->ecole->removeElement($ecole);
-            // set the owning side to null (unless already changed)
-            if ($ecole->getEcole() === $this) {
-                $ecole->setEcole(null);
-            }
-        }
-
-        return $this;
     }
 
     public function getNomEcole(): ?string

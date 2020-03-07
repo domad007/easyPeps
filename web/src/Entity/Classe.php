@@ -20,7 +20,6 @@ class Classe
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="classes")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $professeur;
 
@@ -29,15 +28,13 @@ class Classe
      */
     private $nomClasse;
 
-
     /**
      * @ORM\Column(type="string", length=255)
      */
     private $titulaire;
 
-
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Eleve", mappedBy="classe", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Eleve", mappedBy="classe")
      */
     private $eleves;
 
@@ -81,7 +78,6 @@ class Classe
         return $this;
     }
 
-
     public function getTitulaire(): ?string
     {
         return $this->titulaire;
@@ -102,7 +98,7 @@ class Classe
         return $this->eleves;
     }
 
-    public function addElefe(Eleve $elefe): self
+    public function addEleve(Eleve $elefe): self
     {
         if (!$this->eleves->contains($elefe)) {
             $this->eleves[] = $elefe;
@@ -112,7 +108,7 @@ class Classe
         return $this;
     }
 
-    public function removeElefe(Eleve $elefe): self
+    public function removeEleve(Eleve $elefe): self
     {
         if ($this->eleves->contains($elefe)) {
             $this->eleves->removeElement($elefe);
@@ -136,5 +132,4 @@ class Classe
 
         return $this;
     }
-
 }

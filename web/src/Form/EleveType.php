@@ -26,7 +26,8 @@ class EleveType extends AbstractType
             [
                 'label'=> "Date de naissance",
                 'format' => 'dd-MM-yyyy',
-                'years' => range(1990, 2020)
+                'years' => range(1990, 2020),
+                
             ]
             )
         ;

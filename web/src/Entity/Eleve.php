@@ -19,13 +19,13 @@ class Eleve
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(message="Veuillez renseigner le nom")
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(message="Veuillez renseigner le prénom")
      */
     private $prenom;
 
@@ -39,6 +39,7 @@ class Eleve
      * @ORM\JoinColumn(nullable=false)
      */
     private $classe;
+
     
     public function getId(): ?int
     {
