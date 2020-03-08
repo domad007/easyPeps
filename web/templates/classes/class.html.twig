@@ -50,7 +50,7 @@
                             {% for key, value in eleves %}
                             {% set dateNaissance = date(value.dateNaissance.date) %}
                             <tr id="deleteRow_{{value.id}}">
-                                <td>{{ loop.index0 }}</td>
+                                <td>{{ loop.index }}</td>
                                 <td><span title="Modifiez le nom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="nom">{{value.nom}}</p></span></td>
                                 <td><span title="Modifiez le prénom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="prenom">{{value.prenom}}</p></span></td>
                                 <td>{{dateNaissance | date('d-m-Y')}}</td>
@@ -63,22 +63,28 @@
                 </table>                                        
             </div>           
         </div>
+        <div class="text-center">
+            {{form_start(form)}}   
+            {{form_end(form)}}
+        </div>
     </div>
-    {{form_start(form)}}    
-    {{form_end(form)}}
 {% endblock %}
 
 {% block _add_eleve_eleves_widget %}
     <div class="jumbotron" style="font-size: 1.3em;">
         <div class="row d-flex justify-content-center">
             <h3 class="display-3">Ajoutez des élèves !</h3>
-        </div>        
-        {{form_widget(form)}}
+        </div>
+        <br>
+        <div class="row d-flex justify-content-center">      
+            {{form_widget(form)}}
+       </div>  
         <div class="form-group text-center">
-            <button type="button" id="addEleve" class="btn btn-primary">Ajoutez un autre élève</button>
+            <button type="button" id="addEleve" class="btn btn-primary">Ajoutez un élève</button>
         </div>
     </div>
 {% endblock %}
+
 {% block _add_eleve_eleves_entry_widget %}
     <div class="form-row" id="block_{{id}}"> 	
         <div class="form-group col-md-3">{{form_widget(form.nom)}}</div>	

@@ -23,7 +23,6 @@ class AddEleveType extends AbstractType
                 'entry_options' => ['label' => false],
                 'allow_add' => true,
                 'label' => false,
-                'by_reference' => true
             ])
             ->add('save', SubmitType::class, $contact->getConfig("Ajouter à la liste des élèves", ""))
         ;
