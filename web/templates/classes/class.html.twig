@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} -{{nomClasse.nomClasse}} {% endblock %}
+
+{% form_theme form _self %}
+
+{% block header %}
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">{{ nomClasse.nomClasse|upper }}</h1>
+        <h3 class="display-7" style="text-align: center">{{ nomEcole.nomEcole }}</h3>
+    </header>
+{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/CSS/scripts/editable.css">
+{% endblock %}
+
+{% block scripts %}
+    <script src="/JS/scripts/editable.js"></script>
+    <script src="/JS/main.js"></script>
+{% endblock %}
+
+{% block container %}
+    <div class="classe">
+        <div class="jumbotron" style="font-size: 1.3em;">
+            <div class="gestion" style="text-align: center">
+                <h3 class="display-8">Gestion de classe: </h3>
+                <a href="#" class="btn btn-primary btn-lg" style="text-align: center">Nouveau cours</a>
+                <a href="#" class="btn btn-primary btn-lg" style="text-align: center">Nouvelle évaluation</a>
+                <a href="#" class="btn btn-primary btn-lg" style="text-align: center">Plannification de cycle</a>
+            </div>
+            <br>
+            <div style="text-align: center">
+                <h3 class="display-3">Liste des élèves</h3>
+            </div>
+            <div class="row d-flex justify-content-center">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}  
+        </div>
+            <br>
+            <div class="table">
+                <table class="table" id="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Date de naissance</th>
+                            <th>Age</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                            {% for key, value in eleves %}
+                            {% set dateNaissance = date(value.dateNaissance.date) %}
+                            <tr id="deleteRow_{{value.id}}">
+                                <td>{{ loop.index }}</td>
+                                <td><span title="Modifiez le nom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="nom">{{value.nom}}</p></span></td>
+                                <td><span title="Modifiez le prénom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="prenom">{{value.prenom}}</p></span></td>
+                                <td>{{dateNaissance | date('d-m-Y')}}</td>
+                                <td>{{ dateNaissance | age }}</td>
+                                <td><a href="{{path('change_class', {idEleve: value.id})}}" class="btn btn-default btn-sm">Changer la classe</a></td>
+                                <td><button id="deleteEleve" class="btn btn-danger btn-sm" onclick="deleteEleve({{value.id}}, this);">Supprimer élève</button></td>
+                            </tr>    
+                            {% endfor %}
+                    </tbody>
+                </table>                                        
+            </div>           
+        </div>
+        <div class="text-center">
+            {{form_start(form)}}   
+            {{form_end(form)}}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _add_eleve_eleves_widget %}
+    <div class="jumbotron" style="font-size: 1.3em;">
+        <div class="row d-flex justify-content-center">
+            <h3 class="display-3">Ajoutez des élèves !</h3>
+        </div>
+        <br>
+        <div class="row d-flex justify-content-center">      
+            {{form_widget(form)}}
+       </div>  
+        <div class="form-group text-center">
+            <button type="button" id="addEleve" class="btn btn-primary">Ajoutez un élève</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _add_eleve_eleves_entry_widget %}
+    <div class="form-row" id="block_{{id}}"> 	
+        <div class="form-group col-md-3">{{form_widget(form.nom)}}</div>	
+        <div class="form-group col-md-3">{{form_widget(form.prenom)}}</div>	
+        <div class="form-group col-5">{{form_widget(form.dateNaissance)}}</div>	
+        <div class="form-group col-sm-1">
+            <button type="button" data-action="delete" data-target="#block_{{id}}" class="btn btn-danger">X</button>
+        </div>
+    </div>	
+{% endblock %}

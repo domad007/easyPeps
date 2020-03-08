@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+{% block title %} -Mes classes {% endblock %} 
+{% block header %}
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">Mes classes</h1>
+    </header>
+{% endblock %}
+{% block container %}
+<div class="mesClasses">
+    <div class="jumbotron" style="font-size: 1.3em;">
+        <div class="text-center">
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+            <h3 class="display-3">Vos classes</h3> 
+            <br>
+            <a href="{{path('newClass')}}" class="btn btn-primary btn-lg">Créer une nouvelle classe</a>
+        </div>
+        <br>
+        <div style="text-align: center">
+            <table class="table">
+                {% for row in classes|batch(2) %}    
+                    <tr>
+                    {% for key, value in row|sort((a, b) => a.ecole.nomEcole <=> b.ecole.nomEcole) %}               
+                        <td>
+                            <a href="{{path("class", {idEcole: value.ecole.id, idClasse: value.id})}}">{{ value.nomClasse|upper }} ({{value.ecole.nomEcole}})</a> 
+                        <td>                                      
+                    {% endfor %}
+                    </tr>
+                {% endfor %}  
+            <table>     
+        </div>
+    </div>
+</div>
+{% endblock %}

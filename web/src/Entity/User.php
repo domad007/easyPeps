@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -74,6 +76,23 @@ class User implements UserInterface
      * @Assert\EqualTo(propertyPath="mdp", message="Votre mot de passe ne corresponds pas")
      */
     public $confMdp;
+    
+    /**
+     * @var string le token qui servira lors de l'oubli de mot de passe
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    protected $resetToken;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Classe", mappedBy="professeur")
+     */
+    private $classes;
+
+
+    public function __construct()
+    {
+        $this->classes = new ArrayCollection();
+    }
 
 
     public function getId(): ?int
@@ -166,6 +185,22 @@ class User implements UserInterface
         return $this;
     }
 
+      /**
+     * @return string
+     */
+    public function getResetToken(): string
+    {
+        return $this->resetToken;
+    }
+
+    /**
+     * @param string $resetToken
+     */
+    public function setResetToken(?string $resetToken): void
+    {
+        $this->resetToken = $resetToken;
+    }
+
     public function getRoles(){
         return ['ROLE_USER'];
     }
@@ -185,5 +220,37 @@ class User implements UserInterface
     public function eraseCredentials(){
         
     }
+
+    /**
+     * @return Collection|Classe[]
+     */
+    public function getClasses(): Collection
+    {
+        return $this->classes;
+    }
+
+    public function addClass(Classe $class): self
+    {
+        if (!$this->classes->contains($class)) {
+            $this->classes[] = $class;
+            $class->setProfesseur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClass(Classe $class): self
+    {
+        if ($this->classes->contains($class)) {
+            $this->classes->removeElement($class);
+            // set the owning side to null (unless already changed)
+            if ($class->getProfesseur() === $this) {
+                $class->setProfesseur(null);
+            }
+        }
+
+        return $this;
+    }
+
 
 }

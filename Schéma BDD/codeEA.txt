@@ -1,0 +1,7 @@
+User: nom_user, nom, prenom, mail, mot de passe, sexe, dateNaiss
+Gère, 1N User, 11 Classe
+Classe: professeur, nomClasse, titulaire, ecole
+Peut avoir, 11 Classe, 1N Ecole
+Eleve: nom, prenom, dateNaiss, sexe
+Est dans, 11 Eleve, 1N Classe
+Ecole: nomEcole
