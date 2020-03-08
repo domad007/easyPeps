@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} -Mes Groupes {% endblock %} 
+{% block header %}
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">Mes groupes</h1>
+    </header>
+{% endblock %}
+{% block container %}
+<div class="mesGroupes">
+    <div class="jumbotron" style="font-size: 1.3em;">
+        <div class="text-center">
+            <h3 class="display-3">Vos classes</h3>
+            <br>
+            <a href="{{path('new_group')}}" class="btn btn-primary">Groupez vos classes</a> 
+        </div>   
+    </div>
+</div>
+
+{% endblock %}
