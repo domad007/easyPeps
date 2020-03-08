@@ -150,7 +150,7 @@ class classesController extends AbstractController {
                 $manager->flush();
             }
 
-            $this->addFlash('success', "L'élève a été rajouté avec succès");
+            $this->addFlash('success', "L'élève ou les élèves ont été rajouté avec succès");
             return $this->redirectToRoute('class', ['idEcole' => $idEcole, 'idClasse' => $idClasse]);
         }
 
