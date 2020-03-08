@@ -21,52 +21,50 @@
 {% endblock %}
 
 {% block container %}
-    <div class="classe">
-        <div class="jumbotron" style="font-size: 1.3em;">
-            <div style="text-align: center">
-                <h3 class="display-3">Liste des élèves</h3>
-            </div>
-            <div class="row d-flex justify-content-center">
+    <div class="jumbotron" style="font-size: 1.3em;">
+        <div style="text-align: center">
+            <h3 class="display-3">Liste des élèves</h3>
+        </div>
+        <div class="row d-flex justify-content-center">
             {% for message in app.flashes('success') %}
                 <div class="alert alert-success">
                     {{ message }}
                 </div>
             {% endfor %}  
-        </div>
-            <br>
-            <div class="table">
-                <table class="table" id="table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Nom</th>
-                            <th>Prénom</th>
-                            <th>Date de naissance</th>
-                            <th>Age</th>
-                            
-                        </tr>
-                    </thead>
-                    <tbody>
-                            {% for key, value in eleves %}
-                            {% set dateNaissance = date(value.dateNaissance.date) %}
-                            <tr id="deleteRow_{{value.id}}">
-                                <td>{{ loop.index }}</td>
-                                <td><span title="Modifiez le nom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="nom">{{value.nom}}</p></span></td>
-                                <td><span title="Modifiez le prénom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="prenom">{{value.prenom}}</p></span></td>
-                                <td>{{dateNaissance | date('d-m-Y')}}</td>
-                                <td>{{ dateNaissance | age }}</td>
-                                <td><a href="{{path('change_class', {idEleve: value.id})}}" class="btn btn-default btn-sm">Changer la classe</a></td>
-                                <td><button id="deleteEleve" class="btn btn-danger btn-sm" onclick="deleteEleve({{value.id}}, this);">Supprimer élève</button></td>
-                            </tr>    
-                            {% endfor %}
-                    </tbody>
-                </table>                                        
-            </div>           
-        </div>
-        <div class="text-center">
-            {{form_start(form)}}   
-            {{form_end(form)}}
-        </div>
+        </div>    
+        <br>
+        <div class="table">
+            <table class="table" id="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Date de naissance</th>
+                        <th>Age</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                        {% for key, value in eleves %}
+                        {% set dateNaissance = date(value.dateNaissance.date) %}
+                        <tr id="deleteRow_{{value.id}}">
+                            <td>{{ loop.index }}</td>
+                            <td><span title="Modifiez le nom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="nom">{{value.nom}}</p></span></td>
+                            <td><span title="Modifiez le prénom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="prenom">{{value.prenom}}</p></span></td>
+                            <td>{{dateNaissance | date('d-m-Y')}}</td>
+                            <td>{{ dateNaissance | age }}</td>
+                            <td><a href="{{path('change_class', {idEleve: value.id})}}" class="btn btn-default btn-sm">Changer la classe</a></td>
+                            <td><button id="deleteEleve" class="btn btn-danger btn-sm" onclick="deleteEleve({{value.id}}, this);">Supprimer élève</button></td>
+                        </tr>    
+                        {% endfor %}
+                </tbody>
+            </table>                                        
+        </div>           
+    </div>
+    <div class="text-center">
+        {{form_start(form)}}   
+        {{form_end(form)}}
     </div>
 {% endblock %}
 

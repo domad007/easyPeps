@@ -1,7 +1,8 @@
 $(document).ready(function(){
-    $('#table p').editable();
+    //$('#table p').editable();
     addEleve();
-    deleteRowEleve();
+   // deleteRowEleve();
+    addGroup();
 });
 
 function deleteEleve(idEleve, button){
@@ -24,10 +25,21 @@ function addEleve(){
     });  
 }
 
+
 function deleteRowEleve(){
     $('button[data-action="delete"]').click(function(){
         const target = this.dataset.target;
         $(target).remove();
 
+    });
+}
+
+function addGroup(){
+    $('#addGroup').click(function(){
+        const index = $('#add_group_classes div.form-group').length;
+        const form = $('#add_group_classes').data('prototype').replace(/__name__/g, index);
+        $('#add_group_classes').append(form);
+
+        deleteRowEleve(); 
     });
 }

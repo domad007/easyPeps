@@ -1,27 +1,54 @@
 {% extends 'base.html.twig' %}
 
 {% block title %} - Groupement {% endblock %} 
+
+{% form_theme form _self %}
+
 {% block header %}
     <header class="jumbotron my-4">
         <h1 class="display-3" style="text-align: center">Groupement des classes</h1>
+        <h3 class="display-7" style="text-align: center">{{ ecole.nomEcole }}</h3>
     </header>
 {% endblock %}
 
+{% block scripts %}
+    <script src="/JS/main.js"></script>
+{% endblock %}
+
 {% block container %}
-<div class="row row d-flex justify-content-center">
-    <div class="col-md-8">
-        <div class="jumbotron text-center" style="font-size: 1.3em;">
-            {% for message in app.flashes('success') %}
-                <div class="alert alert-success">
-                    {{ message }}
-                </div>
-            {% endfor %}
-            {% for message in app.flashes('error') %}
-                <div class="alert alert-danger">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        </div>    
+<div class="jumbotron text-center" style="font-size: 1.3em;">
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+    <div class="text-center">
+        {{form_start(form)}}
+        {{form_end(form)}}
     </div>
-</div>   
+</div>      
+{% endblock %}
+
+{% block _add_group_classes_widget %}
+<div class="jumbotron" style="font-size: 1.3em;">
+    <div class="row justify-content-center">
+         <h3 class="display-3">Groupez vos classes !</h3>
+    </div>   
+    <br>  
+    <div class="row d-flex justify-content-center">      
+        {{form_widget(form)}}
+    </div>  
+    <div class="form-group text-center">
+        <button type="button" id="addGroup" class="btn btn-primary">Ajoutez les champs de groupement !</button>
+    </div>
+</div>    
+{% endblock %}
+
+{% block  _add_group_classes_entry_widget %}
+    <div class="form-row" id="block_{{id}}">
+        <div class="form-group col-md-8">{{form_widget(form)}} </div>
+        <div class="form-group col-sm-1">
+            <button type="button" data-action="delete" data-target="#block_{{id}}" class="btn btn-danger">X</button>
+        </div>
+    </div>
 {% endblock %}

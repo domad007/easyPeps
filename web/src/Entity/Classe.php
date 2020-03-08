@@ -44,6 +44,12 @@ class Classe
      */
     private $ecole;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Groups", inversedBy="classes")
+     */
+    private $groups;
+
+
     public function __construct()
     {
         $this->eleves = new ArrayCollection();
@@ -129,6 +135,18 @@ class Classe
     public function setEcole(?Ecole $ecole): self
     {
         $this->ecole = $ecole;
+
+        return $this;
+    }
+
+    public function getGroups(): ?Groups
+    {
+        return $this->groups;
+    }
+
+    public function setGroups(?Groups $groups): self
+    {
+        $this->groups = $groups;
 
         return $this;
     }
