@@ -22,17 +22,12 @@ class groupsController extends AbstractController {
     public function groups(UserInterface $user){
         $manager = $this->getDoctrine()->getManager();
 
-       /* $ecoles = $manager->getRepository(Classe::class)
-        ->findBy(
-            array(
-                'professeur' => $user->getId(), 
-                'ecole.id' => 'groupby'
-            ),
-        );*/
         $ecoles = $manager->createQueryBuilder();
         $ecoles->select('ecole')
         ->from('App:Ecole', 'ecole')
-        ->join('App:Classe', 'classes', 'WITH', 'ecole.id = classes.ecole');
+        ->join('App:Classe', 'classes', 'WITH', 'ecole.id = classes.ecole')
+        ->where('classes.professeur = :idProfesseur')
+        ->setParameter('idProfesseur', $user->getId());
 
         $resultEcoles = $ecoles->getQuery()->getResult();
         
