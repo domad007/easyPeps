@@ -4,18 +4,72 @@
 {% block header %}
     <header class="jumbotron my-4">
         <h1 class="display-3" style="text-align: center">Votre groupe</h1>
+        <h3 class="display-7" style="text-align: center">{{ group.0.0.0.classe.ecole.nomEcole }}</h3>
     </header>
 {% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="/CSS/scripts/editable.css">
+{% endblock %}
 
+{% block scripts %}
+    <script src="/JS/scripts/editable.js"></script>
+    <script src="/JS/main.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+    $(document).ready(function(){
+        $('#table').DataTable({
+            "language": {
+                "search": "Chercher un élève: ",
+                "show": "Montrer"
+            }
+        });
+        $('#table p').editable();
+    });
+    </script>
+{% endblock %}
 {% block container %}
 <div class="classe">
     <div class="jumbotron" style="font-size: 1.3em;">
         <div class="gestion" style="text-align: center">
             <h3 class="display-8">Gestion de groupe: </h3>
+            <br>
             <a href="#" class="btn btn-primary btn-lg" style="text-align: center">Nouveau cours</a>
             <a href="#" class="btn btn-primary btn-lg" style="text-align: center">Nouvelle évaluation</a>
             <a href="#" class="btn btn-primary btn-lg" style="text-align: center">Plannification de cycle</a>
         </div>
+        <br>
+        <div>
+            <table class="table" id="table">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Date de naissance</th>
+                        <th>Age</th>
+                        <th>Classe</th>
+                        <th>Supprimer l'élève</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        {% for key, value in group %}
+                            {% for key, value in value %}
+                             {% set dateNaissance = date(value.dateNaissance.date) %}
+                            <tr id="deleteRow_{{value.id}}">
+                                <td><span title="Modifiez le nom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="nom">{{value.nom}}</p></span></td>
+                                <td><span title="Modifiez le prénom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="prenom">{{value.prenom}}</p></span></td>
+                                <td>{{dateNaissance | date('d-m-Y')}}</td>
+                                <td>{{ dateNaissance | age }}</td>
+                                <td>{{value.classe.nomClasse}}</td>
+                                <td><button id="deleteEleve" class="btn btn-danger btn-sm" onclick="deleteEleve({{value.id}}, this);">Supprimer élève</button></td>
+                            </tr>
+                            {% endfor %}
+                        {% endfor %}
+                </tbody>
+            </table>                                        
+        </div>           
     </div>
 </div>            
 {% endblock %}

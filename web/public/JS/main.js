@@ -1,7 +1,5 @@
 $(document).ready(function(){
-    //$('#table p').editable();
     addEleve();
-   // deleteRowEleve();
     addGroup();
 });
 

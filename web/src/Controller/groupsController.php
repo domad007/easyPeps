@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Ecole;
+use App\Entity\Eleve;
 use App\Entity\Classe;
 use App\Entity\Groups;
 use App\Form\GroupType;
@@ -23,7 +24,8 @@ class groupsController extends AbstractController {
         $manager = $this->getDoctrine()->getManager();
 
         $ecoles = $manager->createQueryBuilder();
-        $ecoles->select('ecole')
+        $ecoles
+        ->select('ecole')
         ->from('App:Ecole', 'ecole')
         ->join('App:Classe', 'classes', 'WITH', 'ecole.id = classes.ecole')
         ->where('classes.professeur = :idProfesseur')
@@ -31,10 +33,21 @@ class groupsController extends AbstractController {
 
         $resultEcoles = $ecoles->getQuery()->getResult();
         
+        $groups = $manager->createQueryBuilder();
+        $groups
+        ->select('classes')
+        ->from('App:Classe', 'classes')
+        ->join('App:Groups', 'groups', 'WITH', 'classes.groups = groups.id')
+        ->where('classes.professeur = :idProfesseur')
+        ->setParameter('idProfesseur', $user->getId());
 
+        $resultGroups = $groups->getQuery()->getResult();
+
+        dump($resultGroups);
         return $this->render(
             'groupes/groups.html.twig', [
-                'ecoles' => $resultEcoles
+                'ecoles' => $resultEcoles,
+                'groups' => $resultGroups
             ]
         );
     }
@@ -81,12 +94,29 @@ class groupsController extends AbstractController {
     }
 
     /**
-     * @Route("/group", name="group")
+     * @Route("/group/{idGroup}", name="group")
      */
 
-    public function group(){
+    public function group($idGroup){
+        $manager = $this->getDoctrine()->getManager();
+        $group = $manager
+        ->getRepository(Classe::class)
+        ->findByGroups($idGroup);
+
+        foreach($group as $key => $value){
+            $eleves [] = $manager
+            ->getRepository(Eleve::class)
+            ->findBy(
+                [
+                    'classe' => $value->getId()
+                ]
+            );
+        }
+        dump($eleves);
         return $this->render(
-            'groupes/group.html.twig'
+            'groupes/group.html.twig',[
+                'group' => $eleves
+            ]
         );
     }
 }

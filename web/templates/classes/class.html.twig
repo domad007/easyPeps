@@ -18,6 +18,11 @@
 {% block scripts %}
     <script src="/JS/scripts/editable.js"></script>
     <script src="/JS/main.js"></script>
+    <script>
+    $(document).ready(function(){
+        $('#table p').editable();
+    });
+    </script>
 {% endblock %}
 
 {% block container %}
@@ -42,7 +47,8 @@
                         <th>Prénom</th>
                         <th>Date de naissance</th>
                         <th>Age</th>
-                        
+                        <th>Changer classe</th>
+                        <th>Supprimer élève</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -54,7 +60,7 @@
                             <td><span title="Modifiez le prénom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="prenom">{{value.prenom}}</p></span></td>
                             <td>{{dateNaissance | date('d-m-Y')}}</td>
                             <td>{{ dateNaissance | age }}</td>
-                            <td><a href="{{path('change_class', {idEleve: value.id})}}" class="btn btn-default btn-sm">Changer la classe</a></td>
+                            <td><a href="{{path('change_class', {idEleve: value.id})}}" class="btn btn-default btn-md">Changer la classe</a></td>
                             <td><button id="deleteEleve" class="btn btn-danger btn-sm" onclick="deleteEleve({{value.id}}, this);">Supprimer élève</button></td>
                         </tr>    
                         {% endfor %}
