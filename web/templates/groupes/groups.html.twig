@@ -31,16 +31,15 @@
             </div>
         </div> 
         <div style="text-align: center">
-            <table class="table">
-                {% for row in groups|batch(2) %}    
-                    <tr>
-                    {% for key, value in row|sort((a, b) => a.ecole.nomEcole <=> b.ecole.nomEcole) %}               
+            <table class="table">   
+                {% for key, value in groups %}
+                    <tr>                
+                        <td>Groupe {{loop.index}}</td>          
                         <td>
                             <a href="{{path("group", {idGroup: value.groups.id})}}">{{ value.nomClasse|upper }} ({{value.ecole.nomEcole}})</a> 
-                        <td>                                      
-                    {% endfor %}
+                        <td>                                     
                     </tr>
-                {% endfor %}  
+                {% endfor %}
             <table>     
         </div>
     </div>

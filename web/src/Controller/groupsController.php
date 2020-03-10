@@ -8,6 +8,7 @@ use App\Entity\Classe;
 use App\Entity\Groups;
 use App\Form\GroupType;
 use App\Form\AddGroupType;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -30,9 +31,8 @@ class groupsController extends AbstractController {
         ->join('App:Classe', 'classes', 'WITH', 'ecole.id = classes.ecole')
         ->where('classes.professeur = :idProfesseur')
         ->setParameter('idProfesseur', $user->getId());
-
         $resultEcoles = $ecoles->getQuery()->getResult();
-        
+       
         $groups = $manager->createQueryBuilder();
         $groups
         ->select('classes')
@@ -112,7 +112,6 @@ class groupsController extends AbstractController {
                 ]
             );
         }
-        dump($eleves);
         return $this->render(
             'groupes/group.html.twig',[
                 'group' => $eleves
