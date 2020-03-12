@@ -27,7 +27,7 @@ class CoursGroupe
     private $eleveId;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=255)
      */
     private $points;
 
@@ -70,7 +70,7 @@ class CoursGroupe
         return $this->points;
     }
 
-    public function setPoints(int $points): self
+    public function setPoints(string $points): self
     {
         $this->points = $points;
 

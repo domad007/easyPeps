@@ -80,19 +80,19 @@
                     </tr>
                 </thead>
                 <tbody>
-                        {% for key, value in group %}
-                            {% for key, value in value %}
-                             {% set dateNaissance = date(value.dateNaissance.date) %}
-                            <tr id="deleteRow_{{value.id}}">
-                                <td><span title="Modifiez le nom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="nom">{{value.nom}}</p></span></td>
-                                <td><span title="Modifiez le prénom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="prenom">{{value.prenom}}</p></span></td>
-                                <td>{{dateNaissance | date('d-m-Y')}}</td>
-                                <td>{{ dateNaissance | age }}</td>
-                                <td>{{value.classe.nomClasse}}</td>
-                                <td><button id="deleteEleve" class="btn btn-danger btn-sm" onclick="deleteEleve({{value.id}}, this);">Supprimer élève</button></td>
-                            </tr>
-                            {% endfor %}
+                    {% for key, value in group %}
+                        {% for key, value in value %}
+                            {% set dateNaissance = date(value.dateNaissance.date) %}
+                        <tr id="deleteRow_{{value.id}}">
+                            <td><span title="Modifiez le nom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="nom">{{value.nom}}</p></span></td>
+                            <td><span title="Modifiez le prénom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="prenom">{{value.prenom}}</p></span></td>
+                            <td>{{dateNaissance | date('d-m-Y')}}</td>
+                            <td>{{ dateNaissance | age }}</td>
+                            <td>{{value.classe.nomClasse}}</td>
+                            <td><button id="deleteEleve" class="btn btn-danger btn-sm" onclick="deleteEleve({{value.id}}, this);">Supprimer élève</button></td>
+                        </tr>
                         {% endfor %}
+                    {% endfor %}
                 </tbody>
             </table>                                       
         </div>           

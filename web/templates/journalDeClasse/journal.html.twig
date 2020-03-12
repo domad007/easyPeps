@@ -9,27 +9,54 @@
     </header>
 {% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="/CSS/scripts/editable.css">
+{% endblock %}
+
+{% block scripts %}
+    <script src="/JS/scripts/editable.js"></script>
+    <script src="/JS/main.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#table p').editable();
+        });
+    </script>
+{% endblock %}
 {% block container %}
 <div class="journal">
     <div class="jumbotron" style="font-size: 1.3em;">
         <div class="table-responsive">
-            <table border="1" class="table">
+            <table class="table" id="table">
                 <thead>
-                    <th>Nom</th>
-                    <th>Prenom</th>
-                    <th>Classe</th>
-                    {% for key, value in cours %}
-                        {% set dateCours = date(value.dateCours.date) %}
-                        <td colspan="2">{{value.intitule}} {{dateCours | date('d-m-Y')}}</td>
-                    {% endfor %}
+                    <tr>
+                        <th>Nom</th>
+                        <th>Prenom</th>
+                        <th>Classe</th>
+                        {% for key, value in cours %}
+                            {% set dateCours = date(value.dateCours.date) %}
+                            <td colspan="2" class="text-center">{{value.intitule}} {{dateCours | date('d-m-Y')}}</td>
+                        {% endfor %}
+                    </tr>
                 </thead>
                 <tbody>
                     {% for key, value in eleves %}
-                        {% for key, value in value %}
+                        {% for key, val in value %}
                             <tr>
-                            <td>{{value.nom}}</td>
-                            <td>{{value.prenom}}</td>
-                            <td>{{value.classe.nomClasse}}</td>
+                                <td>{{val.nom}}</td>
+                                <td>{{val.prenom}}</td>
+                                <td>{{val.classe.nomClasse}}</td>
+                                {% for key, value in cours %}
+                                    <td><p data-pk="{{value.id}}" data-url="{{path('modif_points')}}" data-name="{{val.id}}">0</p></td>
+                                    <td>
+                                        <select name="presence" id="presence" onchange="presenceEleve()"class="custom-select">
+                                            <option value="{'coursId': {{value.id}}, 'eleveId': {{val.id}}, 'value': 'present'}">Present</option>
+                                            <option value="{'coursId': {{value.id}}, 'eleveId': {{val.id}}, 'value': 'abs'}">Absent</option>
+                                            <option value="{'coursId': {{value.id}}, 'eleveId': {{val.id}}, 'value': 'cm'}">Certificat médical</option>
+                                            <option value="{'coursId': {{value.id}}, 'eleveId': {{val.id}}, 'value': 'tshirt'}">Oubli t-shirt</option>
+                                        </select>
+                                    </td>    
+                                {% endfor %}   
+                            </tr> 
                         {% endfor %}
                     {% endfor %}
                 </tbody>

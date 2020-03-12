@@ -41,3 +41,12 @@ function addGroup(){
         deleteRowEleve(); 
     });
 }
+
+function presenceEleve(){
+    $.ajax({
+        url: '/presences',
+        method: 'POST',
+        data: $('#presence').serialize()
+    });
+
+}

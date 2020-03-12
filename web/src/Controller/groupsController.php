@@ -11,6 +11,7 @@ use App\Entity\Groups;
 use App\Form\GroupType;
 use App\Form\AddGroupType;
 use App\Form\NewCoursType;
+use App\Entity\CoursGroupe;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -111,7 +112,6 @@ class groupsController extends AbstractController {
         ->getRepository(Classe::class)
         ->findByGroups($idGroup);
 
-        dump($group);
         foreach($group as $key => $value){           
             $eleves [] = $manager
             ->getRepository(Eleve::class)
@@ -135,6 +135,7 @@ class groupsController extends AbstractController {
      */
     public function newCours(Request $request, $idGroupe){
         $cours = new Cours();
+
         $manager = $this->getDoctrine()->getManager();
         $form = $this->createForm(NewCoursType::class, $cours);
 
@@ -159,12 +160,43 @@ class groupsController extends AbstractController {
             ->getRepository(Groups::class)
             ->find($idGroupe);
 
-            $cours->setDateCours(new \DateTime());
-            $cours->setGroupe($idGroupe);
+            $cours
+            ->setDateCours(new \DateTime())
+            ->setGroupe($idGroupe);
 
             $manager->persist($cours);
             $manager->flush();
 
+            $group = $manager
+            ->getRepository(Classe::class)
+            ->findByGroups($idGroupe);
+
+            $cours = $manager
+            ->getRepository(Cours::class)
+            ->findOneById($cours->getId());
+            
+            foreach($group as $key => $value){           
+                $eleve [] = $manager
+                ->getRepository(Eleve::class)
+                ->findOneBy(
+                    [
+                        'classe' => $value->getId()
+                    ]
+                );
+            }
+
+            foreach($eleve as $key => $value){
+                $coursGroupe = new CoursGroupe();
+                $coursGroupe
+                ->setCoursId($cours)
+                ->setEleveId($value)
+                ->setPoints("0")
+                ->setPresence("present");
+                $manager->persist($coursGroupe);
+            }
+            
+            $manager->flush();
+            
             return $this->redirectToRoute('journal_de_classe');
         }
         return $this->render(
