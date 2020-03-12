@@ -5,12 +5,11 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\EleveRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\CoursRepository")
  */
-class Eleve
+class Cours
 {
     /**
      * @ORM\Id()
@@ -21,29 +20,26 @@ class Eleve
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Veuillez renseigner le nom")
      */
-    private $nom;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Veuillez renseigner le prénom")
-     */
-    private $prenom;
+    private $intitule;
 
     /**
      * @ORM\Column(type="date")
      */
-    private $dateNaissance;
+    private $dateCours;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Classe", inversedBy="eleves")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="integer")
      */
-    private $classe;
+    private $nombreHeures;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\CoursGroupe", mappedBy="eleveId")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Groups", inversedBy="cours")
+     */
+    private $groupe;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\CoursGroupe", mappedBy="coursId")
      */
     private $coursGroupes;
 
@@ -52,56 +48,55 @@ class Eleve
         $this->coursGroupes = new ArrayCollection();
     }
 
-    
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getNom(): ?string
+    public function getIntitule(): ?string
     {
-        return $this->nom;
+        return $this->intitule;
     }
 
-    public function setNom(string $nom): self
+    public function setIntitule(string $intitule): self
     {
-        $this->nom = $nom;
+        $this->intitule = $intitule;
 
         return $this;
     }
 
-    public function getPrenom(): ?string
+    public function getDateCours(): ?\DateTimeInterface
     {
-        return $this->prenom;
+        return $this->dateCours;
     }
 
-    public function setPrenom(string $prenom): self
+    public function setDateCours(\DateTimeInterface $dateCours): self
     {
-        $this->prenom = $prenom;
+        $this->dateCours = $dateCours;
 
         return $this;
     }
 
-    public function getDateNaissance(): ?\DateTimeInterface
+    public function getNombreHeures(): ?int
     {
-        return $this->dateNaissance;
+        return $this->nombreHeures;
     }
 
-    public function setDateNaissance(\DateTimeInterface $dateNaissance): self
+    public function setNombreHeures(int $nombreHeures): self
     {
-        $this->dateNaissance = $dateNaissance;
+        $this->nombreHeures = $nombreHeures;
 
         return $this;
     }
 
-    public function getClasse(): ?Classe
+    public function getGroupe(): ?Groups
     {
-        return $this->classe;
+        return $this->groupe;
     }
 
-    public function setClasse(?Classe $classe): self
+    public function setGroupe(?Groups $groupe): self
     {
-        $this->classe = $classe;
+        $this->groupe = $groupe;
 
         return $this;
     }
@@ -118,7 +113,7 @@ class Eleve
     {
         if (!$this->coursGroupes->contains($coursGroupe)) {
             $this->coursGroupes[] = $coursGroupe;
-            $coursGroupe->setEleveId($this);
+            $coursGroupe->setCoursId($this);
         }
 
         return $this;
@@ -129,13 +124,11 @@ class Eleve
         if ($this->coursGroupes->contains($coursGroupe)) {
             $this->coursGroupes->removeElement($coursGroupe);
             // set the owning side to null (unless already changed)
-            if ($coursGroupe->getEleveId() === $this) {
-                $coursGroupe->setEleveId(null);
+            if ($coursGroupe->getCoursId() === $this) {
+                $coursGroupe->setCoursId(null);
             }
         }
 
         return $this;
     }
-
-   
 }

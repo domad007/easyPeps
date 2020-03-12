@@ -2,12 +2,15 @@
 
 namespace App\Controller;
 
+use DateTime;
+use App\Entity\Cours;
 use App\Entity\Ecole;
 use App\Entity\Eleve;
 use App\Entity\Classe;
 use App\Entity\Groups;
 use App\Form\GroupType;
 use App\Form\AddGroupType;
+use App\Form\NewCoursType;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -108,6 +111,7 @@ class groupsController extends AbstractController {
         ->getRepository(Classe::class)
         ->findByGroups($idGroup);
 
+        dump($group);
         foreach($group as $key => $value){           
             $eleves [] = $manager
             ->getRepository(Eleve::class)
@@ -123,6 +127,64 @@ class groupsController extends AbstractController {
                 'group' => $eleves,
                 'ecole' => $group
             ]
+        );
+    }
+
+    /**
+     * @Route("/newCours/{idGroupe}", name="new_cours")
+     */
+    public function newCours(Request $request, $idGroupe){
+        $cours = new Cours();
+        $manager = $this->getDoctrine()->getManager();
+        $form = $this->createForm(NewCoursType::class, $cours);
+
+        $rsm = new ResultSetMapping();
+        $rsm->addScalarResult('ecole', 'ecole');
+        $rsm->addScalarResult('groups_id', 'groups_id');
+        $rsm->addScalarResult('groupes', 'groupes');
+
+        $groupSql = "select ecole.nom_ecole as ecole, groups_id, GROUP_CONCAT(nom_classe SEPARATOR '/') as groupes 
+        from classe
+        join ecole on classe.ecole_id = ecole.id
+        where groups_id = ?";
+        
+        $getGroup = $manager->createNativeQuery($groupSql, $rsm);
+        $getGroup->setParameter(1, $idGroupe);
+        $group = $getGroup->getResult();
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+
+            $idGroupe = $manager
+            ->getRepository(Groups::class)
+            ->find($idGroupe);
+
+            $cours->setDateCours(new \DateTime());
+            $cours->setGroupe($idGroupe);
+
+            $manager->persist($cours);
+            $manager->flush();
+
+            return $this->redirectToRoute('journal_de_classe');
+        }
+        return $this->render(
+            'groupes/newCours.html.twig', 
+            [
+                'form' => $form->createView(),
+                'group' => $group
+            ]
+        );
+    }
+
+    /**
+     * @Route("/journalDeCalsse", name="journal_de_classe")
+     */
+    public function journalDeCalsse(){
+        $manager = $this->getDoctrine()->getManager();
+
+        return $this->render(
+            'journalDeClasse/journal.html.twig'
         );
     }
 }
