@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} - Nouveau cours {% endblock %} 
+{% block title %} - Nouvelle évaluation {% endblock %} 
 
 {% block header %}
     <header class="jumbotron my-4">
-        <h1 class="display-3" style="text-align: center">Nouveau cours</h1>
+        <h1 class="display-3" style="text-align: center">Nouvelle évaluation</h1>
         <h3 class="display-7" style="text-align: center">{{ group.0.groupes }} ({{group.0.ecole}})</h3>
     </header>
 {% endblock %}
@@ -13,10 +13,8 @@
 <div class="row row d-flex justify-content-center">
     <div class="col-md-6">
         <div class="jumbotron text-center" style="font-size: 1.3em;">
-            {{ form_start(form) }}
-            {{ form_end(form) }}
-
         </div>
     </div>
 </div>
+
 {% endblock %}

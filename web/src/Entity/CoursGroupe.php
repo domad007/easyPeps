@@ -31,6 +31,11 @@ class CoursGroupe
      */
     private $points;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $presence;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -68,6 +73,18 @@ class CoursGroupe
     public function setPoints(int $points): self
     {
         $this->points = $points;
+
+        return $this;
+    }
+
+    public function getPresence(): ?string
+    {
+        return $this->presence;
+    }
+
+    public function setPresence(string $presence): self
+    {
+        $this->presence = $presence;
 
         return $this;
     }

@@ -32,6 +32,7 @@ class Groups
     {
         $this->classes = new ArrayCollection();
         $this->cours = new ArrayCollection();
+        $this->evaluations = new ArrayCollection();
     }
 
     public function getId(): ?int

@@ -155,7 +155,6 @@ class groupsController extends AbstractController {
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()){
-
             $idGroupe = $manager
             ->getRepository(Groups::class)
             ->find($idGroupe);
@@ -178,13 +177,30 @@ class groupsController extends AbstractController {
     }
 
     /**
-     * @Route("/journalDeCalsse", name="journal_de_classe")
+     * @Route("/newEvaluation/{idGroupe}", name="new_evaluation")
      */
-    public function journalDeCalsse(){
+    public function newEvaluation($idGroupe){
         $manager = $this->getDoctrine()->getManager();
+        $rsm = new ResultSetMapping();
+        $rsm->addScalarResult('ecole', 'ecole');
+        $rsm->addScalarResult('groups_id', 'groups_id');
+        $rsm->addScalarResult('groupes', 'groupes');
+
+        $groupSql = "select ecole.nom_ecole as ecole, groups_id, GROUP_CONCAT(nom_classe SEPARATOR '/') as groupes 
+        from classe
+        join ecole on classe.ecole_id = ecole.id
+        where groups_id = ?";
+
+        $getGroup = $manager->createNativeQuery($groupSql, $rsm);
+        $getGroup->setParameter(1, $idGroupe);
+        $group = $getGroup->getResult();
 
         return $this->render(
-            'journalDeClasse/journal.html.twig'
+            'groupes/newEvaluation.html.twig',
+            [
+                'group' => $group
+            ]
         );
     }
+
 }

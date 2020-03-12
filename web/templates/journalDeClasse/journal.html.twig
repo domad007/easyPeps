@@ -18,14 +18,20 @@
                     <th>Nom</th>
                     <th>Prenom</th>
                     <th>Classe</th>
-                    <td colspan="2">Volley 21/12/2019</td>
+                    {% for key, value in cours %}
+                        {% set dateCours = date(value.dateCours.date) %}
+                        <td colspan="2">{{value.intitule}} {{dateCours | date('d-m-Y')}}</td>
+                    {% endfor %}
                 </thead>
                 <tbody>
-                    <td></td>
-                    <td></td>
-                    <td></td>                   
-                    <td><select name="" id=""><option value="">a</option></td>
-                    <td>pts</td>
+                    {% for key, value in eleves %}
+                        {% for key, value in value %}
+                            <tr>
+                            <td>{{value.nom}}</td>
+                            <td>{{value.prenom}}</td>
+                            <td>{{value.classe.nomClasse}}</td>
+                        {% endfor %}
+                    {% endfor %}
                 </tbody>
             </table>
         </div>

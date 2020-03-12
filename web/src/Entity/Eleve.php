@@ -50,6 +50,7 @@ class Eleve
     public function __construct()
     {
         $this->coursGroupes = new ArrayCollection();
+        $this->evaluationGroupes = new ArrayCollection();
     }
 
     
@@ -136,6 +137,5 @@ class Eleve
 
         return $this;
     }
-
    
 }
