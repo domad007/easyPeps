@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use DateTime;
 use App\Entity\Cours;
 use App\Entity\Eleve;
 use App\Entity\Classe;
@@ -78,6 +79,57 @@ class journalController extends AbstractController {
      * @Route("/presences", name="presence_eleve")
      */
     public function presenceEleve(){
+
+        return new Response("");
+    }
+
+    /**
+     * @Route("/modifDate", name="modif_date")
+     */
+    public function modifDate(Request $request){
+        $manager = $this->getDoctrine()->getManager();
+        if($request->isMethod('post')){
+            $date =  $request->request->all();
+            $newDate = new \DateTime($date['value']);
+
+            $cours = 
+            $manager->getRepository(Cours::class)
+            ->findOneBy(
+                [
+                    'id' => $date['pk']
+                ]
+            );
+
+            $cours->setDateCours($newDate);
+            $manager->persist($cours);
+            $manager->flush();
+            
+        }    
+
+        return new Response("");
+    }
+
+    /**
+     * @Route("/modifHeures", name="modif_heures")
+     */
+    public function modifHeures(Request $request){
+        $manager = $this->getDoctrine()->getManager();
+        if($request->isMethod('post')){
+            $heures =  $request->request->all();
+
+            $cours = 
+            $manager->getRepository(Cours::class)
+            ->findOneBy(
+                [
+                    'id' => $heures['pk']
+                ]
+            );
+
+            $cours->setNombreHeures($heures['value']);
+            $manager->persist($cours);
+            $manager->flush();
+
+        }
 
         return new Response("");
     }

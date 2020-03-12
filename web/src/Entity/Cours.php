@@ -29,7 +29,7 @@ class Cours
     private $dateCours;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=255)
      */
     private $nombreHeures;
 
@@ -82,7 +82,7 @@ class Cours
         return $this->nombreHeures;
     }
 
-    public function setNombreHeures(int $nombreHeures): self
+    public function setNombreHeures(string $nombreHeures): self
     {
         $this->nombreHeures = $nombreHeures;
 

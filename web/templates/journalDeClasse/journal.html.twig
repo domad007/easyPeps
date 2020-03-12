@@ -18,7 +18,7 @@
     <script src="/JS/main.js"></script>
     <script>
         $(document).ready(function(){
-            $('#table p').editable();
+            $('#table span').editable();
         });
     </script>
 {% endblock %}
@@ -34,7 +34,15 @@
                         <th>Classe</th>
                         {% for key, value in cours %}
                             {% set dateCours = date(value.dateCours.date) %}
-                            <td colspan="2" class="text-center">{{value.intitule}} {{dateCours | date('d-m-Y')}}</td>
+                            <td colspan="2" class="text-center">{{value.intitule}} 
+                                <p>
+                                    <span data-pk="{{value.id}}" data-url="{{path('modif_date')}}" data-name="cours"> {{dateCours | date('d-m-Y')}}</span>
+                                </p>
+                                <small>Heures: </small>
+                                <p>
+                                    <span data-pk="{{value.id}}" data-url="{{path('modif_heures')}}" data-name="heures">{{value.nombreHeures}}</span>
+                                </p>
+                            </td>
                         {% endfor %}
                     </tr>
                 </thead>
