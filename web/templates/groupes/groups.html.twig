@@ -18,7 +18,14 @@
                     {{ message }}
                 </div>
             {% endfor %}  
-        </div>    
+        </div> 
+        <div class="row d-flex justify-content-center">
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-error">
+                    {{ message }}
+                </div>
+            {% endfor %}  
+        </div>      
         <div class="row d-flex justify-content-center">
             <h4 class="display-10">Choisissez l'école dans laquelle vous souhaitez grouper les classes: </h1>
             <div class="col-8">
@@ -30,16 +37,23 @@
                 </select>
             </div>
         </div> 
+        <br>
         <div style="text-align: center">
-            <table class="table">   
-                {% for key, value in groups %}
+            <table class="table">  
+                <tr>
+                    <th>Nom école</th>
+                    <th>Groupe</th>
+                </tr> 
+            {% for row in groups|batch(2) %}
+                {% for key, value in row %}
                     <tr>                
-                        <td>Groupe {{loop.index}}</td>          
+                        <td>{{value.ecole}} </td>          
                         <td>
-                            <a href="{{path("group", {idGroup: value.groups.id})}}">{{ value.nomClasse|upper }} ({{value.ecole.nomEcole}})</a> 
+                            <a href="{{path("group", {idGroup: value.groups_id})}}">{{ value.groupes|upper }}</a> 
                         <td>                                     
                     </tr>
                 {% endfor %}
+            {% endfor %}
             <table>     
         </div>
     </div>

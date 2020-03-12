@@ -4,7 +4,7 @@
 {% block header %}
     <header class="jumbotron my-4">
         <h1 class="display-3" style="text-align: center">Votre groupe</h1>
-        <h3 class="display-7" style="text-align: center">{{ group.0.0.0.classe.ecole.nomEcole }}</h3>
+        <h3 class="display-7" style="text-align: center">{{ ecole.0.ecole.nomEcole}}</h3>
     </header>
 {% endblock %}
 {% block stylesheets %}
@@ -22,8 +22,34 @@
     $(document).ready(function(){
         $('#table').DataTable({
             "language": {
-                "search": "Chercher un élève: ",
-                "show": "Montrer"
+                "sEmptyTable":     "Aucune élève est disponible veillez en ajouter dans l'onglet vos classes",
+                "sInfo":           "Affichage de l'élément _START_ à _END_ sur _TOTAL_ éléments",
+                "sInfoEmpty":      "Affichage de l'élément 0 à 0 sur 0 élément",
+                "sInfoFiltered":   "(filtré à partir de _MAX_ éléments au total)",
+                "sInfoPostFix":    "",
+                "sInfoThousands":  ",",
+                "sLengthMenu":     "Afficher _MENU_ éléments",
+                "sLoadingRecords": "Chargement...",
+                "sProcessing":     "Traitement...",
+                "sSearch":         "Rechercher un élève :",
+                "sZeroRecords":    "Aucun élément correspondant trouvé",
+                "oPaginate": {
+                    "sFirst":    "Premier",
+                    "sLast":     "Dernier",
+                    "sNext":     "Suivant",
+                    "sPrevious": "Précédent"
+                },
+                "oAria": {
+                    "sSortAscending":  ": activer pour trier la colonne par ordre croissant",
+                    "sSortDescending": ": activer pour trier la colonne par ordre décroissant"
+                },
+                "select": {
+                        "rows": {
+                            "_": "%d lignes sélectionnées",
+                            "0": "Aucune ligne sélectionnée",
+                            "1": "1 ligne sélectionnée"
+                        } 
+                }
             }
         });
         $('#table p').editable();
@@ -42,6 +68,7 @@
         </div>
         <br>
         <div>
+        <div class="table-responsive">
             <table class="table" id="table">
                 <thead>
                     <tr>
@@ -68,7 +95,8 @@
                             {% endfor %}
                         {% endfor %}
                 </tbody>
-            </table>                                        
+            </table> 
+            </div>                                       
         </div>           
     </div>
 </div>            

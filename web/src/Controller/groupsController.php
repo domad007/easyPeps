@@ -24,6 +24,22 @@ class groupsController extends AbstractController {
     public function groups(UserInterface $user){
         $manager = $this->getDoctrine()->getManager();
 
+        $rsm = new ResultSetMapping();
+        $rsm->addScalarResult('ecole', 'ecole');
+        $rsm->addScalarResult('groups_id', 'groups_id');
+        $rsm->addScalarResult('groupes', 'groupes');
+
+        $groupsSql = "select ecole.nom_ecole as ecole, groups_id, GROUP_CONCAT(nom_classe SEPARATOR '/') as groupes 
+        from classe
+        join ecole on classe.ecole_id = ecole.id
+        where groups_id is not null and professeur_id = ?
+        group by groups_id";
+
+        $getGroups = $manager->createNativeQuery($groupsSql, $rsm);
+        $getGroups->setParameter(1, $user->getId());
+
+        $groups = $getGroups->getResult();
+
         $ecoles = $manager->createQueryBuilder();
         $ecoles
         ->select('ecole')
@@ -32,22 +48,11 @@ class groupsController extends AbstractController {
         ->where('classes.professeur = :idProfesseur')
         ->setParameter('idProfesseur', $user->getId());
         $resultEcoles = $ecoles->getQuery()->getResult();
-       
-        $groups = $manager->createQueryBuilder();
-        $groups
-        ->select('classes')
-        ->from('App:Classe', 'classes')
-        ->join('App:Groups', 'groups', 'WITH', 'classes.groups = groups.id')
-        ->where('classes.professeur = :idProfesseur')
-        ->setParameter('idProfesseur', $user->getId());
 
-        $resultGroups = $groups->getQuery()->getResult();
-
-        dump($resultGroups);
         return $this->render(
             'groupes/groups.html.twig', [
                 'ecoles' => $resultEcoles,
-                'groups' => $resultGroups
+                'groups' => $groups
             ]
         );
     }
@@ -103,7 +108,7 @@ class groupsController extends AbstractController {
         ->getRepository(Classe::class)
         ->findByGroups($idGroup);
 
-        foreach($group as $key => $value){
+        foreach($group as $key => $value){           
             $eleves [] = $manager
             ->getRepository(Eleve::class)
             ->findBy(
@@ -112,9 +117,11 @@ class groupsController extends AbstractController {
                 ]
             );
         }
+
         return $this->render(
             'groupes/group.html.twig',[
-                'group' => $eleves
+                'group' => $eleves,
+                'ecole' => $group
             ]
         );
     }
