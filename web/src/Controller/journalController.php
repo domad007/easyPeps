@@ -39,7 +39,7 @@ class journalController extends AbstractController {
         $groups = $getGroups->getResult();
 
         return $this->render(
-            'journalDeClasse/journalChoix.html.twig', 
+            'journalDeClasse/journalChoixGroupe.html.twig', 
             [
                 'groups' => $groups
             ]
@@ -52,7 +52,10 @@ class journalController extends AbstractController {
         $manager = $this->getDoctrine()->getManager();
         $getCours = $manager
         ->getRepository(Cours::class)
-        ->findBygroupe($idGroup);
+        ->findBygroupe($idGroup, 
+        [
+            'dateCours' => 'ASC'
+        ]);
 
         $group = $manager
         ->getRepository(Classe::class)
@@ -131,8 +134,13 @@ class journalController extends AbstractController {
     /**
      * @Route("/presences", name="presence_eleve")
      */
-    public function presenceEleve(){
-
+    public function presenceEleve(Request $request){
+        $manager = $this->getDoctrine()->getManager();
+        if($request->isMethod('post')){
+            $presence = $request->request->all();
+            $values = explode(",", $presence['presence']);
+            dump($presence);
+        }    
         return new Response("");
     }
 

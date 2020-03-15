@@ -46,7 +46,7 @@ function presenceEleve(){
     $.ajax({
         url: '/presences',
         method: 'POST',
-        data: $('#presence').serialize()
+        data: $('#presence')
     });
 
 }

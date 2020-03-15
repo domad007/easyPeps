@@ -69,10 +69,10 @@
                                         <td><span data-pk="{{value.id}}" data-url="{{path('modif_points')}}" data-name="{{val.id}}">{{value.id}}</span></td>                                    
                                     <td>
                                         <select name="presence" id="presence" onchange="presenceEleve()" class="custom-select">
-                                            <option value="{'coursId': {{value.id}}, 'eleveId': {{val.id}}, 'value': 'present'}">Present</option>
-                                            <option value="{'coursId': {{value.id}}, 'eleveId': {{val.id}}, 'value': 'abs'}">Absent</option>
-                                            <option value="{'coursId': {{value.id}}, 'eleveId': {{val.id}}, 'value': 'cm'}">Certificat médical</option>
-                                            <option value="{'coursId': {{value.id}}, 'eleveId': {{val.id}}, 'value': 'tshirt'}">Oubli t-shirt</option>
+                                            <option value="{{value.id}},{{val.id}},Present">Present</option>
+                                            <option value="{{value.id}},{{val.id}},Absent">Absent</option>
+                                            <option value="{{value.id}},{{val.id}},Certificat médical">Certificat médical</option>
+                                            <option value="{{value.id}},{{val.id}},Oubli t-shirt">Oubli t-shirt</option>
                                         </select>
                                     </td>    
                                 {% endfor %}   
