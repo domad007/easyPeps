@@ -90,7 +90,7 @@ class journalController extends AbstractController {
         $getCoursGroupe = $manager
         ->getRepository(CoursGroupe::class)
         ->findBycoursId($getCours);
-
+        dump($getCours);
         return $this->render(
             'journalDeClasse/journal.html.twig', 
             [

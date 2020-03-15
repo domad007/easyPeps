@@ -59,25 +59,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for key, value in eleves %}
-                        {% for key, val in value %}
-                            <tr>
-                                <td>{{val.nom}}</td>
-                                <td>{{val.prenom}}</td>
-                                <td>{{val.classe.nomClasse}}</td>
-                                {% for key, value in cours %}
-                                        <td><span data-pk="{{value.id}}" data-url="{{path('modif_points')}}" data-name="{{val.id}}">{{value.id}}</span></td>                                    
-                                    <td>
-                                        <select name="presence" id="presence" onchange="presenceEleve()" class="custom-select">
-                                            <option value="{{value.id}},{{val.id}},Present">Present</option>
-                                            <option value="{{value.id}},{{val.id}},Absent">Absent</option>
-                                            <option value="{{value.id}},{{val.id}},Certificat médical">Certificat médical</option>
-                                            <option value="{{value.id}},{{val.id}},Oubli t-shirt">Oubli t-shirt</option>
-                                        </select>
-                                    </td>    
-                                {% endfor %}   
-                            </tr> 
-                        {% endfor %}
+                    
+                    {% for key, value in coursGroupe %}
+                        <tr>
+                            <td>{{value.eleveId.nom}}</td>
+                            <td>{{value.eleveId.prenom}}</td>
+                            <td>{{value.eleveId.classe.nomClasse}}</td>
+                            <td>{{value.points}}</td>
+                            <td>{{value.presence}}</td>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>
