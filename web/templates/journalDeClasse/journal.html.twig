@@ -19,12 +19,38 @@
     <script src="/JS/main.js"></script>
     <script>
         $(document).ready(function(){
-            $('#table span').editable();
+            $('#tableJournal span').editable();
+            $('#tablePeriode span').editable();
         });
     </script>
 {% endblock %}
 {% block container %}
 <div class="journal">
+    <div class="jumbotron" style="font-size: 1.3em;">
+    <h3 class="display-7" style="text-align: center">Pourcentage d'évaluation</h3>
+        <div class="row d-flex justify-content-center">
+            <a href="{{path('new_periode', {idGroup: eleves.0.0.0.classe.groups.id})}}">Ajouter les périodes</a>
+            
+            <table class="table" id="tablePeriode">
+                <thead>
+                    <tr>
+                        {% for key, value in periodes %}
+                            <th>{{value.nomPeriode}}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        {% for key, value in periodes %}
+                            <td>
+                                <span data-pk="{{value.id}}" data-url="{{path('modif_periode')}}" data-name="periode"> {{value.pourcentage}} </span>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
     <div class="jumbotron" style="font-size: 1.3em;">
         <div class="table-responsive">
             <div class="row d-flex justify-content-center">
@@ -38,7 +64,8 @@
                     {% endfor %}
                 </select>
             </div>
-            <table class="table" id="table">
+            <br>
+            <table class="table" id="tableJournal">
                 <thead>
                     <tr>
                         <th>Nom</th>
@@ -46,7 +73,8 @@
                         <th>Classe</th>
                         {% for key, value in eleves.0.0.0.coursGroupes|sort((a, b) => a.coursId.dateCours <=> b.coursId.dateCours) %}                           
                             {% set dateCours = date(value.coursId.dateCours.date) %}
-                            <td colspan="2" class="text-center">{{value.coursId.intitule}} 
+                            <td colspan="2" class="text-center">
+                                {{value.coursId.intitule}} 
                                 <p>
                                     <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_date')}}" data-name="cours"> {{dateCours | date('d-m-Y')}}</span>
                                 </p>

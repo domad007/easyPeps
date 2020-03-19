@@ -1,6 +1,7 @@
 $(document).ready(function(){
     addEleve();
     addGroup();
+    addPeriodes();
 });
 
 function deleteEleve(idEleve, button){
@@ -42,6 +43,22 @@ function addGroup(){
     });
 }
 
+function addPeriodes(){
+    $('#addPeriodes').click(function(){
+        const index = $('#group_periode_periodes div.form-group').length;
+        const form = $('#group_periode_periodes').data('prototype').replace(/__name__/g, index);
+        $('#group_periode_periodes').append(form);
+
+        deleteRowPeriodes();
+    });
+}
+
+function deleteRowPeriodes(){
+    $('button[data-action="delete"]').click(function(){
+        const target = this.dataset.target;
+        $(target).remove();
+    });
+}
 function presenceEleve(value){
     $.ajax({
         url: '/presences',

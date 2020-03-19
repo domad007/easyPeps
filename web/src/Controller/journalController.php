@@ -6,6 +6,7 @@ use DateTime;
 use App\Entity\Cours;
 use App\Entity\Eleve;
 use App\Entity\Classe;
+use App\Entity\Periodes;
 use App\Entity\CoursGroupe;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Component\HttpFoundation\Request;
@@ -57,6 +58,10 @@ class journalController extends AbstractController {
             'dateCours' => 'ASC'
         ]);
 
+        $getPeriodes = $this->getDoctrine()
+        ->getRepository(Periodes::class)
+        ->findBygroupe($idGroup);
+
         $group = $manager
         ->getRepository(Classe::class)
         ->findByGroups($idGroup);
@@ -100,13 +105,15 @@ class journalController extends AbstractController {
                 }
             }
         }
-        dump($eleves);
+        
+
         return $this->render(
             'journalDeClasse/journal.html.twig', 
             [
                 'groups' => $groups,
                 'ecole' => $group,
-                'eleves' => $eleves,           
+                'eleves' => $eleves,   
+                'periodes' => $getPeriodes        
             ]
         );
     }
@@ -210,6 +217,26 @@ class journalController extends AbstractController {
             $manager->persist($cours);
             $manager->flush();
 
+        }
+
+        return new Response("");
+    }
+
+    /**
+     * @Route("/modifPeriode", name="modif_periode")
+     */
+    public function modifPeriode(Request $request){
+        $manager = $this->getDoctrine()->getManager();
+
+        if($request->isMethod('post')){
+            $periodeData = $request->request->all(); 
+            $getPeriode = $this->getDoctrine()
+            ->getRepository(Periodes::class)
+            ->findOneById($periodeData['pk']);
+
+            $getPeriode->setPourcentage($periodeData['value']);
+            $manager->persist($getPeriode);
+            $manager->flush();
         }
 
         return new Response("");

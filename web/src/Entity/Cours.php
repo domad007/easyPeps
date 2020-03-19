@@ -44,13 +44,16 @@ class Cours
     private $coursGroupes;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="App\Entity\Periodes", inversedBy="cours")
      */
     private $periode;
+
+
 
     public function __construct()
     {
         $this->coursGroupes = new ArrayCollection();
+        $this->periodes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -137,15 +140,16 @@ class Cours
         return $this;
     }
 
-    public function getPeriode(): ?string
+    public function getPeriode(): ?Periodes
     {
         return $this->periode;
     }
 
-    public function setPeriode(string $periode): self
+    public function setPeriode(?Periodes $periode): self
     {
         $this->periode = $periode;
 
         return $this;
     }
+
 }

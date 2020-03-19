@@ -9,9 +9,11 @@ use App\Entity\Eleve;
 use App\Entity\Classe;
 use App\Entity\Groups;
 use App\Form\GroupType;
+use App\Entity\Periodes;
 use App\Form\AddGroupType;
 use App\Form\NewCoursType;
 use App\Entity\CoursGroupe;
+use App\Form\GroupPeriodeType;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -131,13 +133,47 @@ class groupsController extends AbstractController {
     }
 
     /**
+     * @Route("/newPeriode/{idGroup}", name="new_periode")
+     */
+    public function newPeriode(Request $request, $idGroup){
+        $manager = $this->getDoctrine()->getManager();
+        $groups = new Groups();
+        $form = $this->createForm(GroupPeriodeType::class, $groups);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            foreach($groups->getPeriodes() as $periodes){
+
+                $group = $this->getDoctrine()
+                ->getRepository(Groups::class)
+                ->findOneById($idGroup);
+                $periodes->setGroupe($group);
+
+                $manager->persist($periodes);
+                $manager->flush();
+
+            }
+        }
+        return $this->render(
+            'groupes/newPeriode.html.twig', 
+            [
+                'form' => $form->createView()
+            ]
+        );
+    }
+
+    /**
      * @Route("/newCours/{idGroup}", name="new_cours")
      */
     public function newCours(Request $request, $idGroup){
         $cours = new Cours();
 
+        $periodes = $this->getDoctrine()
+        ->getRepository(Periodes::class)
+        ->findBygroupe($idGroup);
+
         $manager = $this->getDoctrine()->getManager();
-        $form = $this->createForm(NewCoursType::class, $cours);
+        $form = $this->createForm(NewCoursType::class, $cours, ['periodes' => $periodes]);
 
         $rsm = new ResultSetMapping();
         $rsm->addScalarResult('ecole', 'ecole');

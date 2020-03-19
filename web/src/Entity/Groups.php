@@ -28,11 +28,17 @@ class Groups
      */
     private $cours;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Periodes", mappedBy="groupe")
+     */
+    private $periodes;
+
     public function __construct()
     {
         $this->classes = new ArrayCollection();
         $this->cours = new ArrayCollection();
         $this->evaluations = new ArrayCollection();
+        $this->periodes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -96,6 +102,37 @@ class Groups
             // set the owning side to null (unless already changed)
             if ($cour->getGroupe() === $this) {
                 $cour->setGroupe(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Periodes[]
+     */
+    public function getPeriodes(): Collection
+    {
+        return $this->periodes;
+    }
+
+    public function addPeriode(Periodes $periode): self
+    {
+        if (!$this->periodes->contains($periode)) {
+            $this->periodes[] = $periode;
+            $periode->setGroupe($this);
+        }
+
+        return $this;
+    }
+
+    public function removePeriode(Periodes $periode): self
+    {
+        if ($this->periodes->contains($periode)) {
+            $this->periodes->removeElement($periode);
+            // set the owning side to null (unless already changed)
+            if ($periode->getGroupe() === $this) {
+                $periode->setGroupe(null);
             }
         }
 

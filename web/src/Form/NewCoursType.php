@@ -25,22 +25,20 @@ class NewCoursType extends AbstractType
                 [
                     'placeholder' => "Choisissez le nombre d'heures de cours",
                     'min' => 1,
-                    'max' => 3
+                    'max' => 3,
+                    'class' => "col-md-8"
                 ]
             ])
             ->add('periode', ChoiceType::class, 
+            [
+                'choices' => 
                 [
-                    'label' => "Choisissez la période",
-                    'choices' => 
-                    [
-                        'P1' => "P1",
-                        'P2' => "P2",
-                        'P3' => "P3",
-                        'P4' => "P4"
-                    ],
-                    'expanded' => true,
-                ]           
-            )
+                    $options['periodes']
+                ],
+                'choice_label' => 'nomPeriode',
+                'choice_value' => 'id',
+                'expanded' => true
+            ])
             ->add('save', SubmitType::class, $contact->getConfig("Créez le nouveau cours !", ""))
         ;
     }
@@ -49,6 +47,9 @@ class NewCoursType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Cours::class,
+            'periodes' => array()
         ]);
+
+        $resolver->setAllowedTypes('periodes', 'array');
     }
 }
