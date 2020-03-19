@@ -42,11 +42,11 @@ function addGroup(){
     });
 }
 
-function presenceEleve(){
+function presenceEleve(value){
     $.ajax({
         url: '/presences',
         method: 'POST',
-        data: $('#presence')
+        data: $(value)
     });
 
 }

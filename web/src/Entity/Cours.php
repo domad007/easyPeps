@@ -43,6 +43,11 @@ class Cours
      */
     private $coursGroupes;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $periode;
+
     public function __construct()
     {
         $this->coursGroupes = new ArrayCollection();
@@ -128,6 +133,18 @@ class Cours
                 $coursGroupe->setCoursId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPeriode(): ?string
+    {
+        return $this->periode;
+    }
+
+    public function setPeriode(string $periode): self
+    {
+        $this->periode = $periode;
 
         return $this;
     }

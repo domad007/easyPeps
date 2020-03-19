@@ -90,15 +90,23 @@ class journalController extends AbstractController {
         $getCoursGroupe = $manager
         ->getRepository(CoursGroupe::class)
         ->findBycoursId($getCours);
-        dump($getCours);
+
+        foreach($eleves as $key => $value){
+            foreach($value as $key => $val){
+                foreach($getCoursGroupe as $key => $value){
+                    if($value->getEleveId()->getId() == $val->getId()){
+                        $val->addCoursGroupe($value);
+                    }
+                }
+            }
+        }
+        dump($eleves);
         return $this->render(
             'journalDeClasse/journal.html.twig', 
             [
-                'cours' => $getCours,
-                'eleves' => $eleves,
-                'coursGroupe' => $getCoursGroupe,
                 'groups' => $groups,
-                'ecole' => $group
+                'ecole' => $group,
+                'eleves' => $eleves,           
             ]
         );
     }
@@ -139,7 +147,19 @@ class journalController extends AbstractController {
         if($request->isMethod('post')){
             $presence = $request->request->all();
             $values = explode(",", $presence['presence']);
-            dump($presence);
+
+            $presenceEleve = $this->getDoctrine()
+            ->getRepository(CoursGroupe::class)
+            ->findOneBy(
+                [
+                    'coursId' => $values[0],
+                    'eleveId' => $values[1]
+                ]
+            );
+
+            $presenceEleve->setPresence($values[2]);
+            $manager->persist($presenceEleve);
+            $manager->flush();
         }    
         return new Response("");
     }

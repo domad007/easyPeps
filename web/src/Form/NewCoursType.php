@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
@@ -27,6 +28,19 @@ class NewCoursType extends AbstractType
                     'max' => 3
                 ]
             ])
+            ->add('periode', ChoiceType::class, 
+                [
+                    'label' => "Choisissez la période",
+                    'choices' => 
+                    [
+                        'P1' => "P1",
+                        'P2' => "P2",
+                        'P3' => "P3",
+                        'P4' => "P4"
+                    ],
+                    'expanded' => true,
+                ]           
+            )
             ->add('save', SubmitType::class, $contact->getConfig("Créez le nouveau cours !", ""))
         ;
     }

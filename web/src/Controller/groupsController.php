@@ -131,9 +131,9 @@ class groupsController extends AbstractController {
     }
 
     /**
-     * @Route("/newCours/{idGroupe}", name="new_cours")
+     * @Route("/newCours/{idGroup}", name="new_cours")
      */
-    public function newCours(Request $request, $idGroupe){
+    public function newCours(Request $request, $idGroup){
         $cours = new Cours();
 
         $manager = $this->getDoctrine()->getManager();
@@ -150,7 +150,7 @@ class groupsController extends AbstractController {
         where groups_id = ?";
         
         $getGroup = $manager->createNativeQuery($groupSql, $rsm);
-        $getGroup->setParameter(1, $idGroupe);
+        $getGroup->setParameter(1, $idGroup);
         $group = $getGroup->getResult();
 
         $form->handleRequest($request);
@@ -158,7 +158,7 @@ class groupsController extends AbstractController {
         if($form->isSubmitted() && $form->isValid()){
             $idGroupe = $manager
             ->getRepository(Groups::class)
-            ->find($idGroupe);
+            ->find($idGroup);
 
             $cours
             ->setDateCours(new \DateTime())
@@ -169,7 +169,7 @@ class groupsController extends AbstractController {
 
             $group = $manager
             ->getRepository(Classe::class)
-            ->findByGroups($idGroupe);
+            ->findByGroups($idGroup);
 
             $cours = $manager
             ->getRepository(Cours::class)
@@ -191,13 +191,17 @@ class groupsController extends AbstractController {
                 ->setCoursId($cours)
                 ->setEleveId($value)
                 ->setPoints("0")
-                ->setPresence("present");
+                ->setPresence("Present");
                 $manager->persist($coursGroupe);
             }
             
             $manager->flush();
             
-            return $this->redirectToRoute('journal_de_classe');
+            return $this->redirectToRoute('journal_de_classe', 
+                [
+                    'idGroup' => $idGroup
+                ]
+            );
         }
         return $this->render(
             'groupes/newCours.html.twig', 
@@ -209,9 +213,9 @@ class groupsController extends AbstractController {
     }
 
     /**
-     * @Route("/newEvaluation/{idGroupe}", name="new_evaluation")
+     * @Route("/newEvaluation/{idGroup}", name="new_evaluation")
      */
-    public function newEvaluation($idGroupe){
+    public function newEvaluation($idGroup){
         $manager = $this->getDoctrine()->getManager();
         $rsm = new ResultSetMapping();
         $rsm->addScalarResult('ecole', 'ecole');
@@ -224,7 +228,7 @@ class groupsController extends AbstractController {
         where groups_id = ?";
 
         $getGroup = $manager->createNativeQuery($groupSql, $rsm);
-        $getGroup->setParameter(1, $idGroupe);
+        $getGroup->setParameter(1, $idGroup);
         $group = $getGroup->getResult();
 
         return $this->render(
