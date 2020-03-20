@@ -57,14 +57,14 @@
             <tbody> 
                 {% for key, value in eleves %}
                     <tr>
-                        <td>{{loop.index}}</td>
+                        <td id="nombreEleve">{{loop.index}}</td>
                         {% for key, val in value %}
-                            <td>{{val.nom}}</td>
-                            <td>{{val.prenom}}</td>
+                            <td id="nom">{{val.nom}}</td>
+                            <td id="prenom">{{val.prenom}}</td>
                             <td>{{val.classe.nomClasse}}</td>       
                             {% for key, value in val.coursGroupes|sort((a, b) => a.coursId.dateCours <=> b.coursId.dateCours) %}
                                 <td>
-                                    <select name="presence" id="presence" onchange="presenceEleve(this)" class="custom-select">
+                                    <select name="presence" id="presence" onchange="presenceEleve(this)" class="custom-select mr-sm-5">
                                         {% if value.presences.id != 1 %}
                                             <option value="{{value.coursId.id}},{{val.id}},{{value.presences.id}}" selected>{{value.presences.abreviation}}</option>
                                         {% endif %}
