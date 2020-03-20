@@ -5,9 +5,6 @@
 {% form_theme form _self %}
 
 {% block header %}
-    <header class="jumbotron my-4">
-        <h1 class="display-3" style="text-align: center">Création de périodes</h1>
-    </header>
 {% endblock %}
 
 {% block scripts %}
@@ -16,11 +13,6 @@
 
 {% block container %}
 <div class="jumbotron text-center" style="font-size: 1.3em;">
-    {% for message in app.flashes('error') %}
-        <div class="alert alert-danger">
-            {{ message }}
-        </div>
-    {% endfor %}
     <div class="text-center">
         {{form_start(form)}}
         {{form_end(form)}}
@@ -31,25 +23,30 @@
     <div class="jumbotron" style="font-size: 1.3em;">
     <div class="row justify-content-center">
          <h3 class="display-3">Créez vos périodes !</h3>
-    </div>   
-    <br>  
-    <div class="row d-flex justify-content-center">      
-        {{form_widget(form)}}
-    </div>  
+    </div> 
+    
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+    
+    <br>      
+        {{form_widget(form)}}    
     <div class="form-group text-center">
-        <button type="button" id="addPeriodes" class="btn btn-primary">Ajoutez les périodes !</button>
+        <button type="button" id="addPeriodes" class="btn btn-primary">Ajoutez une période !</button>
     </div>
 </div>    
 {% endblock %}
 {% block _group_periode_periodes_entry_widget %}
-    <div class="form-row" id="block_{{id}}">
-        <div class="col">
+    <div class="form-row d-flex justify-content-center" id="block_{{id}}">
+        <div class="col-md-3">
             {{form_widget(form.nomPeriode)}}
         </div>
-        <div class="col">
+        <div class="col-md-3">
             {{form_widget(form.pourcentage)}}
         </div>
-        <div class="col">
+        <div class="col-md-1">
             <button type="button" data-action="delete" data-target="#block_{{id}}" class="btn btn-danger">X</button>
         </div>
     </div>

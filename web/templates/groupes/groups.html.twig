@@ -2,9 +2,6 @@
 
 {% block title %} -Mes Groupes {% endblock %} 
 {% block header %}
-    <header class="jumbotron my-4">
-        <h1 class="display-3" style="text-align: center">Mes groupes</h1>
-    </header>
 {% endblock %}
 {% block container %}
 <div class="mesGroupes">
@@ -42,7 +39,8 @@
             <table class="table">  
                 <tr>
                     <th>Nom école</th>
-                    <th>Groupe</th>
+                    <th>Groupes</th>
+                    <th>Nombre d'élèves</th>
                 </tr> 
             {% for row in groups|batch(2) %}
                 {% for key, value in row %}
@@ -50,7 +48,8 @@
                         <td>{{value.ecole}} </td>          
                         <td>
                             <a href="{{path("group", {idGroup: value.groups_id})}}">{{ value.groupes|upper }}</a> 
-                        <td>                                     
+                        </td> 
+                        <td>{{value.nombreEleves}}</td>                                    
                     </tr>
                 {% endfor %}
             {% endfor %}

@@ -2,10 +2,6 @@
 
 {% block title %} -Groupe {% endblock %} 
 {% block header %}
-    <header class="jumbotron my-4">
-        <h1 class="display-3" style="text-align: center">Votre groupe</h1>
-        <h3 class="display-7" style="text-align: center">{{ ecole.0.ecole.nomEcole}}</h3>
-    </header>
 {% endblock %}
 {% block stylesheets %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css">
@@ -23,7 +19,7 @@
         $('#table').DataTable({
             "language": {
                 "sEmptyTable":     "Aucune élève est disponible veillez en ajouter dans l'onglet vos classes",
-                "sInfo":           "Affichage de l'élément _START_ à _END_ sur _TOTAL_ éléments",
+                "sInfo":           "Affichage de _TOTAL_ élèves",
                 "sInfoEmpty":      "Affichage de l'élément 0 à 0 sur 0 élément",
                 "sInfoFiltered":   "(filtré à partir de _MAX_ éléments au total)",
                 "sInfoPostFix":    "",
@@ -60,11 +56,7 @@
 <div class="classe">
     <div class="jumbotron" style="font-size: 1.3em;">
         <div class="gestion" style="text-align: center">
-            <h3 class="display-8">Gestion de groupe: </h3>
-            <br>
-            <a href="{{path('new_cours', {idGroup: ecole.0.groups.id})}}" class="btn btn-primary btn-lg" style="text-align: center">Nouveau cours</a>
-            <a href="{{path('new_evaluation', {idGroup: ecole.0.groups.id})}}" class="btn btn-primary btn-lg" style="text-align: center">Nouvelle évaluation</a>
-            <a href="#" class="btn btn-primary btn-lg" style="text-align: center">Plannification de cycle</a>
+            <h3 class="display-7" style="text-align: center">{{ ecole.0.ecole.nomEcole}}</h3>
         </div>
         <br>
         <div class="table-responsive">

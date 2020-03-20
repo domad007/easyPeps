@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -32,9 +34,15 @@ class CoursGroupe
     private $points;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="App\Entity\Presences", inversedBy="cours")
      */
-    private $presence;
+    private $presences;
+
+    public function __construct()
+    {
+        $this->presences = new ArrayCollection();
+    }
+
 
     public function getId(): ?int
     {
@@ -77,15 +85,16 @@ class CoursGroupe
         return $this;
     }
 
-    public function getPresence(): ?string
+    public function getPresences(): ?Presences
     {
-        return $this->presence;
+        return $this->presences;
     }
 
-    public function setPresence(string $presence): self
+    public function setPresences(?Presences $presences): self
     {
-        $this->presence = $presence;
+        $this->presences = $presences;
 
         return $this;
     }
+
 }

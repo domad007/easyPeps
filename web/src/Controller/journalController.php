@@ -7,6 +7,7 @@ use App\Entity\Cours;
 use App\Entity\Eleve;
 use App\Entity\Classe;
 use App\Entity\Periodes;
+use App\Entity\Presences;
 use App\Entity\CoursGroupe;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Component\HttpFoundation\Request;
@@ -66,6 +67,10 @@ class journalController extends AbstractController {
         ->getRepository(Classe::class)
         ->findByGroups($idGroup);
 
+        $getCoursGroupe = $manager
+        ->getRepository(CoursGroupe::class)
+        ->findBycoursId($getCours);
+
         $rsm = new ResultSetMapping();
         $rsm->addScalarResult('ecole', 'ecole');
         $rsm->addScalarResult('groups_id', 'groups_id');
@@ -82,6 +87,10 @@ class journalController extends AbstractController {
 
         $groups = $getGroups->getResult();
 
+        $getPresences = $this->getDoctrine()
+        ->getRepository(Presences::class)
+        ->findAll();
+
         foreach($group as $key => $value){           
             $eleves [] = $manager
             ->getRepository(Eleve::class)
@@ -91,10 +100,6 @@ class journalController extends AbstractController {
                 ]
             );
         }
-
-        $getCoursGroupe = $manager
-        ->getRepository(CoursGroupe::class)
-        ->findBycoursId($getCours);
 
         foreach($eleves as $key => $value){
             foreach($value as $key => $val){
@@ -106,6 +111,7 @@ class journalController extends AbstractController {
             }
         }
         
+        dump($eleves);
 
         return $this->render(
             'journalDeClasse/journal.html.twig', 
@@ -113,7 +119,8 @@ class journalController extends AbstractController {
                 'groups' => $groups,
                 'ecole' => $group,
                 'eleves' => $eleves,   
-                'periodes' => $getPeriodes        
+                'periodes' => $getPeriodes,
+                'presences' => $getPresences     
             ]
         );
     }
@@ -154,6 +161,10 @@ class journalController extends AbstractController {
         if($request->isMethod('post')){
             $presence = $request->request->all();
             $values = explode(",", $presence['presence']);
+            
+            $typePresence = $this->getDoctrine()
+            ->getRepository(Presences::class)
+            ->findOneById($values[2]);
 
             $presenceEleve = $this->getDoctrine()
             ->getRepository(CoursGroupe::class)
@@ -164,7 +175,7 @@ class journalController extends AbstractController {
                 ]
             );
 
-            $presenceEleve->setPresence($values[2]);
+            $presenceEleve->setPresences($typePresence);
             $manager->persist($presenceEleve);
             $manager->flush();
         }    
@@ -182,11 +193,7 @@ class journalController extends AbstractController {
 
             $cours = 
             $manager->getRepository(Cours::class)
-            ->findOneBy(
-                [
-                    'id' => $date['pk']
-                ]
-            );
+            ->findOneById($date['pk']);
 
             $cours->setDateCours($newDate);
             $manager->persist($cours);
@@ -194,6 +201,27 @@ class journalController extends AbstractController {
             
         }    
 
+        return new Response("");
+    }
+
+    /**
+     * @Route("/modifIntitule", name="modif_intitule")
+     */
+    public function modifIntitule(Request $request){
+        $manager = $this->getDoctrine()->getManager();
+
+        if($request->isMethod('post')){
+            $intitule =  $request->request->all();
+
+            $cours = 
+            $manager->getRepository(Cours::class)
+            ->findOneById($intitule['pk']);
+
+            $cours->setIntitule($intitule['value']);
+            $manager->persist($cours);
+            $manager->flush();
+            
+        }    
         return new Response("");
     }
 

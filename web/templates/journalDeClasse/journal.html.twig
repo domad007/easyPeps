@@ -3,11 +3,6 @@
 {% block title %} -Journal de classe {% endblock %}
 
 {% block header %}
-    <!-- Jumbotron Header -->
-    <header class="jumbotron my-4">
-        <h1 class="display-3" style="text-align: center">Journal de classe</h1>
-        <h3 class="display-7" style="text-align: center">{{ecole.0.ecole.nomEcole}}</h3>
-    </header>
 {% endblock %}
 
 {% block stylesheets %}
@@ -25,96 +20,110 @@
     </script>
 {% endblock %}
 {% block container %}
-<div class="journal">
-    <div class="jumbotron" style="font-size: 1.3em;">
-    <h3 class="display-7" style="text-align: center">Pourcentage d'évaluation</h3>
-        <div class="row d-flex justify-content-center">
-            <a href="{{path('new_periode', {idGroup: eleves.0.0.0.classe.groups.id})}}">Ajouter les périodes</a>
-            
-            <table class="table" id="tablePeriode">
-                <thead>
-                    <tr>
-                        {% for key, value in periodes %}
-                            <th>{{value.nomPeriode}}</th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        {% for key, value in periodes %}
-                            <td>
-                                <span data-pk="{{value.id}}" data-url="{{path('modif_periode')}}" data-name="periode"> {{value.pourcentage}} </span>
-                            </td>
-                        {% endfor %}
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+
+<div class="jumbotron" style="font-size: 1.3em;">
+    <h3 class="display-7" style="text-align: center">Journal de classe</h1>
+    <h5 class="display-10" style="text-align: center">{{ecole.0.ecole.nomEcole}}</h3>
+
+    <div class="row d-flex justify-content-center">
+        <a href="{{path('new_cours', {idGroup: ecole.0.groups.id})}}" style="margin-right:10px;" class="btn btn-primary btn-md" style="text-align: center">Nouveau cours</a>
+        <a href="{{path('new_evaluation', {idGroup: ecole.0.groups.id})}}" style="margin-right:10px;" class="btn btn-primary btn-md" style="text-align: center">Nouvelle évaluation</a>
+        <a href="#" class="btn btn-primary btn-md" style="text-align: center">Plannification de cycle</a>
     </div>
-    <div class="jumbotron" style="font-size: 1.3em;">
-        <div class="table-responsive">
-            <div class="row d-flex justify-content-center">
-                <h3 class="display-7" style="text-align: center">Choisissez le groupe: </h3>
-                <select name="groups" id="groups" class="custom-select col-md-6" onchange="window.location.href=this.value">
-                    <option value="#"></option>
-                    {% for key, value in groups %}
-                        <optgroup label="{{value.ecole}}">
-                            <option value="{{path('journal_de_classe', {idGroup: value.groups_id})}}">{{value.groupes}}</option>
-                        </optgroup>
+    <br>
+    <div class="table-responsive">
+        <table class="table" id="tableJournal">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nom</th>
+                    <th>Prenom</th>
+                    <th>Classe</th>
+                    {% for key, value in eleves.0.0.0.coursGroupes|sort((a, b) => a.coursId.dateCours <=> b.coursId.dateCours) %}                           
+                        {% set dateCours = date(value.coursId.dateCours.date) %}
+                        <td colspan="2" class="text-center">
+                            <span  data-pk="{{value.coursId.id}}" data-url="{{path('modif_intitule')}}" data-name="intitule"> {{value.coursId.intitule}} </span> 
+                            <p>
+                                <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_date')}}" data-name="cours"> {{dateCours | date('d-m-Y')}}</span>
+                            </p>
+                            <small>Heures: </small>
+                            <p>
+                                <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_heures')}}" data-name="heures">{{value.coursId.nombreHeures}}</span>
+                            </p>
+                        </td>
                     {% endfor %}
-                </select>
-            </div>
-            <br>
-            <table class="table" id="tableJournal">
-                <thead>
+                </tr>
+            </thead>
+            <tbody> 
+                {% for key, value in eleves %}
                     <tr>
-                        <th>Nom</th>
-                        <th>Prenom</th>
-                        <th>Classe</th>
-                        {% for key, value in eleves.0.0.0.coursGroupes|sort((a, b) => a.coursId.dateCours <=> b.coursId.dateCours) %}                           
-                            {% set dateCours = date(value.coursId.dateCours.date) %}
-                            <td colspan="2" class="text-center">
-                                {{value.coursId.intitule}} 
-                                <p>
-                                    <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_date')}}" data-name="cours"> {{dateCours | date('d-m-Y')}}</span>
-                                </p>
-                                <small>Heures: </small>
-                                <p>
-                                    <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_heures')}}" data-name="heures">{{value.coursId.nombreHeures}}</span>
-                                </p>
-                            </td>
+                        <td>{{loop.index}}</td>
+                        {% for key, val in value %}
+                            <td>{{val.nom}}</td>
+                            <td>{{val.prenom}}</td>
+                            <td>{{val.classe.nomClasse}}</td>       
+                            {% for key, value in val.coursGroupes|sort((a, b) => a.coursId.dateCours <=> b.coursId.dateCours) %}
+                                <td>
+                                    <select name="presence" id="presence" onchange="presenceEleve(this)" class="custom-select">
+                                        {% if value.presences.id != 1 %}
+                                            <option value="{{value.coursId.id}},{{val.id}},{{value.presences.id}}" selected>{{value.presences.abreviation}}</option>
+                                        {% endif %}
+                                        {% for key, presence in presences %}
+                                            <option value="{{value.coursId.id}},{{val.id}},{{presence.id}}">{{presence.abreviation}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td>
+                                    <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_points')}}" data-name="{{val.id}}">{{value.points}}</span>
+                                </td>
+                            {% endfor %}
                         {% endfor %}
                     </tr>
-                </thead>
-                <tbody> 
-                    {% for key, value in eleves %}
-                        <tr>
-                            {% for key, val in value %}
-                                <td>{{val.nom}}</td>
-                                <td>{{val.prenom}}</td>
-                                <td>{{val.classe.nomClasse}}</td>       
-                                {% for key, value in val.coursGroupes|sort((a, b) => a.coursId.dateCours <=> b.coursId.dateCours) %}
-                                    <td>
-                                        <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_points')}}" data-name="{{val.id}}">{{value.points}}</span>
-                                    </td>
-                                    <td>
-                                        <select name="presence" id="presence" onchange="presenceEleve(this)" class="custom-select">
-                                            {% if value.presence != "Present" %}
-                                                <option value="{{value.coursId.id}},{{val.id}},{{value.presence}}" selected>{{value.presence}}</option>
-                                            {% endif %}
-                                            <option value="{{value.coursId.id}},{{val.id}},Present">Present</option>
-                                            <option value="{{value.coursId.id}},{{val.id}},Absent">Absent</option>
-                                            <option value="{{value.coursId.id}},{{val.id}},Certificat médical">Certificat médical</option>
-                                            <option value="{{value.coursId.id}},{{val.id}},Oubli t-shirt">Oubli t-shirt</option>
-                                        </select>
-                                    </td>
-                                {% endfor %}
-                            {% endfor %}
-                        </tr>
-                    {% endfor %}                   
-                </tbody>
-            </table>
+                {% endfor %}                   
+            </tbody>
+        </table>
+    </div>      
+</div>
+<div class="jumbotron my-4">
+    <h5 class="display-7" style="text-align: center">Changez le groupe: </h3>
+    <div class="row d-flex justify-content-center">
+        <select name="groups" id="groups" class="custom-select col-md-6" onchange="window.location.href=this.value">
+            <option value="#"></option>
+            {% for key, value in groups %}
+                <optgroup label="{{value.ecole}}">
+                    <option value="{{path('journal_de_classe', {idGroup: value.groups_id})}}">{{value.groupes}}</option>
+                </optgroup>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+<div class="jumbotron" style="font-size: 1.3em;">
+    <h3 class="display-7" style="text-align: center">Pourcentage d'évaluation</h3>
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
         </div>
+    {% endfor %}
+    <div class="row d-flex justify-content-center">        
+        <a href="{{path('new_periode', {idGroup: eleves.0.0.0.classe.groups.id})}}">Ajouter les périodes</a>
+        <table class="table" id="tablePeriode">
+            <thead>
+                <tr>
+                    {% for key, value in periodes %}
+                        <th>{{value.nomPeriode}}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% for key, value in periodes %}
+                        <td>
+                            <span data-pk="{{value.id}}" data-url="{{path('modif_periode')}}" data-name="periode"> {{value.pourcentage}} </span>%
+                        </td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}

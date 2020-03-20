@@ -5,10 +5,6 @@
 {% form_theme form _self %}
 
 {% block header %}
-    <header class="jumbotron my-4">
-        <h1 class="display-3" style="text-align: center">{{ nomClasse.nomClasse|upper }}</h1>
-        <h3 class="display-7" style="text-align: center">{{ nomEcole.nomEcole }}</h3>
-    </header>
 {% endblock %}
 
 {% block stylesheets %}
@@ -29,6 +25,8 @@
     <div class="jumbotron" style="font-size: 1.3em;">
         <div style="text-align: center">
             <h3 class="display-3">Liste des élèves</h3>
+            <h1 class="display-7" style="text-align: center">{{ nomClasse.nomClasse|upper }}</h1>
+            <h3 class="display-7" style="text-align: center">{{ nomEcole.nomEcole }}</h3>
         </div>
         <div class="row d-flex justify-content-center">
             {% for message in app.flashes('success') %}
@@ -38,7 +36,7 @@
             {% endfor %}  
         </div>    
         <br>
-        <div class="table">
+        <div class="table-responsive">
             <table class="table" id="table">
                 <thead>
                     <tr>

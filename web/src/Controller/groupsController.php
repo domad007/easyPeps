@@ -10,6 +10,7 @@ use App\Entity\Classe;
 use App\Entity\Groups;
 use App\Form\GroupType;
 use App\Entity\Periodes;
+use App\Entity\Presences;
 use App\Form\AddGroupType;
 use App\Form\NewCoursType;
 use App\Entity\CoursGroupe;
@@ -31,13 +32,15 @@ class groupsController extends AbstractController {
         $manager = $this->getDoctrine()->getManager();
 
         $rsm = new ResultSetMapping();
-        $rsm->addScalarResult('ecole', 'ecole');
-        $rsm->addScalarResult('groups_id', 'groups_id');
-        $rsm->addScalarResult('groupes', 'groupes');
+        $rsm->addScalarResult('ecole', 'ecole')
+        ->addScalarResult('groups_id', 'groups_id')
+        ->addScalarResult('groupes', 'groupes')
+        ->addScalarResult('nombreEleves', 'nombreEleves');
 
-        $groupsSql = "select ecole.nom_ecole as ecole, groups_id, GROUP_CONCAT(nom_classe SEPARATOR '/') as groupes 
+        $groupsSql = "select ecole.nom_ecole as ecole, groups_id, GROUP_CONCAT(nom_classe SEPARATOR '/') as groupes, count(eleve.id) as nombreEleves 
         from classe
         join ecole on classe.ecole_id = ecole.id
+        join eleve on classe.id = eleve.classe_id
         where groups_id is not null and professeur_id = ?
         group by groups_id";
 
@@ -153,6 +156,9 @@ class groupsController extends AbstractController {
                 $manager->flush();
 
             }
+            
+            $this->addFlash('error', "Erreur lors de la création de la période, aucune période n'as été spécifée");
+            return $this->redirectToRoute('journal_de_classe', ['idGroup' => $idGroup]);
         }
         return $this->render(
             'groupes/newPeriode.html.twig', 
@@ -196,6 +202,10 @@ class groupsController extends AbstractController {
             ->getRepository(Groups::class)
             ->find($idGroup);
 
+            $getPresence = $this->getDoctrine()
+            ->getRepository(Presences::class)
+            ->findOneById(1);
+
             $cours
             ->setDateCours(new \DateTime())
             ->setGroupe($idGroupe);
@@ -227,7 +237,8 @@ class groupsController extends AbstractController {
                 ->setCoursId($cours)
                 ->setEleveId($value)
                 ->setPoints("0")
-                ->setPresence("Present");
+                ->setPresences($getPresence);
+
                 $manager->persist($coursGroupe);
             }
             
