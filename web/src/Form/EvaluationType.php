@@ -8,15 +8,25 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
-class NewEvaluationType extends AbstractType
+class EvaluationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            //->add('heuresCompetence')
-            //->add('cours')
-           // ->add('competence')
+            ->add('competence', EntityType::class, [
+                'class' => Competences::class,
+                'choice_label' => 'nomCompetence'
+            ])
+            ->add('heuresCompetence', IntegerType::class, [
+                'attr' => 
+                [
+                    'placeholder' => "Heures travaillés de la compétence",
+                    'min' => 1,
+                    'max' => 20,
+                ]
+            ])
         ;
     }
 

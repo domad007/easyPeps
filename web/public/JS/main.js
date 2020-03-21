@@ -2,6 +2,7 @@ $(document).ready(function(){
     addEleve();
     addGroup();
     addPeriodes();
+    addEvaluation();
 });
 
 function deleteEleve(idEleve, button){
@@ -57,6 +58,16 @@ function deleteRowPeriodes(){
     $('button[data-action="delete"]').click(function(){
         const target = this.dataset.target;
         $(target).remove();
+    });
+}
+
+function addEvaluation(){
+    $('#addEvaluation').click(function(){
+        const index = $('#add_cours_evaluation_evaluations div.form-group').length;
+        const form = $('#add_cours_evaluation_evaluations').data('prototype').replace(/__name__/g, index);
+        $('#add_cours_evaluation_evaluations').append(form);
+
+        deleteRowPeriodes();
     });
 }
 function presenceEleve(value){

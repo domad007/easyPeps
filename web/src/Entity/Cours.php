@@ -49,7 +49,7 @@ class Cours
     private $periode;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Evaluation", mappedBy="cours")
+     * @ORM\OneToMany(targetEntity="App\Entity\Evaluation", mappedBy="cours", cascade={"persist"})
      */
     private $evaluations;
 
