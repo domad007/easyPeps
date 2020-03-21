@@ -48,12 +48,18 @@ class Cours
      */
     private $periode;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Evaluation", mappedBy="cours")
+     */
+    private $evaluations;
+
 
 
     public function __construct()
     {
         $this->coursGroupes = new ArrayCollection();
         $this->periodes = new ArrayCollection();
+        $this->evaluations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -148,6 +154,37 @@ class Cours
     public function setPeriode(?Periodes $periode): self
     {
         $this->periode = $periode;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Evaluation[]
+     */
+    public function getEvaluations(): Collection
+    {
+        return $this->evaluations;
+    }
+
+    public function addEvaluation(Evaluation $evaluation): self
+    {
+        if (!$this->evaluations->contains($evaluation)) {
+            $this->evaluations[] = $evaluation;
+            $evaluation->setCours($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvaluation(Evaluation $evaluation): self
+    {
+        if ($this->evaluations->contains($evaluation)) {
+            $this->evaluations->removeElement($evaluation);
+            // set the owning side to null (unless already changed)
+            if ($evaluation->getCours() === $this) {
+                $evaluation->setCours(null);
+            }
+        }
 
         return $this;
     }

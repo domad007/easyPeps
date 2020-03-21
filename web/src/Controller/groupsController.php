@@ -11,10 +11,14 @@ use App\Entity\Groups;
 use App\Form\GroupType;
 use App\Entity\Periodes;
 use App\Entity\Presences;
+use App\Entity\Evaluation;
 use App\Form\AddGroupType;
 use App\Form\NewCoursType;
+use App\Entity\Competences;
 use App\Entity\CoursGroupe;
+use App\Form\EvaluationType;
 use App\Form\GroupPeriodeType;
+use App\Form\NewEvaluationType;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -216,8 +220,6 @@ class groupsController extends AbstractController {
             $manager->persist($cours);
             $manager->flush();
 
-            $this->getMoyenne($idGroup, $cours->getPeriode()->getId());
-
             $group = $manager
             ->getRepository(Classe::class)
             ->findByGroups($idGroup);
@@ -267,8 +269,9 @@ class groupsController extends AbstractController {
     /**
      * @Route("/newEvaluation/{idGroup}", name="new_evaluation")
      */
-    public function newEvaluation($idGroup){
+    public function newEvaluation(Request $request, $idGroup){
         $manager = $this->getDoctrine()->getManager();
+        $evaluation = new Evaluation();
         $rsm = new ResultSetMapping();
         $rsm->addScalarResult('ecole', 'ecole');
         $rsm->addScalarResult('groups_id', 'groups_id');
@@ -283,10 +286,21 @@ class groupsController extends AbstractController {
         $getGroup->setParameter(1, $idGroup);
         $group = $getGroup->getResult();
 
+        if(substr($group[0]['groupes'], 0, 1) == "6"){
+            $competences = $this->getDoctrine()
+            ->getRepository(Competences::class)
+            ->findBytypeCompetence('CM1');
+
+            dump($competences);
+        }
+        $form = $this->createForm(NewEvaluationType::class, $evaluation);
+
+
         return $this->render(
             'groupes/newEvaluation.html.twig',
             [
-                'group' => $group
+                'group' => $group,
+                'form' => $form->createView()
             ]
         );
     }
