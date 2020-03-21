@@ -117,9 +117,13 @@
             <tbody>
                 <tr>
                     {% for key, value in periodes %}
-                        <td>
-                            <span data-pk="{{value.id}}" data-url="{{path('modif_periode')}}" data-name="periode"> {{value.pourcentage}} </span>%
-                        </td>
+                        {% if eleves.0.0.0.classe.groups.calculAutomatique == 0 %}
+                            <td>
+                                <span data-pk="{{value.id}}" data-url="{{path('modif_periode')}}" data-name="periode"> {{value.pourcentage}} </span>%
+                            </td>
+                        {% else %}
+                            <td>{{value.pourcentage|number_format(2)}}</td>
+                        {% endif %}
                     {% endfor %}
                 </tr>
             </tbody>

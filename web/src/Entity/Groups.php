@@ -33,6 +33,11 @@ class Groups
      */
     private $periodes;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $calculAutomatique;
+
     public function __construct()
     {
         $this->classes = new ArrayCollection();
@@ -135,6 +140,18 @@ class Groups
                 $periode->setGroupe(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCalculAutomatique(): ?int
+    {
+        return $this->calculAutomatique;
+    }
+
+    public function setCalculAutomatique(?int $calculAutomatique): self
+    {
+        $this->calculAutomatique = $calculAutomatique;
 
         return $this;
     }

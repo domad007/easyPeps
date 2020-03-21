@@ -141,29 +141,32 @@ class groupsController extends AbstractController {
     public function newPeriode(Request $request, $idGroup){
         $manager = $this->getDoctrine()->getManager();
         $groups = new Groups();
+
+        $group = $this->getDoctrine()
+                ->getRepository(Groups::class)
+                ->findOneById($idGroup);
+        
         $form = $this->createForm(GroupPeriodeType::class, $groups);
-        $form->handleRequest($request);
+        $form->handleRequest($request);        
 
         if($form->isSubmitted() && $form->isValid()){
             foreach($groups->getPeriodes() as $periodes){
 
-                $group = $this->getDoctrine()
-                ->getRepository(Groups::class)
-                ->findOneById($idGroup);
                 $periodes->setGroupe($group);
-
                 $manager->persist($periodes);
                 $manager->flush();
 
             }
-            
+
             $this->addFlash('error', "Erreur lors de la création de la période, aucune période n'as été spécifée");
             return $this->redirectToRoute('journal_de_classe', ['idGroup' => $idGroup]);
         }
+
         return $this->render(
             'groupes/newPeriode.html.twig', 
             [
-                'form' => $form->createView()
+                'form' => $form->createView(),
+                'calculAuto' => $group
             ]
         );
     }
@@ -213,6 +216,8 @@ class groupsController extends AbstractController {
             $manager->persist($cours);
             $manager->flush();
 
+            $this->getMoyenne($idGroup, $cours->getPeriode()->getId());
+
             $group = $manager
             ->getRepository(Classe::class)
             ->findByGroups($idGroup);
@@ -236,7 +241,6 @@ class groupsController extends AbstractController {
                 $coursGroupe
                 ->setCoursId($cours)
                 ->setEleveId($value)
-                ->setPoints("0")
                 ->setPresences($getPresence);
 
                 $manager->persist($coursGroupe);
@@ -250,6 +254,7 @@ class groupsController extends AbstractController {
                 ]
             );
         }
+
         return $this->render(
             'groupes/newCours.html.twig', 
             [
@@ -284,6 +289,33 @@ class groupsController extends AbstractController {
                 'group' => $group
             ]
         );
+    }
+
+
+    public function getMoyenne($idGroup, $idPeriode){
+        $manager = $this->getDoctrine()->getManager();
+        $coursPeriodes = $this->getDoctrine()
+        ->getRepository(Cours::class)
+        ->findBygroupe($idGroup);
+
+        $nombreHeuresPeriode = 0;
+        $nombreHeuresTotal = 0;
+        $moyenne = 0;
+        foreach($coursPeriodes as $key => $value){    
+            $nombreHeuresTotal += $value->getNombreHeures();
+            if($value->getPeriode()->getId() == $idPeriode){
+                $nombreHeuresPeriode += $value->getNombreHeures();     
+            } 
+        }
+        $moyenne = ($nombreHeuresPeriode/$nombreHeuresTotal)*100;       
+        
+        $periode = $this->getDoctrine()
+        ->getRepository(Periodes::class)
+        ->findOneById($idPeriode);
+
+        $periode->setPourcentage($moyenne);
+        $manager->persist($periode);
+        $manager->flush();
     }
 
 }

@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
 class PeriodesType extends AbstractType
@@ -21,7 +22,7 @@ class PeriodesType extends AbstractType
                 'label' => "Pourcentage de la période",
                 'attr' => 
                 [
-                    'placeholder' => "Choisissez le nombre d'heures de cours",
+                    'placeholder' => "Le poids de la période en %",
                     'min' => 0,
                     'max' => 100
                 ]

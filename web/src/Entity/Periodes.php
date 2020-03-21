@@ -38,6 +38,7 @@ class Periodes
      */
     private $cours;
 
+
     public function __construct()
     {
         $this->cours = new ArrayCollection();

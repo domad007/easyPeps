@@ -31,7 +31,7 @@ class CoursGroupe
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $points;
+    private $points = "6";
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Presences", inversedBy="cours")

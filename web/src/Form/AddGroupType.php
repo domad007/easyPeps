@@ -38,6 +38,16 @@ class AddGroupType extends AbstractType
             ],
             'allow_add' => true,
         ])
+        ->add('calculAutomatique', ChoiceType::class, [
+            'label' => "Calcul automatique de la moyenne de la période pour ce groupe ?",
+            'choices' => 
+            [
+                'Oui' => 1,
+                'Non' => 0
+            ],
+            'expanded' => true,
+            
+        ])
         ->add('save', SubmitType::class, $contact->getConfig("Effectuez le groupement", "", "btn-primary btn-lg"))
         ;
     }

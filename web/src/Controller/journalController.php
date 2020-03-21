@@ -25,9 +25,10 @@ class journalController extends AbstractController {
 
         $manager = $this->getDoctrine()->getManager();
         $rsm = new ResultSetMapping();
-        $rsm->addScalarResult('ecole', 'ecole');
-        $rsm->addScalarResult('groups_id', 'groups_id');
-        $rsm->addScalarResult('groupes', 'groupes');
+        $rsm
+        ->addScalarResult('ecole', 'ecole')
+        ->addScalarResult('groups_id', 'groups_id')
+        ->addScalarResult('groupes', 'groupes');
 
         $groupsSql = "select ecole.nom_ecole as ecole, groups_id, GROUP_CONCAT(nom_classe SEPARATOR '/') as groupes 
         from classe
@@ -47,6 +48,7 @@ class journalController extends AbstractController {
             ]
         );
     }
+    
     /**
      * @Route("/journalDeClasse/{idGroup}", name="journal_de_classe")
      */
@@ -72,9 +74,10 @@ class journalController extends AbstractController {
         ->findBycoursId($getCours);
 
         $rsm = new ResultSetMapping();
-        $rsm->addScalarResult('ecole', 'ecole');
-        $rsm->addScalarResult('groups_id', 'groups_id');
-        $rsm->addScalarResult('groupes', 'groupes');
+        $rsm
+        ->addScalarResult('ecole', 'ecole')
+        ->addScalarResult('groups_id', 'groups_id')
+        ->addScalarResult('groupes', 'groupes');
 
         $groupsSql = "select ecole.nom_ecole as ecole, groups_id, GROUP_CONCAT(nom_classe SEPARATOR '/') as groupes 
         from classe
@@ -110,8 +113,7 @@ class journalController extends AbstractController {
                 }
             }
         }
-        
-
+    
         return $this->render(
             'journalDeClasse/journal.html.twig', 
             [
