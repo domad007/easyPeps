@@ -162,7 +162,7 @@ class groupsController extends AbstractController {
                 $manager->flush();
 
             }
-            
+
             return $this->redirectToRoute('journal_de_classe', ['idGroup' => $idGroup]);
         }
 
@@ -299,9 +299,7 @@ class groupsController extends AbstractController {
             ->getRepository(Competences::class)
             ->findBytypeCompetence('CM1');
         }*/
-
         if($form->isSubmitted() && $form->isValid()){
-
             $idGroupe = $manager
             ->getRepository(Groups::class)
             ->find($idGroup);
@@ -325,12 +323,12 @@ class groupsController extends AbstractController {
             $courss = $manager
             ->getRepository(Cours::class)
             ->findOneById($cours->getId());
-
             foreach($cours->getEvaluations() as $evaluation){
+                dump($cours->getEvaluations());
                 $evaluation->setCours($courss);
                 $manager->persist($evaluation);
-                $manager->flush();
             }
+            $manager->flush();
 
             foreach($group as $key => $value){           
                 $eleve [] = $manager
@@ -352,7 +350,7 @@ class groupsController extends AbstractController {
                 $manager->persist($coursGroupe);
             }
             $manager->flush();
-            return $this->redirectToRoute('journal_de_classe', ['idGroup' => $idGroup]);
+            //return $this->redirectToRoute('journal_de_classe', ['idGroup' => $idGroup]);
         }
 
         return $this->render(

@@ -16,7 +16,7 @@
 
 {% block container %}
 <div class="row row d-flex justify-content-center">
-    <div class="col-md-6">
+    <div class="col-md-8">
         <div class="jumbotron text-center" style="font-size: 1.3em;">
             {{form_start(form)}}
                 
@@ -44,11 +44,11 @@
 
 {% block _add_cours_evaluation_evaluations_entry_widget %}
     <div class="form-row d-flex justify-content-center" id="block_{{id}}">
-        <div class="col-md-5">
+        <div class="col-md-8">
             {{form_widget(form.heuresCompetence)}}
         </div>
-        <div class="col-md-4">
-            {{form_widget(form.competence)}}
+        <div class="col-md-3">
+            {{form_widget(form.competences)}}
         </div>
         <div class="col-md-1">
             <button type="button" data-action="delete" data-target="#block_{{id}}" class="btn btn-danger">X</button>

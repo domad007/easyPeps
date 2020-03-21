@@ -15,9 +15,9 @@ class EvaluationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('competence', EntityType::class, [
+            ->add('competences', EntityType::class, [
                 'class' => Competences::class,
-                'choice_label' => 'nomCompetence'
+                'choice_label' => 'nom'
             ])
             ->add('heuresCompetence', IntegerType::class, [
                 'attr' => 

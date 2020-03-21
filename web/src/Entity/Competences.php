@@ -21,20 +21,31 @@ class Competences
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $nomCompetence;
+    private $nom;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
+    private $description;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $degre;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Types", inversedBy="competences")
+     */
     private $typeCompetence;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Evaluation", mappedBy="competence")
+     * @ORM\OneToMany(targetEntity="App\Entity\Evaluation", mappedBy="competences")
      */
     private $evaluations;
 
     public function __construct()
     {
+        $this->evaluation = new ArrayCollection();
         $this->evaluations = new ArrayCollection();
     }
 
@@ -43,24 +54,48 @@ class Competences
         return $this->id;
     }
 
-    public function getNomCompetence(): ?string
+    public function getNom(): ?string
     {
-        return $this->nomCompetence;
+        return $this->nom;
     }
 
-    public function setNomCompetence(string $nomCompetence): self
+    public function setNom(string $nom): self
     {
-        $this->nomCompetence = $nomCompetence;
+        $this->nom = $nom;
 
         return $this;
     }
 
-    public function getTypeCompetence(): ?string
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getDegre(): ?int
+    {
+        return $this->degre;
+    }
+
+    public function setDegre(int $degre): self
+    {
+        $this->degre = $degre;
+
+        return $this;
+    }
+
+    public function getTypeCompetence(): ?Types
     {
         return $this->typeCompetence;
     }
 
-    public function setTypeCompetence(string $typeCompetence): self
+    public function setTypeCompetence(?Types $typeCompetence): self
     {
         $this->typeCompetence = $typeCompetence;
 
@@ -79,7 +114,7 @@ class Competences
     {
         if (!$this->evaluations->contains($evaluation)) {
             $this->evaluations[] = $evaluation;
-            $evaluation->setCompetence($this);
+            $evaluation->setCompetences($this);
         }
 
         return $this;
@@ -90,8 +125,8 @@ class Competences
         if ($this->evaluations->contains($evaluation)) {
             $this->evaluations->removeElement($evaluation);
             // set the owning side to null (unless already changed)
-            if ($evaluation->getCompetence() === $this) {
-                $evaluation->setCompetence(null);
+            if ($evaluation->getCompetences() === $this) {
+                $evaluation->setCompetences(null);
             }
         }
 

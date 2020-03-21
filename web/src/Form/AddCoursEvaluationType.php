@@ -25,7 +25,7 @@ class AddCoursEvaluationType extends AbstractType
                 'label' => "Nombre d'heures de cours",
                 'attr' => 
                 [
-                    'placeholder' => "Choisissez le nombre d'heures de cours",
+                    'placeholder' => "Choisissez le nombre d'heures d'évaluation",
                     'min' => 1,
                     'max' => 3,
                 ]

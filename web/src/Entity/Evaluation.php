@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -22,14 +24,15 @@ class Evaluation
     private $cours;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Competences", inversedBy="evaluations")
-     */
-    private $competence;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
     private $heuresCompetence;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Competences", inversedBy="evaluations")
+     */
+    private $competences;
+
 
     public function getId(): ?int
     {
@@ -48,18 +51,6 @@ class Evaluation
         return $this;
     }
 
-    public function getCompetence(): ?Competences
-    {
-        return $this->competence;
-    }
-
-    public function setCompetence(?Competences $competence): self
-    {
-        $this->competence = $competence;
-
-        return $this;
-    }
-
     public function getHeuresCompetence(): ?string
     {
         return $this->heuresCompetence;
@@ -68,6 +59,18 @@ class Evaluation
     public function setHeuresCompetence(string $heuresCompetence): self
     {
         $this->heuresCompetence = $heuresCompetence;
+
+        return $this;
+    }
+
+    public function getCompetences(): ?Competences
+    {
+        return $this->competences;
+    }
+
+    public function setCompetences(?Competences $competences): self
+    {
+        $this->competences = $competences;
 
         return $this;
     }
