@@ -49,11 +49,9 @@ class Cours
     private $periode;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Evaluation", mappedBy="cours", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Evaluation", mappedBy="cours")
      */
     private $evaluations;
-
-
 
     public function __construct()
     {
@@ -188,5 +186,4 @@ class Cours
 
         return $this;
     }
-
 }

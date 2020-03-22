@@ -19,11 +19,6 @@ class Evaluation
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Cours", inversedBy="evaluations")
-     */
-    private $cours;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
     private $heuresCompetence;
@@ -33,24 +28,17 @@ class Evaluation
      */
     private $competences;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Cours", inversedBy="evaluations")
+     */
+    private $cours;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getCours(): ?Cours
-    {
-        return $this->cours;
-    }
-
-    public function setCours(?Cours $cours): self
-    {
-        $this->cours = $cours;
-
-        return $this;
-    }
-
+   
     public function getHeuresCompetence(): ?string
     {
         return $this->heuresCompetence;
@@ -71,6 +59,18 @@ class Evaluation
     public function setCompetences(?Competences $competences): self
     {
         $this->competences = $competences;
+
+        return $this;
+    }
+
+    public function getCours(): ?Cours
+    {
+        return $this->cours;
+    }
+
+    public function setCours(?Cours $cours): self
+    {
+        $this->cours = $cours;
 
         return $this;
     }

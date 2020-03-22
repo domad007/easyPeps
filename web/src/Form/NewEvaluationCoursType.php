@@ -3,7 +3,8 @@
 namespace App\Form;
 
 use App\Entity\Cours;
-use App\Form\EvaluationType;
+use App\Form\ContactType;
+use App\Form\NewEvaluationType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -13,13 +14,13 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
-class AddCoursEvaluationType extends AbstractType
+class NewEvaluationCoursType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $contact = new ContactType();
         $builder
-            ->add('intitule', TextType::class, $contact->getConfig("Intitulé de l'évaluation", "Intitulé"))
+            ->add('intitule', TextType::class, $contact->getConfig("Intitulé d'évaluation", "Intitulé"))
             ->add('nombreHeures', IntegerType::class, 
             [  
                 'label' => "Nombre d'heures de cours",
@@ -41,11 +42,13 @@ class AddCoursEvaluationType extends AbstractType
                 'expanded' => true
             ])
             ->add('evaluations', CollectionType::class, [
-                'entry_type' => EvaluationType::class,
-                'entry_options' => ['label' => false],
-                'allow_add' => true,
+                'entry_type' => NewEvaluationType::class,
+                'entry_options' => 
+                [
+                    'label' => false,
+                ],
                 'label' => false,
-
+                'allow_add' => true,
             ])
             ->add('save', SubmitType::class, $contact->getConfig("Créez l'évaluation !", ""))
         ;
@@ -57,7 +60,6 @@ class AddCoursEvaluationType extends AbstractType
             'data_class' => Cours::class,
             'periodes' => array()
         ]);
-
         $resolver->setAllowedTypes('periodes', 'array');
     }
 }

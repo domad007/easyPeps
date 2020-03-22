@@ -62,10 +62,11 @@ function deleteRowPeriodes(){
 }
 
 function addEvaluation(){
+    var index = 0;
     $('#addEvaluation').click(function(){
-        const index = $('#add_cours_evaluation_evaluations div.form-group').length;
-        const form = $('#add_cours_evaluation_evaluations').data('prototype').replace(/__name__/g, index);
-        $('#add_cours_evaluation_evaluations').append(form);
+        index++;
+        const form = $('#new_evaluation_cours_evaluations').data('prototype').replace(/__name__/g, index);
+        $('#new_evaluation_cours_evaluations').append(form);
 
         deleteRowPeriodes();
     });

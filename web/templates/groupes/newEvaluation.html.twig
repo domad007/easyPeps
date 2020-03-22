@@ -19,14 +19,13 @@
     <div class="col-md-8">
         <div class="jumbotron text-center" style="font-size: 1.3em;">
             {{form_start(form)}}
-                
             {{form_end(form)}}
         </div>
     </div>    
 </div>
 {% endblock %}
 
-{% block _add_cours_evaluation_evaluations_widget %}
+{% block _new_evaluation_cours_evaluations_widget %}
 <div class="jumbotron" style="font-size: 1.3em;">
 
     {% for message in app.flashes('error') %}
@@ -35,17 +34,17 @@
         </div>
     {% endfor %} 
     <br>      
-        {{form_widget(form)}}   
+    {{form_widget(form)}}
     <div class="form-group text-center">
         <button type="button" id="addEvaluation" class="btn btn-primary">Ajoutez une évaluation !</button>
     </div>
 </div>    
 {% endblock %}
 
-{% block _add_cours_evaluation_evaluations_entry_widget %}
+{% block _new_evaluation_cours_evaluations_entry_widget %}
     <div class="form-row d-flex justify-content-center" id="block_{{id}}">
         <div class="col-md-8">
-            {{form_widget(form.heuresCompetence)}}
+           {{form_widget(form.heuresCompetence)}}
         </div>
         <div class="col-md-3">
             {{form_widget(form.competences)}}
