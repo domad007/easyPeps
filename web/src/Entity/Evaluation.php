@@ -44,14 +44,14 @@ class Evaluation
     private $groupe;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $periode;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\EvaluationGroup", mappedBy="evaluation")
      */
     private $evaluationGroups;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Periodes", inversedBy="evaluations")
+     */
+    private $periode;
 
     public function __construct()
     {
@@ -122,19 +122,7 @@ class Evaluation
 
         return $this;
     }
-
-    public function getPeriode(): ?string
-    {
-        return $this->periode;
-    }
-
-    public function setPeriode(string $periode): self
-    {
-        $this->periode = $periode;
-
-        return $this;
-    }
-
+    
     /**
      * @return Collection|EvaluationGroup[]
      */
@@ -162,6 +150,18 @@ class Evaluation
                 $evaluationGroup->setEvaluation(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPeriode(): ?Periodes
+    {
+        return $this->periode;
+    }
+
+    public function setPeriode(?Periodes $periode): self
+    {
+        $this->periode = $periode;
 
         return $this;
     }

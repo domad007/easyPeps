@@ -70,7 +70,7 @@
                             <td>{{val.classe.nomClasse}}</td>       
                             {% for key, value in val.coursGroupes|sort((a, b) => a.coursId.dateCours <=> b.coursId.dateCours) %}
                                 <td>
-                                    <select name="presence" id="presence" onchange="presenceEleve(this)" class="custom-select mr-sm-5">
+                                    <select name="presence" id="presence" onchange="presenceEleve(this)" class="custom-select col-md-4">
                                         {% if value.presences.id != 1 %}
                                             <option value="{{value.coursId.id}},{{val.id}},{{value.presences.id}}" selected>{{value.presences.abreviation}}</option>
                                         {% endif %}

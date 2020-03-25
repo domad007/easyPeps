@@ -22,8 +22,6 @@ class AddGroupType extends AbstractType
             $classes += [$value->getNomClasse() => $value->getId()];
         }
 
-        //dump($options['classes']->getId());
-
         $builder
         ->add('classes', CollectionType::class, [
             'entry_type' => ChoiceType::class,

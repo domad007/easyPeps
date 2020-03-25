@@ -18,6 +18,7 @@ use App\Entity\Competences;
 use App\Entity\CoursGroupe;
 use App\Form\GroupPeriodeType;
 use App\Form\NewEvaluationType;
+use App\Form\AddNewEvaluationsType;
 use App\Form\NewEvaluationCoursType;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Component\HttpFoundation\Request;
@@ -270,28 +271,7 @@ class groupsController extends AbstractController {
      */
     public function newEvaluation(Request $request, $idGroup){
         $manager = $this->getDoctrine()->getManager();
-        $cours = new Cours();
         $evaluation = new Evaluation();
-        $periodes = $this->getDoctrine()
-        ->getRepository(Periodes::class)
-        ->findBygroupe($idGroup);
-
-        $idGroupe = $manager
-            ->getRepository(Groups::class)
-            ->findOneById($idGroup);
-
-        $competences = $manager
-        ->getRepository(Competences::class)
-        ->findBydegre($idGroupe->getDegre()->getId());
-
-        $form = $this->createForm(NewEvaluationCoursType::class, $cours , 
-            [
-            'periodes' => $periodes,
-            'competencesDegre' => $competences        
-            ]
-        );
-
-        $form->handleRequest($request);
 
         $rsm = new ResultSetMapping();
         $rsm->addScalarResult('ecole', 'ecole');
@@ -307,50 +287,23 @@ class groupsController extends AbstractController {
         $getGroup->setParameter(1, $idGroup);
         $group = $getGroup->getResult();
 
-        if($form->isSubmitted() && $form->isValid()){
+        $idDegre = $manager
+        ->getRepository(Groups::class)
+        ->findOneById($idGroup);
 
-            $cours
-            ->setDateCours(new \DateTime())
-            ->setGroupe($idGroupe);
-            foreach($cours->getEvaluations() as $evaluation){
-                $evaluation->setCours($cours);
-                $manager->persist($evaluation);
-            }
+        $getPeriodes = $manager
+        ->getRepository(Periodes::class)
+        ->findBygroupe($idGroup);
 
-            $manager->persist($cours);
-            $manager->flush();
+        $getCompetences = $manager
+        ->getRepository(Competences::class)
+        ->findBydegre($idDegre->getDegre()->getId());
 
-
-            $group = $manager
-            ->getRepository(Classe::class)
-            ->findByGroups($idGroup);
-
-            $getPresence = $this->getDoctrine()
-            ->getRepository(Presences::class)
-            ->findOneById(1);
-
-            foreach($group as $key => $value){           
-                $eleve [] = $manager
-                ->getRepository(Eleve::class)
-                ->findOneBy(
-                    [
-                        'classe' => $value->getId()
-                    ]
-                );
-            }
-
-            foreach($eleve as $key => $value){
-                $coursGroupe = new CoursGroupe();
-                $coursGroupe
-                ->setCoursId($cours)
-                ->setEleveId($value)
-                ->setPresences($getPresence);
-
-                $manager->persist($coursGroupe);
-            }
-            $manager->flush();
-            return $this->redirectToRoute('journal_de_classe', ['idGroup' => $idGroup]);
-        }
+        $form = $this->createForm(AddNewEvaluationsType::class, $evaluation,
+            [
+                'periodes' => $getPeriodes,
+                'competences' => $getCompetences
+            ]);
 
         return $this->render(
             'groupes/newEvaluation.html.twig',

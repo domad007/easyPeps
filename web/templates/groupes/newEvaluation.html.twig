@@ -4,10 +4,6 @@
 {% form_theme form _self %}
 
 {% block header %}
-    <header class="jumbotron my-4">
-        <h1 class="display-3" style="text-align: center">Nouvelle évaluation</h1>
-        <h3 class="display-7" style="text-align: center">{{ group.0.groupes }} ({{group.0.ecole}})</h3>
-    </header>
 {% endblock %}
 
 {% block scripts %}
@@ -15,17 +11,17 @@
 {% endblock %}
 
 {% block container %}
-<div class="row row d-flex justify-content-center">
-    <div class="col-md-8">
-        <div class="jumbotron text-center" style="font-size: 1.3em;">
+    <div class="jumbotron text-center" style="font-size: 1.3em;">
+        <h3 class="display-3" style="text-align: center">Nouvelle évaluation</h3>
+        <h3 class="display-7" style="text-align: center">{{ group.0.groupes }} ({{group.0.ecole}})</h3>
+         <div class="form-row d-flex justify-content-center">
             {{form_start(form)}}
             {{form_end(form)}}
         </div>
-    </div>    
-</div>
+    </div>  
 {% endblock %}
 
-{% block _new_evaluation_cours_evaluations_widget %}
+{% block _add_new_evaluations_evaluationGroups_widget %}
 <div class="jumbotron" style="font-size: 1.3em;">
 
     {% for message in app.flashes('error') %}
@@ -41,13 +37,16 @@
 </div>    
 {% endblock %}
 
-{% block _new_evaluation_cours_evaluations_entry_widget %}
+{% block _add_new_evaluations_evaluationGroups_entry_widget %}
     <div class="form-row d-flex justify-content-center" id="block_{{id}}">
-        <div class="col-md-8">
-           {{form_widget(form.heuresCompetence)}}
+        <div class="col-md-5">    
+           {{form_widget(form.intitule)}}
         </div>
-        <div class="col-md-3">
-            {{form_widget(form.competences)}}
+        <div class="col-md-3">          
+            {{form_widget(form.competence)}}
+        </div>
+        <div class="col-md-2">
+           {{form_widget(form.heuresCompetence)}}
         </div>
         <div class="col-md-1">
             <button type="button" data-action="delete" data-target="#block_{{id}}" class="btn btn-danger">X</button>
