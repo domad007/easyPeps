@@ -47,10 +47,16 @@ class Eleve
      */
     private $coursGroupes;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\EvaluationGroup", mappedBy="eleve")
+     */
+    private $evaluationGroups;
+
     public function __construct()
     {
         $this->coursGroupes = new ArrayCollection();
         $this->evaluationGroupes = new ArrayCollection();
+        $this->evaluationGroups = new ArrayCollection();
     }
 
     
@@ -132,6 +138,37 @@ class Eleve
             // set the owning side to null (unless already changed)
             if ($coursGroupe->getEleveId() === $this) {
                 $coursGroupe->setEleveId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|EvaluationGroup[]
+     */
+    public function getEvaluationGroups(): Collection
+    {
+        return $this->evaluationGroups;
+    }
+
+    public function addEvaluationGroup(EvaluationGroup $evaluationGroup): self
+    {
+        if (!$this->evaluationGroups->contains($evaluationGroup)) {
+            $this->evaluationGroups[] = $evaluationGroup;
+            $evaluationGroup->setEleve($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvaluationGroup(EvaluationGroup $evaluationGroup): self
+    {
+        if ($this->evaluationGroups->contains($evaluationGroup)) {
+            $this->evaluationGroups->removeElement($evaluationGroup);
+            // set the owning side to null (unless already changed)
+            if ($evaluationGroup->getEleve() === $this) {
+                $evaluationGroup->setEleve(null);
             }
         }
 

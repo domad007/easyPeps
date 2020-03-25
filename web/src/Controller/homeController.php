@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Presences;
+use App\Entity\Competences;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -163,6 +165,29 @@ class homeController extends AbstractController {
     public function descriptionVMA(){
         return $this->render(
             '/contenu/outilsVMA.html.twig'
+        );
+    }
+
+    /**
+     * @Route("descriptionAbreviation", name="description_abreviation")
+     */
+    public function descriptionAbreviation(){
+        $getPresences = $this->getDoctrine()
+        ->getRepository(Presences::class)
+        ->findAll();
+
+        $getCompetences = $this->getDoctrine()
+        ->getRepository(Competences::class)
+        ->findAll();
+
+        dump($getPresences);
+        dump($getCompetences);
+        return $this->render(
+            'contenu/descriptionAbreviation.html.twig',
+            [
+                'presences' => $getPresences,
+                'competences' => $getCompetences
+            ]
         );
     }
 

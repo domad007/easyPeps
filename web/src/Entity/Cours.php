@@ -48,10 +48,6 @@ class Cours
      */
     private $periode;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Evaluation", mappedBy="cours")
-     */
-    private $evaluations;
 
     public function __construct()
     {
@@ -109,37 +105,6 @@ class Cours
     public function setGroupe(?Groups $groupe): self
     {
         $this->groupe = $groupe;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|CoursGroupe[]
-     */
-    public function getCoursGroupes(): Collection
-    {
-        return $this->coursGroupes;
-    }
-
-    public function addCoursGroupe(CoursGroupe $coursGroupe): self
-    {
-        if (!$this->coursGroupes->contains($coursGroupe)) {
-            $this->coursGroupes[] = $coursGroupe;
-            $coursGroupe->setCoursId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCoursGroupe(CoursGroupe $coursGroupe): self
-    {
-        if ($this->coursGroupes->contains($coursGroupe)) {
-            $this->coursGroupes->removeElement($coursGroupe);
-            // set the owning side to null (unless already changed)
-            if ($coursGroupe->getCoursId() === $this) {
-                $coursGroupe->setCoursId(null);
-            }
-        }
 
         return $this;
     }

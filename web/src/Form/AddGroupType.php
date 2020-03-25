@@ -39,7 +39,7 @@ class AddGroupType extends AbstractType
             'allow_add' => true,
         ])
         ->add('calculAutomatique', ChoiceType::class, [
-            'label' => "Calcul automatique de la moyenne de la période pour ce groupe ?",
+            'label' => "Pondération automatique des périodes ?",
             'choices' => 
             [
                 'Oui' => 1,
@@ -49,7 +49,7 @@ class AddGroupType extends AbstractType
             
         ])
         ->add('degre', ChoiceType::class, [
-            'label' => "Quel type de compétence ?",
+            'label' => "Choix des compétences",
             'choices' => 
             [
                 "Socles" => 1,

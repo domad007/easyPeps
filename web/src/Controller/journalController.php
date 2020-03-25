@@ -96,10 +96,6 @@ class journalController extends AbstractController {
         ->getRepository(Presences::class)
         ->findAll();
 
-        $getEvaluations = $this->getDoctrine()
-        ->getRepository(Evaluation::class)
-        ->findBycours($getCours);
-
 
         $getCompetences = $this->getDoctrine()
         ->getRepository(Competences::class)
@@ -122,11 +118,6 @@ class journalController extends AbstractController {
                     if($value->getEleveId()->getId() == $val->getId()){
                         $val->addCoursGroupe($value);
                         
-                    }
-                    foreach($getEvaluations as $cle => $valeur){
-                        if($value->getCoursId()->getId() == $valeur->getCours()->getId()){
-                            $value->getCoursId()->addEvaluation($valeur);
-                        }
                     }
                 }
             }

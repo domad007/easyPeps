@@ -33,15 +33,16 @@ class Competences
      */
     private $typeCompetence;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Evaluation", mappedBy="competences")
-     */
-    private $evaluations;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Degre", inversedBy="degre")
      */
     private $degre;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Evaluation", mappedBy="competence")
+     */
+    private $evaluations;
 
     public function __construct()
     {
@@ -90,6 +91,19 @@ class Competences
         return $this;
     }
 
+
+    public function getDegre(): ?Degre
+    {
+        return $this->degre;
+    }
+
+    public function setDegre(?Degre $degre): self
+    {
+        $this->degre = $degre;
+
+        return $this;
+    }
+
     /**
      * @return Collection|Evaluation[]
      */
@@ -102,7 +116,7 @@ class Competences
     {
         if (!$this->evaluations->contains($evaluation)) {
             $this->evaluations[] = $evaluation;
-            $evaluation->setCompetences($this);
+            $evaluation->setCompetence($this);
         }
 
         return $this;
@@ -113,22 +127,10 @@ class Competences
         if ($this->evaluations->contains($evaluation)) {
             $this->evaluations->removeElement($evaluation);
             // set the owning side to null (unless already changed)
-            if ($evaluation->getCompetences() === $this) {
-                $evaluation->setCompetences(null);
+            if ($evaluation->getCompetence() === $this) {
+                $evaluation->setCompetence(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getDegre(): ?Degre
-    {
-        return $this->degre;
-    }
-
-    public function setDegre(?Degre $degre): self
-    {
-        $this->degre = $degre;
 
         return $this;
     }

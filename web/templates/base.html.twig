@@ -24,15 +24,21 @@
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
                             {% if app.user %}
-                             <li class="nav-item">
-                                <a class="nav-link" href="{{path('journal')}}">Journal de classe</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{path('classes')}}">Mes classes</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{path('groups')}}">Mes groupes</a>
-                            </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{path('journal')}}">Journal de classe</a>
+                                </li>
+                                <li class="nav-item">
+                                    <div class="dropdown">
+                                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">Vos groupes et classes</a>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="{{path('classes')}}">Mes classes</a>
+                                            <a class="dropdown-item" href="{{path('groups')}}">Mes groupes</a>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{path('description_abreviation')}}">Description des abréviations</a>
+                                </li>
                                 <li class="nav-item">
                                     <div class="dropdown">
                                         <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">Votre compte</a>
@@ -128,8 +134,7 @@
         {% block container %}
             {% if app.user %}
                 {% set user = app.user.mail|split('@') %}
-                <div class="agenda">
-                    <h3 class="display-3">Votre agenda</h3>
+                <div class="agenda">                 
                     <div class="jumbotron" style="font-size: 1.3em;">
                         <iframe src="https://calendar.google.com/calendar/embed?src={{user[0]}}%40gmail.com" style="border: 0" width="100%" height="800" frameborder="0" scrolling="no"></iframe>
                     </div>

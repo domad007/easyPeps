@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+{% block title %} Description des abréviations {% endblock %}
+{% block header %}
+
+{% endblock %}
+
+{% block container %}
+    <div class="jumbotron" style="font-size: 1.3em;">
+        <h3 class="display-3" style="text-align: center">Description des abréviations</h3>
+
+        <div class="row d-flex justify-content-center">
+            <h3 class="display-7" style="text-align: center">Prise des présences</h3>
+            <div class="table-responsive" style="text-align: center">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Abreviation</th>
+                            <th>Description</th>
+                        </tr>    
+                    </thead>
+                    <tbody>
+                        {% for key, value in presences %}
+                        <tr>
+                            <td>{{value.abreviation}}</td>
+                            <td>{{value.libelle}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <h3 class="display-7" style="text-align: center">Compétences</h3>
+            <div class="table-responsive" style="text-align: center">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Abreviation</th>
+                            <th>Descirption</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key, value in competences %}
+                            <tr>
+                                <td></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -43,6 +43,11 @@ class Groups
      */
     private $degre;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Evaluation", mappedBy="groupe")
+     */
+    private $evaluations;
+
     public function __construct()
     {
         $this->classes = new ArrayCollection();
@@ -169,6 +174,37 @@ class Groups
     public function setDegre(?Degre $degre): self
     {
         $this->degre = $degre;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Evaluation[]
+     */
+    public function getEvaluations(): Collection
+    {
+        return $this->evaluations;
+    }
+
+    public function addEvaluation(Evaluation $evaluation): self
+    {
+        if (!$this->evaluations->contains($evaluation)) {
+            $this->evaluations[] = $evaluation;
+            $evaluation->setGroupe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvaluation(Evaluation $evaluation): self
+    {
+        if ($this->evaluations->contains($evaluation)) {
+            $this->evaluations->removeElement($evaluation);
+            // set the owning side to null (unless already changed)
+            if ($evaluation->getGroupe() === $this) {
+                $evaluation->setGroupe(null);
+            }
+        }
 
         return $this;
     }
