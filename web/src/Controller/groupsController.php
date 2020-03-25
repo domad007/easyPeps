@@ -274,13 +274,22 @@ class groupsController extends AbstractController {
     public function newEvaluation(Request $request, $idGroup){
         $manager = $this->getDoctrine()->getManager();
         $cours = new Cours();
-        //$evaluation = new Evaluation();
+        $evaluation = new Evaluation();
         $periodes = $this->getDoctrine()
         ->getRepository(Periodes::class)
         ->findBygroupe($idGroup);
 
-        $manager = $this->getDoctrine()->getManager();
+        $idGroupe = $manager
+            ->getRepository(Groups::class)
+            ->findOneById($idGroup);
+
+        $competences = $manager
+        ->getRepository(Competences::class)
+        ->findBydegre($idGroupe->getDegre()->getId());
+
+        $formEval = $this->createForm(NewEvaluationType::class, $evaluation , ['competencesDegre' => $competences]);
         $form = $this->createForm(NewEvaluationCoursType::class, $cours , ['periodes' => $periodes]);
+
         $form->handleRequest($request);
 
         $rsm = new ResultSetMapping();
@@ -298,9 +307,6 @@ class groupsController extends AbstractController {
         $group = $getGroup->getResult();
 
         if($form->isSubmitted() && $form->isValid()){
-            $idGroupe = $manager
-            ->getRepository(Groups::class)
-            ->find($idGroup);
 
             $cours
             ->setDateCours(new \DateTime())

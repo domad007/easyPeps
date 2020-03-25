@@ -38,6 +38,11 @@ class Groups
      */
     private $calculAutomatique;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Degre", inversedBy="groups")
+     */
+    private $degre;
+
     public function __construct()
     {
         $this->classes = new ArrayCollection();
@@ -152,6 +157,18 @@ class Groups
     public function setCalculAutomatique(?int $calculAutomatique): self
     {
         $this->calculAutomatique = $calculAutomatique;
+
+        return $this;
+    }
+
+    public function getDegre(): ?Degre
+    {
+        return $this->degre;
+    }
+
+    public function setDegre(?Degre $degre): self
+    {
+        $this->degre = $degre;
 
         return $this;
     }

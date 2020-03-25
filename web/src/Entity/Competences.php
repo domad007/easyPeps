@@ -29,11 +29,6 @@ class Competences
     private $description;
 
     /**
-     * @ORM\Column(type="integer")
-     */
-    private $degre;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Types", inversedBy="competences")
      */
     private $typeCompetence;
@@ -42,6 +37,11 @@ class Competences
      * @ORM\OneToMany(targetEntity="App\Entity\Evaluation", mappedBy="competences")
      */
     private $evaluations;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Degre", inversedBy="degre")
+     */
+    private $degre;
 
     public function __construct()
     {
@@ -74,18 +74,6 @@ class Competences
     public function setDescription(string $description): self
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getDegre(): ?int
-    {
-        return $this->degre;
-    }
-
-    public function setDegre(int $degre): self
-    {
-        $this->degre = $degre;
 
         return $this;
     }
@@ -129,6 +117,18 @@ class Competences
                 $evaluation->setCompetences(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDegre(): ?Degre
+    {
+        return $this->degre;
+    }
+
+    public function setDegre(?Degre $degre): self
+    {
+        $this->degre = $degre;
 
         return $this;
     }

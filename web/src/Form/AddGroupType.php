@@ -48,6 +48,15 @@ class AddGroupType extends AbstractType
             'expanded' => true,
             
         ])
+        ->add('degre', ChoiceType::class, [
+            'label' => "Quel type de compétence ?",
+            'choices' => 
+            [
+                "Socles" => 1,
+                "Terminales" => 2,
+            ],
+            'expanded' => true
+        ])
         ->add('save', SubmitType::class, $contact->getConfig("Effectuez le groupement", "", "btn-primary btn-lg"))
         ;
     }
