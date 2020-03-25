@@ -79,3 +79,11 @@ function presenceEleve(value){
     });
 
 }
+
+function modifCompetence(value){
+    $.ajax({
+        url: '/changementCompetence',
+        method: 'POST',
+        data: $(value)
+    });
+}

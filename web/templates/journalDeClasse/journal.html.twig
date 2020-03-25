@@ -42,14 +42,35 @@
                     {% for key, value in eleves.0.0.0.coursGroupes|sort((a, b) => a.coursId.dateCours <=> b.coursId.dateCours) %}                           
                         {% set dateCours = date(value.coursId.dateCours.date) %}
                         <td colspan="2" class="text-center">
+                            {% if value.coursId.evaluations is empty %}
                             <span  data-pk="{{value.coursId.id}}" data-url="{{path('modif_intitule')}}" data-name="intitule"> {{value.coursId.intitule}} </span> 
-                            <p>
-                                <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_date')}}" data-name="cours"> {{dateCours | date('d-m-Y')}}</span>
-                            </p>
-                            <small>Heures: </small>
-                            <p>
-                                <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_heures')}}" data-name="heures">{{value.coursId.nombreHeures}}</span>
-                            </p>
+                            {% else %}
+                                <span style="color: red" data-pk="{{value.coursId.id}}" data-url="{{path('modif_intitule')}}" data-name="intitule"> {{value.coursId.intitule}} </span> 
+                            {% endif %}
+                                <button class="btn btn-default" data-toggle="collapse" data-target="#cours{{value.coursId.id}}" aria-expanded="false" aria-controls="cours{{value.coursId.id}}">Description du cours > </button>
+                                
+                                <div id="cours{{value.coursId.id}}" class="collapse">                               
+                                    <p>
+                                        <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_date')}}" data-name="cours"> {{dateCours | date('d-m-Y')}}</span>
+                                    </p>
+                                    <p>
+                                        <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_heures_cours')}}" data-name="heures">{{value.coursId.nombreHeures}}</span>h
+                                    </p>
+                                    <p>
+                                        {% for key, val in value.coursId.evaluations %}
+                                            <small> 
+                                                <select name="competences" id="competences" class="custom-select" onchange="modifCompetence(this)">
+                                                    {% for cle, valeur in competences %}
+                                                        <option value="{{valeur.id}},{{val.id}}">{{valeur.nom}}</option>
+                                                    {% endfor %}
+                                                    <option value="{{val.competences.id}}" selected> {{val.competences.nom}}</option> 
+                                                </select>
+                                                <span data-pk="{{val.id}}" data-url="{{path('modif_heures_competence')}}" data-name="heures">{{val.heuresCompetence}}</span>h 
+                                            </small>
+                                            <br>
+                                        {% endfor %}
+                                    </p>
+                                </div>
                         </td>
                     {% endfor %}
                 </tr>

@@ -8,6 +8,8 @@ use App\Entity\Eleve;
 use App\Entity\Classe;
 use App\Entity\Periodes;
 use App\Entity\Presences;
+use App\Entity\Evaluation;
+use App\Entity\Competences;
 use App\Entity\CoursGroupe;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Component\HttpFoundation\Request;
@@ -94,6 +96,16 @@ class journalController extends AbstractController {
         ->getRepository(Presences::class)
         ->findAll();
 
+        $getEvaluations = $this->getDoctrine()
+        ->getRepository(Evaluation::class)
+        ->findBycours($getCours);
+
+
+        $getCompetences = $this->getDoctrine()
+        ->getRepository(Competences::class)
+        ->findBydegre($group[0]->getGroups()->getDegre()->getId());
+
+
         foreach($group as $key => $value){           
             $eleves [] = $manager
             ->getRepository(Eleve::class)
@@ -109,10 +121,17 @@ class journalController extends AbstractController {
                 foreach($getCoursGroupe as $key => $value){
                     if($value->getEleveId()->getId() == $val->getId()){
                         $val->addCoursGroupe($value);
+                        
+                    }
+                    foreach($getEvaluations as $cle => $valeur){
+                        if($value->getCoursId()->getId() == $valeur->getCours()->getId()){
+                            $value->getCoursId()->addEvaluation($valeur);
+                        }
                     }
                 }
             }
         }
+
     
         return $this->render(
             'journalDeClasse/journal.html.twig', 
@@ -121,7 +140,8 @@ class journalController extends AbstractController {
                 'ecole' => $group,
                 'eleves' => $eleves,   
                 'periodes' => $getPeriodes,
-                'presences' => $getPresences     
+                'presences' => $getPresences,
+                'competences' => $getCompetences     
             ]
         );
     }
@@ -227,9 +247,9 @@ class journalController extends AbstractController {
     }
 
     /**
-     * @Route("/modifHeures", name="modif_heures")
+     * @Route("/modifHeuresCours", name="modif_heures_cours")
      */
-    public function modifHeures(Request $request){
+    public function modifHeuresCours(Request $request){
         $manager = $this->getDoctrine()->getManager();
         if($request->isMethod('post')){
             $heures =  $request->request->all();
@@ -252,6 +272,28 @@ class journalController extends AbstractController {
     }
 
     /**
+     * @Route("/modifHeuresCompetence", name="modif_heures_competence")
+     */
+    public function modifHeuresCompetence(Request $request){
+        $manager = $this->getDoctrine()->getManager();
+
+        if($request->isMethod('post')){
+            $heures =  $request->request->all();
+
+            $evaluation = $this->getDoctrine()
+            ->getRepository(Evaluation::class)
+            ->findOneById($heures['pk']);
+
+            $evaluation->setHeuresCompetence($heures['value']);
+            $manager->persist($evaluation);
+            $manager->flush();
+        }
+
+        return new Response("");
+
+    }
+
+    /**
      * @Route("/modifPeriode", name="modif_periode")
      */
     public function modifPeriode(Request $request){
@@ -268,6 +310,31 @@ class journalController extends AbstractController {
             $manager->flush();
         }
 
+        return new Response("");
+    }
+
+    /**
+     * @Route("/changementCompetence", name="changement_competence")
+     */
+    public function chagementCompetence(Request $request){
+        $manager = $this->getDoctrine()->getManager();
+
+        if($request->isMethod('post')){
+            $competence = $request->request->all();
+            $values = explode(",", $competence['competences']);
+
+            $typeCompetence =  $this->getDoctrine()
+            ->getRepository(Competences::class)
+            ->findOneById($values[0]);
+
+            $evaluation = $this->getDoctrine()
+            ->getRepository(Evaluation::class)
+            ->findOneById($values[1]);
+
+            $evaluation->setCompetences($typeCompetence);
+            $manager->persist($evaluation);
+            $manager->flush();
+        }
         return new Response("");
     }
 }
