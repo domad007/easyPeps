@@ -335,6 +335,7 @@ class journalController extends AbstractController {
             $manager->persist($evaluation);
             $manager->flush();
         }
+        
         return new Response("");
     }
 }
