@@ -17,6 +17,7 @@ use App\Form\NewCoursType;
 use App\Entity\Competences;
 use App\Entity\CoursGroupe;
 use App\Form\GroupPeriodeType;
+use App\Entity\EvaluationGroup;
 use App\Form\NewEvaluationType;
 use App\Form\AddNewEvaluationsType;
 use App\Form\NewEvaluationCoursType;
@@ -303,7 +304,47 @@ class groupsController extends AbstractController {
             [
                 'periodes' => $getPeriodes,
                 'competences' => $getCompetences
-            ]);
+            ]
+        );
+
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+            $classes = $manager
+            ->getRepository(Classe::class)
+            ->findByGroups($idGroup);
+
+            $data = $form->getData();
+
+            foreach($classes as $key => $value){           
+                $eleve [] = $manager
+                ->getRepository(Eleve::class)
+                ->findOneBy(
+                    [
+                        'classe' => $value->getId()
+                    ]
+                );
+            }
+            
+            foreach($evaluation->getEvaluations() as $evaluations){
+                $evaluations
+                ->setDateEvaluation($data->getDateEvaluation())
+                ->setGroupe($idDegre)
+                ->setPeriode($data->getPeriode());
+
+                foreach($eleve as $key => $value){
+                    $evaluationGroup = new EvaluationGroup();
+                    $evaluationGroup->setEleve($value)
+                    ->setEvaluation($evaluations)
+                    ->setPoints("0");
+                    $evaluations->addEvaluationGroup($evaluationGroup);
+                }
+                $manager->persist($evaluations);
+            }
+
+            $manager->flush();
+            
+            return $this->redirectToRoute('journal_de_classe', ['idGroup' => $idGroup ]);
+        }
 
         return $this->render(
             'groupes/newEvaluation.html.twig',

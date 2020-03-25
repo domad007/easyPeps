@@ -65,8 +65,8 @@ function addEvaluation(){
     var index = 0;
     $('#addEvaluation').click(function(){
         index++;
-        const form = $('#add_new_evaluations_evaluationGroups').data('prototype').replace(/__name__/g, index);
-        $('#add_new_evaluations_evaluationGroups').append(form);
+        const form = $('#add_new_evaluations_evaluations').data('prototype').replace(/__name__/g, index);
+        $('#add_new_evaluations_evaluations').append(form);
 
         deleteRowPeriodes();
     });

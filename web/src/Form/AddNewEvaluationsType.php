@@ -17,7 +17,7 @@ class AddNewEvaluationsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('evaluationGroups', CollectionType::class, 
+            ->add('evaluations', CollectionType::class, 
             [
                 'entry_type' => NewEvaluationType::class,
                 'entry_options' => 
@@ -30,7 +30,8 @@ class AddNewEvaluationsType extends AbstractType
             ])
             ->add('dateEvaluation', DateType::class, [
                 'label' => "Date d'évaluation",
-                'data' => new \DateTime()
+                'data' => new \DateTime(),
+                'format' => 'dd-MM-yyyy',
             ])
             ->add('periode', ChoiceType::class, [
                 'choices' => 

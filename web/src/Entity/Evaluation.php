@@ -44,7 +44,7 @@ class Evaluation
     private $groupe;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\EvaluationGroup", mappedBy="evaluation")
+     * @ORM\OneToMany(targetEntity="App\Entity\EvaluationGroup", mappedBy="evaluation",cascade={"persist"})
      */
     private $evaluationGroups;
 
@@ -53,9 +53,12 @@ class Evaluation
      */
     private $periode;
 
+    private $evaluations;
+
     public function __construct()
     {
         $this->evaluationGroups = new ArrayCollection();
+        $this->evaluations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -123,6 +126,15 @@ class Evaluation
         return $this;
     }
     
+    
+    /**
+     * @return Collection|Evaluations[]
+     */
+    public function getEvaluations(): Collection
+    {
+        return $this->evaluations;
+    }
+
     /**
      * @return Collection|EvaluationGroup[]
      */
