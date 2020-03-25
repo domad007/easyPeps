@@ -31,7 +31,7 @@ class NewEvaluationType extends AbstractType
             ])
             ->add('competences', ChoiceType::class, [
                 'choices' => [
-                    $options['competencesDegre']
+                   $options['competencesDegre']
                 ],
                 'choice_label' => 'nom',
                 'group_by' => 'typeCompetence.intitule'

@@ -287,8 +287,12 @@ class groupsController extends AbstractController {
         ->getRepository(Competences::class)
         ->findBydegre($idGroupe->getDegre()->getId());
 
-        $formEval = $this->createForm(NewEvaluationType::class, $evaluation , ['competencesDegre' => $competences]);
-        $form = $this->createForm(NewEvaluationCoursType::class, $cours , ['periodes' => $periodes]);
+        $form = $this->createForm(NewEvaluationCoursType::class, $cours , 
+            [
+            'periodes' => $periodes,
+            'competencesDegre' => $competences        
+            ]
+        );
 
         $form->handleRequest($request);
 

@@ -42,10 +42,11 @@ class NewEvaluationCoursType extends AbstractType
                 'expanded' => true
             ])
             ->add('evaluations', CollectionType::class, [
-                'entry_type' => NewEvaluationType::class,
+                'entry_type' =>  NewEvaluationType::class,
                 'entry_options' => 
                 [
                     'label' => false,
+                    'competencesDegre' => $options['competencesDegre']
                 ],
                 'label' => false,
                 'allow_add' => true,
@@ -58,8 +59,9 @@ class NewEvaluationCoursType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Cours::class,
-            'periodes' => array()
+            'periodes' => array(),
+            'competencesDegre' => array(),
         ]);
-        $resolver->setAllowedTypes('periodes', 'array');
+        
     }
 }
