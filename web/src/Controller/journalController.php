@@ -11,6 +11,7 @@ use App\Entity\Presences;
 use App\Entity\Evaluation;
 use App\Entity\Competences;
 use App\Entity\CoursGroupe;
+use App\Entity\EvaluationGroup;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -100,7 +101,14 @@ class journalController extends AbstractController {
         $getCompetences = $this->getDoctrine()
         ->getRepository(Competences::class)
         ->findBydegre($group[0]->getGroups()->getDegre()->getId());
-
+        
+        $getEvaluations = $this->getDoctrine()
+        ->getRepository(Evaluation::class)
+        ->findBygroupe($idGroup);
+        
+        $getEvaluationsGroupe = $this->getDoctrine()
+        ->getRepository(EvaluationGroup::class)
+        ->findById($getEvaluations);
 
         foreach($group as $key => $value){           
             $eleves [] = $manager
@@ -116,12 +124,18 @@ class journalController extends AbstractController {
             foreach($value as $key => $val){
                 foreach($getCoursGroupe as $key => $value){
                     if($value->getEleveId()->getId() == $val->getId()){
-                        $val->addCoursGroupe($value);
-                        
+                        $val->addCoursGroupe($value);                      
+                    }
+                }
+                foreach($getEvaluationsGroupe as $key => $value){
+                    if($value->getEleve()->getId() == $val->getId()){
+                        $val->addEvaluationGroup($value);
                     }
                 }
             }
         }
+
+        dump($eleves);
 
     
         return $this->render(
