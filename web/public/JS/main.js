@@ -3,6 +3,7 @@ $(document).ready(function(){
     addGroup();
     addPeriodes();
     addEvaluation();
+    coursEvaluationPeriode;
 });
 
 function deleteEleve(idEleve, button){
@@ -88,17 +89,6 @@ function modifCompetence(value){
     });
 }
 
-function gestionCours(property){
-    if(property.checked){
-        $('.coursThead').fadeIn('slow');
-        $('.coursTbody').fadeIn('slow');
-    } 
-    else {
-        $('.coursThead').fadeOut('slow'); 
-        $('.coursTbody').fadeOut('slow');
-    }
-}
-
 /*function gestionEvaluation(property){
     if(property.checked){
         $('.evalThead').fadeIn('slow');
@@ -120,3 +110,41 @@ function gestionPeriodes(property, id){
         $('.periode'+id).fadeOut('slow');
     }
 }*/
+function coursEvaluation(){
+    switch($('input[name=checkboxCours]').is(':checked')){
+        case false : 
+            $('.periodeCours').fadeOut('slow');
+        break;
+        case true : 
+            $('.periodeCours').fadeIn('slow');
+        break;
+    }
+
+    switch($('input[name=checkboxEval]').is(':checked')){
+        case false : 
+            $('.periodeEval').fadeOut('slow');
+           
+        break;
+        case true : 
+            $('.periodeEval').fadeIn('slow');
+        break;
+    }
+}
+
+function coursEvaluationPeriode(property= null, idPeriode = null){
+    if(!property.checked){
+        $('.periodeEval'+idPeriode).fadeOut('slow');
+        $('.periodeCours'+idPeriode).fadeOut('slow');
+    }
+    if(property.checked && $('input[name=checkboxCours]').is(':checked') && $('input[name=checkboxEval]').is(':checked')){
+        $('.periodeEval'+idPeriode).fadeIn('slow');
+        $('.periodeCours'+idPeriode).fadeIn('slow');
+    }
+    if(property.checked && !$('input[name=checkboxCours]').is(':checked') && $('input[name=checkboxEval]').is(':checked')){
+        $('.periodeEval'+idPeriode).fadeIn('slow');
+    }
+    if(property.checked && $('input[name=checkboxCours]').is(':checked') && !$('input[name=checkboxEval]').is(':checked')){ 
+        $('.periodeCours'+idPeriode).fadeIn('slow');
+    }
+
+}
