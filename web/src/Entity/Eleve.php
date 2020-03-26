@@ -52,10 +52,10 @@ class Eleve
      */
     private $evaluationGroups;
 
+    
     public function __construct()
     {
         $this->coursGroupes = new ArrayCollection();
-        $this->evaluationGroupes = new ArrayCollection();
         $this->evaluationGroups = new ArrayCollection();
     }
 
@@ -174,5 +174,6 @@ class Eleve
 
         return $this;
     }
+
    
 }

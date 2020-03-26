@@ -136,8 +136,7 @@ class journalController extends AbstractController {
         }
 
         dump($eleves);
-
-    
+        
         return $this->render(
             'journalDeClasse/journal.html.twig', 
             [
@@ -152,7 +151,7 @@ class journalController extends AbstractController {
     }
 
     /**
-     * @Route("/modifPoints", name="modif_points")
+     * @Route("/modifPointsCours", name="modif_points_cours")
      */
     public function modifPoints(Request $request){
         $manager = $this->getDoctrine()->getManager();
@@ -209,7 +208,7 @@ class journalController extends AbstractController {
     }
 
     /**
-     * @Route("/modifDate", name="modif_date")
+     * @Route("/modifDateCours", name="modif_date_cours")
      */
     public function modifDate(Request $request){
         $manager = $this->getDoctrine()->getManager();
@@ -231,7 +230,7 @@ class journalController extends AbstractController {
     }
 
     /**
-     * @Route("/modifIntitule", name="modif_intitule")
+     * @Route("/modifIntituleCours", name="modif_intitule_cours")
      */
     public function modifIntitule(Request $request){
         $manager = $this->getDoctrine()->getManager();
@@ -277,13 +276,14 @@ class journalController extends AbstractController {
     }
 
     /**
-     * @Route("/modifHeuresCompetence", name="modif_heures_competence")
+     * @Route("/modifHeuresEval", name="modif_heures_eval")
      */
     public function modifHeuresCompetence(Request $request){
         $manager = $this->getDoctrine()->getManager();
 
         if($request->isMethod('post')){
             $heures =  $request->request->all();
+            $newDate = new \DateTime($date['value']);
 
             $evaluation = $this->getDoctrine()
             ->getRepository(Evaluation::class)
@@ -296,6 +296,72 @@ class journalController extends AbstractController {
 
         return new Response("");
 
+    }
+
+    /**
+     * @Route("modifIntituleEval", name="modif_inititule_eval")
+     */
+    public function modifIntituleEval(Request $request){
+        $manager = $this->getDoctrine()->getManager();
+
+        if($request->isMethod('post')){
+            $intitule =  $request->request->all();
+
+            $evaluation = $this->getDoctrine()
+            ->getRepository(Evaluation::class)
+            ->findOneById($intitule['pk']);
+
+            $evaluation->setIntitule($intitule['value']);
+            $manager->persist($evaluation);
+            $manager->flush();
+        }
+
+        return new Response("");
+    }
+
+    /**
+     * @Route("modifDateEval", name="modif_date_eval")
+     */
+    public function modifDateEval(Request $request){
+        $manager = $this->getDoctrine()->getManager();
+        if($request->isMethod('post')){
+            $date = $request->request->all();
+            $newDate = new \DateTime($date['value']);
+
+            $evaluation = $this->getDoctrine()
+            ->getRepository(Evaluation::class)
+            ->findOneById($date['pk']);
+
+            $evaluation->setDateEvaluation($newDate);
+            $manager->persist($evaluation);
+            $manager->flush();
+        }
+        return new Response("");
+    }
+
+    /**
+     * @Route("modifPointsEval", name="modif_points_evaluation")
+     */
+    public function modifPointsEval(Request $request){
+        $manager = $this->getDoctrine()->getManager();
+
+        if($request->isMethod('post')){
+            $points = $request->request->all();
+
+            $evalGroup = $manager
+            ->getRepository(EvaluationGroup::class)
+            ->findOneBy(
+                [
+                    'evaluation' => $points['pk'],
+                    'eleve' => $points['name']
+                ]
+            );
+            $evalGroup->setPoints($points['value']);
+            $manager->persist($evalGroup);
+            $manager->flush();
+        }
+
+        return new Response("");
     }
 
     /**
@@ -336,7 +402,7 @@ class journalController extends AbstractController {
             ->getRepository(Evaluation::class)
             ->findOneById($values[1]);
 
-            $evaluation->setCompetences($typeCompetence);
+            $evaluation->setCompetence($typeCompetence);
             $manager->persist($evaluation);
             $manager->flush();
         }

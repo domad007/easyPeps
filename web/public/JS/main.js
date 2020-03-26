@@ -87,3 +87,36 @@ function modifCompetence(value){
         data: $(value)
     });
 }
+
+function gestionCours(property){
+    if(property.checked){
+        $('.coursThead').fadeIn('slow');
+        $('.coursTbody').fadeIn('slow');
+    } 
+    else {
+        $('.coursThead').fadeOut('slow'); 
+        $('.coursTbody').fadeOut('slow');
+    }
+}
+
+/*function gestionEvaluation(property){
+    if(property.checked){
+        $('.evalThead').fadeIn('slow');
+        $('.evalTbody').fadeIn('slow');
+    } 
+    else {
+        $('.evalThead').fadeOut('slow'); 
+        $('.evalTbody').fadeOut('slow');
+    }
+}
+
+function gestionPeriodes(property, id){
+    if(property.checked){
+        $('.periode'+id).fadeIn('slow');
+        $('.periode'+id).fadeIn('slow');
+    } 
+    else {
+        $('.periode'+id).fadeOut('slow'); 
+        $('.periode'+id).fadeOut('slow');
+    }
+}*/
