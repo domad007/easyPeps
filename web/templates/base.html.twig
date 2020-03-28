@@ -37,7 +37,14 @@
                                     </div>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{path('description_abreviation')}}">Description des abréviations</a>
+                                    <div class="dropdown">
+                                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">Descriptions</a>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="{{path('description_comp_socles')}}">Compétences socles</a>
+                                            <a class="dropdown-item" href="{{path('description_comp_terminales')}}">Compétences terminales</a>
+                                            <a class="dropdown-item" href="{{path('description_presences')}}">Prise des présences</a>
+                                        </div>
+                                    </div>
                                 </li>
                                 <li class="nav-item">
                                     <div class="dropdown">

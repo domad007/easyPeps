@@ -169,24 +169,51 @@ class homeController extends AbstractController {
     }
 
     /**
-     * @Route("descriptionAbreviation", name="description_abreviation")
+     * @Route("/descriptionCompSocles", name="description_comp_socles")
      */
-    public function descriptionAbreviation(){
+    public function descriptionCompSocles(){
+
+        $getCompetences = $this->getDoctrine()
+        ->getRepository(Competences::class)
+        ->findBydegre(1);
+
+        return $this->render(
+            'contenu/descriptionCompSocles.html.twig',
+            [
+                'competences' => $getCompetences
+            ]
+        );
+    }
+
+    /**
+     * @Route("/descriptionCompTerminales", name="description_comp_terminales")
+     */
+    public function descriptionCompTerminales(){
+
+        $getCompetences = $this->getDoctrine()
+        ->getRepository(Competences::class)
+        ->findBydegre(2);
+
+        return $this->render(
+            'contenu/descriptionCompTerminales.html.twig',
+            [
+                'competences' => $getCompetences
+            ]
+        );
+    }
+
+    /**
+     * @Route("/descriptionPresences", name="description_presences")
+     */
+    public function descriptionPresecnes(){
         $getPresences = $this->getDoctrine()
         ->getRepository(Presences::class)
         ->findAll();
 
-        $getCompetences = $this->getDoctrine()
-        ->getRepository(Competences::class)
-        ->findAll();
-
-        dump($getPresences);
-        dump($getCompetences);
         return $this->render(
-            'contenu/descriptionAbreviation.html.twig',
+            'contenu/descriptionPresences.html.twig',
             [
-                'presences' => $getPresences,
-                'competences' => $getCompetences
+                'presences' => $getPresences
             ]
         );
     }

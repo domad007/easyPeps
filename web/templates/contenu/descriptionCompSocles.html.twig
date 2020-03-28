@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+{% block title %} -Compétences socles {% endblock %}
+{% block header %}
+
+{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css">
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#tableCompetences').DataTable({
+                "language": {
+                    "sInfo":           "Affichage des _TOTAL_ compétences",
+                    "sInfoEmpty":      "Affichage de l'élément 0 à 0 sur 0 élément",
+                    "sInfoFiltered":   "(filtré à partir de _MAX_ éléments au total)",
+                    "sInfoPostFix":    "",
+                    "sInfoThousands":  ",",
+                    "sLengthMenu":     "Afficher _MENU_ éléments",
+                    "sLoadingRecords": "Chargement...",
+                    "sProcessing":     "Traitement...",
+                    "sSearch":         "Rechercher :",
+                    "sZeroRecords":    "Aucun élément correspondant trouvé",
+                    "oPaginate": {
+                        "sFirst":    "Premier",
+                        "sLast":     "Dernier",
+                        "sNext":     "Suivant",
+                        "sPrevious": "Précédent"
+                    },
+                    "oAria": {
+                        "sSortAscending":  ": activer pour trier la colonne par ordre croissant",
+                        "sSortDescending": ": activer pour trier la colonne par ordre décroissant"
+                    },
+                    "select": {
+                            "rows": {
+                                "_": "%d lignes sélectionnées",
+                                "0": "Aucune ligne sélectionnée",
+                                "1": "1 ligne sélectionnée"
+                            } 
+                    }
+                }
+            });
+        })
+    </script>
+
+{% endblock %}
+{% block container %}
+    <div class="jumbotron" style="font-size: 1.3em;">
+        <div class="row d-flex justify-content-center">
+            <h3 class="display-7" style="text-align: center">Compétences socles</h3>
+            <br>
+            <div class="table-responsive" style="text-align: center">
+                <table class="table table-sm" id="tableCompetences">
+                    <thead>
+                        <tr>
+                            <th>Abreviation</th>
+                            <th>Descirption</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key, value in competences %}
+                            <tr>
+                                <td>{{value.nom}}</td>
+                                <td>{{value.description}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

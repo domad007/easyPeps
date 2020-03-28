@@ -24,11 +24,6 @@ class Periodes
     private $nomPeriode;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $pourcentage;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Groups", inversedBy="periodes")
      */
     private $groupe;
@@ -42,6 +37,16 @@ class Periodes
      * @ORM\OneToMany(targetEntity="App\Entity\Evaluation", mappedBy="periode")
      */
     private $evaluations;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $pourcentageCours;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $pourcentageEval;
 
 
     public function __construct()
@@ -67,17 +72,6 @@ class Periodes
         return $this;
     }
 
-    public function getPourcentage(): ?string
-    {
-        return $this->pourcentage;
-    }
-
-    public function setPourcentage(string $pourcentage): self
-    {
-        $this->pourcentage = $pourcentage;
-
-        return $this;
-    }
 
     public function getGroupe(): ?Groups
     {
@@ -149,6 +143,30 @@ class Periodes
                 $evaluation->setPeriode(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPourcentageCours(): ?string
+    {
+        return $this->pourcentageCours;
+    }
+
+    public function setPourcentageCours(string $pourcentageCours): self
+    {
+        $this->pourcentageCours = $pourcentageCours;
+
+        return $this;
+    }
+
+    public function getPourcentageEval(): ?string
+    {
+        return $this->pourcentageEval;
+    }
+
+    public function setPourcentageEval(string $pourcentageEval): self
+    {
+        $this->pourcentageEval = $pourcentageEval;
 
         return $this;
     }

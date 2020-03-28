@@ -265,10 +265,14 @@ class journalController extends AbstractController {
                     'id' => $heures['pk']
                 ]
             );
-
             $cours->setNombreHeures($heures['value']);
             $manager->persist($cours);
             $manager->flush();
+
+            $this->forward('App\Controller\calculController::getMoyenneCours', 
+            [
+                'idGroup' => $cours->getGroupe()->getId()
+            ]);
 
         }
 
@@ -283,7 +287,6 @@ class journalController extends AbstractController {
 
         if($request->isMethod('post')){
             $heures =  $request->request->all();
-            $newDate = new \DateTime($date['value']);
 
             $evaluation = $this->getDoctrine()
             ->getRepository(Evaluation::class)
@@ -292,6 +295,11 @@ class journalController extends AbstractController {
             $evaluation->setHeuresCompetence($heures['value']);
             $manager->persist($evaluation);
             $manager->flush();
+
+            $this->forward('App\Controller\calculController::getMoyenneEvaluation', 
+            [
+                'idGroup' => $evaluation->getGroupe()->getId()
+            ]);
         }
 
         return new Response("");

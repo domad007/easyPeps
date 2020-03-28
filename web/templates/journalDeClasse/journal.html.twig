@@ -163,6 +163,7 @@
         <table class="table" id="tablePeriode">
             <thead>
                 <tr>
+                    <th>Type</th>
                     {% for key, value in periodes %}
                         <th>{{value.nomPeriode}}</th>
                     {% endfor %}
@@ -170,13 +171,26 @@
             </thead>
             <tbody>
                 <tr>
+                    <td>Cours</td>
                     {% for key, value in periodes %}
                         {% if eleves.0.0.0.classe.groups.calculAutomatique == 0 %}
                             <td>
                                 <span data-pk="{{value.id}}" data-url="{{path('modif_periode')}}" data-name="periode"> {{value.pourcentage}} </span>%
                             </td>
                         {% else %}
-                            <td>{{value.pourcentage|number_format(2)}}</td>
+                            <td>{{value.pourcentageCours|number_format(2)}}</td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Evaluations</td>
+                    {% for key, value in periodes %}
+                        {% if eleves.0.0.0.classe.groups.calculAutomatique == 0 %}
+                            <td>
+                                <span data-pk="{{value.id}}" data-url="{{path('modif_periode')}}" data-name="periode"> {{value.pourcentage}} </span>%
+                            </td>
+                        {% else %}
+                            <td>{{value.pourcentageEval|number_format(2)}}</td>
                         {% endif %}
                     {% endfor %}
                 </tr>

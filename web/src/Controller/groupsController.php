@@ -248,8 +248,12 @@ class groupsController extends AbstractController {
 
                 $manager->persist($coursGroupe);
             }
-            
+           
             $manager->flush();
+
+            $this->forward('App\Controller\calculController::getMoyenneCours', [
+                'idGroup' => $idGroup
+            ]);
             
             return $this->redirectToRoute('journal_de_classe', 
                 [
@@ -342,6 +346,11 @@ class groupsController extends AbstractController {
             }
 
             $manager->flush();
+
+            $this->forward('App\Controller\calculController::getMoyenneEvaluation', 
+            [
+                'idGroup' => $idGroup
+            ]);
             
             return $this->redirectToRoute('journal_de_classe', ['idGroup' => $idGroup ]);
         }
@@ -353,33 +362,6 @@ class groupsController extends AbstractController {
                 'form' => $form->createView()
             ]
         );
-    }
-
-
-    public function getMoyenne($idGroup, $idPeriode){
-        $manager = $this->getDoctrine()->getManager();
-        $coursPeriodes = $this->getDoctrine()
-        ->getRepository(Cours::class)
-        ->findBygroupe($idGroup);
-
-        $nombreHeuresPeriode = 0;
-        $nombreHeuresTotal = 0;
-        $moyenne = 0;
-        foreach($coursPeriodes as $key => $value){    
-            $nombreHeuresTotal += $value->getNombreHeures();
-            if($value->getPeriode()->getId() == $idPeriode){
-                $nombreHeuresPeriode += $value->getNombreHeures();     
-            } 
-        }
-        $moyenne = ($nombreHeuresPeriode/$nombreHeuresTotal)*100;       
-        
-        $periode = $this->getDoctrine()
-        ->getRepository(Periodes::class)
-        ->findOneById($idPeriode);
-
-        $periode->setPourcentage($moyenne);
-        $manager->persist($periode);
-        $manager->flush();
     }
 
 }
