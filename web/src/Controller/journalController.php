@@ -151,7 +151,6 @@ class journalController extends AbstractController {
                 'periodes' => $getPeriodes,
                 'presences' => $getPresences,
                 'competences' => $getCompetences,
-                'competencesPeriode' => $getCompetencesPeriode
             ]
         );
     }

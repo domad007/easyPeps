@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} -Cahier de côtes {% endblock %}
+
+{% block header %}
+    <!-- Jumbotron Header -->
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">Cahier de côtes</h1>
+        <h3 class="display-7" style="text-align: center">Choisissez le groupe</h3>
+        <div class="row d-flex justify-content-center">
+            <select name="groups" id="groups" class="custom-select col-sm-6" onchange="window.location.href=this.value">
+                <option value="#"></option>
+                {% for key, value in groups %}
+                    <optgroup label="{{value.ecole}}">
+                        <option value="{{path('cahier_cotes', {idGroup: value.groups_id})}}">{{value.groupes}}</option>
+                    </optgroup>
+                {% endfor %}
+            </select>
+        </div>
+    </header>
+{% endblock %}
+
+{% block container %}
+
+{% endblock %}
