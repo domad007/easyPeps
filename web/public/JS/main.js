@@ -3,7 +3,6 @@ $(document).ready(function(){
     addGroup();
     addPeriodes();
     addEvaluation();
-    coursEvaluationPeriode;
 });
 
 function deleteEleve(idEleve, button){

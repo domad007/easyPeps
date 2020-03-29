@@ -74,7 +74,9 @@
                                         <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_heures_cours')}}" data-name="heures">{{value.coursId.nombreHeures}}</span>h
                                     </p>
                                     <p>
-                    
+                                    <p>
+                                        Evalué sur <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_cote_cours')}}">{{value.coursId.surCombien}}</span>
+                                    </p>
                                 </div>
                             </td>
                         {% endfor %}                
@@ -91,12 +93,15 @@
                                     <span data-pk="{{value.evaluation.id}}" data-url="{{path('modif_heures_eval')}}">{{value.evaluation.heuresCompetence}}</span>h
                                 </p>
                                 <p>
-                                    <select name="competences" id="competences" class="custom-select col-40" onchange="modifCompetence(this)">
+                                    <select name="competences" id="competences" class="custom-select" style="width: 70px" onchange="modifCompetence(this)">
                                         {% for key, val in competences %}
                                             <option value=" {{val.id}}, {{value.evaluation.id}}">{{val.nom}}</option>
                                         {% endfor %}
                                         <option value="{{value.evaluation.competence.id}}" selected>{{value.evaluation.competence.nom}}</option>
                                     </select>
+                                </p>
+                                <p>
+                                    Evalué sur <span data-pk="{{value.evaluation.id}}" data-url="{{path('modif_cote_eval')}}">{{value.evaluation.surCombien}}</span>
                                 </p>
                             </div>
                         </td>
@@ -113,7 +118,7 @@
                             <td>{{val.classe.nomClasse}}</td>       
                             {% for key, value in val.coursGroupes|sort((a, b) => a.coursId.dateCours <=> b.coursId.dateCours) %}
                                 <td class="periodeCours periodeCours{{value.coursId.periode.id}}">
-                                    <select name="presence" id="presence" onchange="presenceEleve(this)" class="custom-select col-md-5">
+                                    <select name="presence" id="presence" onchange="presenceEleve(this)" class="custom-select" style="width: 60px">
                                         {% if value.presences.id != 1 %}
                                             <option value="{{value.coursId.id}},{{val.id}},{{value.presences.id}}" selected>{{value.presences.abreviation}}</option>
                                         {% endif %}
@@ -127,7 +132,7 @@
                                 </td>
                             {% endfor %}
                             {% for key, value in val.evaluationGroups|sort((a,b) => a.evaluation.dateEvaluation <=> b.evaluation.dateEvaluation) %}
-                                <td class="periodeEval periodeEval{{value.evaluation.periode.id}}">
+                                <td class="periodeEval periodeEval{{value.evaluation.periode.id}}" style="text-align: center">
                                     <span data-pk="{{value.evaluation.id}}" data-name="{{val.id}}" data-url="{{path('modif_points_evaluation')}}">{{value.points}}</span>
                                 </td>
                             {% endfor %}
@@ -152,7 +157,7 @@
     </div>
 </div>
 <div class="jumbotron" style="font-size: 1.3em;">
-    <h3 class="display-7" style="text-align: center">Pourcentage des périodes pour le Travail Journalier</h3>
+    <h3 class="display-7" style="text-align: center">Pourcentage des périodes pour le travail journalier et evaluation</h3>
     {% for message in app.flashes('error') %}
         <div class="alert alert-danger">
             {{ message }}

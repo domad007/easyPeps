@@ -31,6 +31,14 @@ class NewCoursType extends AbstractType
                     'max' => 3,
                 ]
             ])
+            ->add('surCombien', IntegerType::class, 
+            [
+                'attr' => 
+                [
+                    'placeholder' => "Sur combien évaluer",
+                    'min' => 1,
+                ]
+            ])
             ->add('periode', ChoiceType::class, 
             [
                 'choices' => 

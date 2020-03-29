@@ -101,6 +101,11 @@ class journalController extends AbstractController {
         $getCompetences = $this->getDoctrine()
         ->getRepository(Competences::class)
         ->findBydegre($group[0]->getGroups()->getDegre()->getId());
+
+        $getCompetencesPeriode = $this->forward('App\Controller\calculController::getMoyenneCompetence', 
+        [
+            'idGroup' => $idGroup
+        ]);
         
         $getEvaluations = $this->getDoctrine()
         ->getRepository(Evaluation::class)
@@ -145,7 +150,8 @@ class journalController extends AbstractController {
                 'eleves' => $eleves,   
                 'periodes' => $getPeriodes,
                 'presences' => $getPresences,
-                'competences' => $getCompetences     
+                'competences' => $getCompetences,
+                'competencesPeriode' => $getCompetencesPeriode
             ]
         );
     }
@@ -279,6 +285,27 @@ class journalController extends AbstractController {
         return new Response("");
     }
 
+     /**
+     * @Route("/modifCoteCours", name="modif_cote_cours")
+     */
+    public function modfiCoteCours(Request $request){
+        $manager = $this->getDoctrine()->getManager();
+
+        if($request->isMethod('post')){
+            $cote = $request->request->all();
+
+            $cours = $manager
+            ->getRepository(Cours::class)
+            ->findOneById($cote['pk']);
+
+            $cours->setSurCombien($cote['value']);
+            $manager->persist($cours);
+            $manager->flush();
+        }
+
+        return new Response("");
+    }
+
     /**
      * @Route("/modifHeuresEval", name="modif_heures_eval")
      */
@@ -297,6 +324,11 @@ class journalController extends AbstractController {
             $manager->flush();
 
             $this->forward('App\Controller\calculController::getMoyenneEvaluation', 
+            [
+                'idGroup' => $evaluation->getGroupe()->getId()
+            ]);
+
+            $this->forward('App\Controller\calculController::getMoyenneCompetence', 
             [
                 'idGroup' => $evaluation->getGroupe()->getId()
             ]);
@@ -416,5 +448,27 @@ class journalController extends AbstractController {
         }
         
         return new Response("");
+    }
+
+     /**
+     * @Route("/modifCoteEval", name="modif_cote_eval")
+     */
+    public function modfiCoteEval(Request $request){
+        $manager = $this->getDoctrine()->getManager();
+
+        if($request->isMethod('post')){
+            $cote = $request->request->all();
+
+            $evaluation = $manager
+            ->getRepository(Evaluation::class)
+            ->findOneById($cote['pk']);
+
+            $evaluation->setSurCombien($cote['value']);
+            $manager->persist($evaluation);
+            $manager->flush();
+        }
+
+        return new Response("");
+        
     }
 }

@@ -37,6 +37,14 @@ class NewEvaluationType extends AbstractType
                 'choice_label' => 'nom',
                 'group_by' => 'typeCompetence.intitule'
             ])
+            ->add('surCombien', IntegerType::class, 
+            [
+                'attr' => 
+                [
+                    'placeholder' => "Sur combien évaluer",
+                    'min' => 1
+                ]
+            ])
         ;
     }
 

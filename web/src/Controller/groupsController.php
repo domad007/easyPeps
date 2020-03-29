@@ -351,6 +351,11 @@ class groupsController extends AbstractController {
             [
                 'idGroup' => $idGroup
             ]);
+
+            $this->forward('App\Controller\calculController::getMoyenneCompetence', 
+            [
+                'idGroup' => $idGroup
+            ]);
             
             return $this->redirectToRoute('journal_de_classe', ['idGroup' => $idGroup ]);
         }

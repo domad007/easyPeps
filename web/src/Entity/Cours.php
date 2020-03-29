@@ -48,6 +48,11 @@ class Cours
      */
     private $periode;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $surCombien;
+
 
     public function __construct()
     {
@@ -148,6 +153,18 @@ class Cours
                 $evaluation->setCours(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSurCombien(): ?string
+    {
+        return $this->surCombien;
+    }
+
+    public function setSurCombien(string $surCombien): self
+    {
+        $this->surCombien = $surCombien;
 
         return $this;
     }

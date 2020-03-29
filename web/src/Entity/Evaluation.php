@@ -55,6 +55,11 @@ class Evaluation
 
     private $evaluations;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $surCombien;
+
     public function __construct()
     {
         $this->evaluationGroups = new ArrayCollection();
@@ -174,6 +179,18 @@ class Evaluation
     public function setPeriode(?Periodes $periode): self
     {
         $this->periode = $periode;
+
+        return $this;
+    }
+
+    public function getSurCombien(): ?string
+    {
+        return $this->surCombien;
+    }
+
+    public function setSurCombien(string $surCombien): self
+    {
+        $this->surCombien = $surCombien;
 
         return $this;
     }

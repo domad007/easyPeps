@@ -11,6 +11,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class calculController extends AbstractController {
 
     public function getMoyenneCours($idGroup){
+        $nombreHeuresPeriode = 0;
+        $nombreHeuresTotal = 0;
+        $moyenne = 0;
+
         $manager = $this->getDoctrine()->getManager();
 
         $coursPeriodes = $this->getDoctrine()
@@ -20,10 +24,6 @@ class calculController extends AbstractController {
         $periodes = $this->getDoctrine()
         ->getRepository(Periodes::class)
         ->findBygroupe($idGroup); 
-
-        $nombreHeuresPeriode = 0;
-        $nombreHeuresTotal = 0;
-        $moyenne = 0;
         
         foreach($coursPeriodes as $key => $val){
             $nombreHeuresTotal += $val->getNombreHeures();
@@ -46,6 +46,11 @@ class calculController extends AbstractController {
     }
     
     public function getMoyenneEvaluation($idGroup){
+        $nombreHeuresPeriode = 0;
+        $nombreHeuresTotal = 0;
+        $heuresCompetence = 0;
+        $moyenne = 0;
+
         $manager = $this->getDoctrine()->getManager();
 
         $evaluation = $this->getDoctrine()
@@ -55,10 +60,6 @@ class calculController extends AbstractController {
         $periodes = $this->getDoctrine()
         ->getRepository(Periodes::class)
         ->findBygroupe($idGroup); 
-
-        $nombreHeuresPeriode = 0;
-        $nombreHeuresTotal = 0;
-        $moyenne = 0;
         
         foreach($evaluation as $key => $val){
             $nombreHeuresTotal += $val->getHeuresCompetence();
@@ -78,5 +79,39 @@ class calculController extends AbstractController {
             }
         }
         $manager->flush();
+        return new Response("");
+    }
+
+    public function getMoyenneCompetence($idGroup){
+        $nombreHeuresCompetence = 0;
+        $nombreHeuresTotal = 0;
+        $moyenne = 0;
+        $heuresParPeriode = 0;
+
+        $evaluation = $this->getDoctrine()
+        ->getRepository(Evaluation::class)
+        ->findBygroupe($idGroup);
+        
+        $periodes = $this->getDoctrine()
+        ->getRepository(Periodes::class)
+        ->findBygroupe($idGroup); 
+
+        foreach($evaluation as $key => $val){
+            if($val->getPeriode()->getId()){                  
+                $heuresPeriodes[$val->getPeriode()->getId()][] = $val->getHeuresCompetence();
+            }
+            if($val->getPeriode()->getId() && $val->getCompetence()->getId()){
+                $heuresCompetence[$val->getPeriode()->getNomPeriode()][$val->getCompetence()->getNom()][] = $val->getHeuresCompetence();
+            }
+        }
+
+        foreach($heuresCompetence as $key => $value){
+            foreach($value as $cle => $val){
+                $nombreHeuresCompetence = array_sum($val);
+                $heures[$key][$cle] = $nombreHeuresCompetence;
+            
+            }
+        }
+        return $heures;
     }
 }
