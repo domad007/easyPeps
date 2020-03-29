@@ -14,8 +14,21 @@
     <script src="/JS/main.js"></script>
     <script>
         $(document).ready(function(){
-            $('#tableJournal span').editable();
-            $('#tablePeriode span').editable(); 
+            $('#tableJournal span').editable({
+                'emptytext' : "Le champ le peut pas être vide",
+                validate: function(value) {
+                    if($.trim(value) == '') {
+                        return 'Le champ ne peut pas être vide';
+                    }
+                },
+                error: function(response, newValue) {
+                    if(response.status != 200) {
+                        return "Veuillez respecter l'annotation de base";
+                    } else {
+                        return response.responseText;
+                    }
+                }
+            });
         });
     </script>
 {% endblock %}
@@ -65,7 +78,7 @@
                         {% for key, value in eleves.0.0.0.coursGroupes|sort((a,b) => a.coursId.dateCours <=> b.coursId.dateCours) %}                           
                             {% set dateCours = date(value.coursId.dateCours.date) %}
                             <td colspan="2" class="text-center periodeCours periodeCours{{value.coursId.periode.id}}" style="font-size: 0.8em">
-                                <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_intitule_cours')}}" data-name="intitule"> {{value.coursId.intitule}} </span>                             
+                                <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_intitule_cours')}}" data-name="intitule" class="editable editable-click editable-empty editable-open"> {{value.coursId.intitule}} </span>                             
                                 <div id="cours" class="collapse">                               
                                     <p>
                                         <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_date_cours')}}" data-name="cours"> {{dateCours | date('d-m-Y')}}</span>

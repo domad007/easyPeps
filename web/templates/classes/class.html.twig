@@ -16,7 +16,20 @@
     <script src="/JS/main.js"></script>
     <script>
     $(document).ready(function(){
-        $('#table p').editable();
+        $('#table p').editable({
+            validate: function(value) {
+                    if($.trim(value) == '') {
+                        return 'Le champ ne peut pas être vide';
+                    }
+            },
+            error: function(response, newValue) {
+                if(response.status != 200) {
+                    return "Veuillez respecter l'annotation de base";
+                } else {
+                    return response.responseText;
+                }
+            }
+        });
     });
     </script>
 {% endblock %}
