@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -39,6 +41,23 @@ class Eleve
      * @ORM\JoinColumn(nullable=false)
      */
     private $classe;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\CoursGroupe", mappedBy="eleveId")
+     */
+    private $coursGroupes;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\EvaluationGroup", mappedBy="eleve")
+     */
+    private $evaluationGroups;
+
+    
+    public function __construct()
+    {
+        $this->coursGroupes = new ArrayCollection();
+        $this->evaluationGroups = new ArrayCollection();
+    }
 
     
     public function getId(): ?int
@@ -90,6 +109,68 @@ class Eleve
     public function setClasse(?Classe $classe): self
     {
         $this->classe = $classe;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CoursGroupe[]
+     */
+    public function getCoursGroupes(): Collection
+    {
+        return $this->coursGroupes;
+    }
+
+    public function addCoursGroupe(CoursGroupe $coursGroupe): self
+    {
+        if (!$this->coursGroupes->contains($coursGroupe)) {
+            $this->coursGroupes[] = $coursGroupe;
+            $coursGroupe->setEleveId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCoursGroupe(CoursGroupe $coursGroupe): self
+    {
+        if ($this->coursGroupes->contains($coursGroupe)) {
+            $this->coursGroupes->removeElement($coursGroupe);
+            // set the owning side to null (unless already changed)
+            if ($coursGroupe->getEleveId() === $this) {
+                $coursGroupe->setEleveId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|EvaluationGroup[]
+     */
+    public function getEvaluationGroups(): Collection
+    {
+        return $this->evaluationGroups;
+    }
+
+    public function addEvaluationGroup(EvaluationGroup $evaluationGroup): self
+    {
+        if (!$this->evaluationGroups->contains($evaluationGroup)) {
+            $this->evaluationGroups[] = $evaluationGroup;
+            $evaluationGroup->setEleve($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvaluationGroup(EvaluationGroup $evaluationGroup): self
+    {
+        if ($this->evaluationGroups->contains($evaluationGroup)) {
+            $this->evaluationGroups->removeElement($evaluationGroup);
+            // set the owning side to null (unless already changed)
+            if ($evaluationGroup->getEleve() === $this) {
+                $evaluationGroup->setEleve(null);
+            }
+        }
 
         return $this;
     }

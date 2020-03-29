@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Presences;
+use App\Entity\Competences;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,7 +15,7 @@ class homeController extends AbstractController {
      * @Route("/", name="homepage")
      */
 
-    public function home(){
+    public function home(){      
         return $this->render(
             'base.html.twig'
         );
@@ -163,6 +165,56 @@ class homeController extends AbstractController {
     public function descriptionVMA(){
         return $this->render(
             '/contenu/outilsVMA.html.twig'
+        );
+    }
+
+    /**
+     * @Route("/descriptionCompSocles", name="description_comp_socles")
+     */
+    public function descriptionCompSocles(){
+
+        $getCompetences = $this->getDoctrine()
+        ->getRepository(Competences::class)
+        ->findBydegre(1);
+
+        return $this->render(
+            'contenu/descriptionCompSocles.html.twig',
+            [
+                'competences' => $getCompetences
+            ]
+        );
+    }
+
+    /**
+     * @Route("/descriptionCompTerminales", name="description_comp_terminales")
+     */
+    public function descriptionCompTerminales(){
+
+        $getCompetences = $this->getDoctrine()
+        ->getRepository(Competences::class)
+        ->findBydegre(2);
+
+        return $this->render(
+            'contenu/descriptionCompTerminales.html.twig',
+            [
+                'competences' => $getCompetences
+            ]
+        );
+    }
+
+    /**
+     * @Route("/descriptionPresences", name="description_presences")
+     */
+    public function descriptionPresecnes(){
+        $getPresences = $this->getDoctrine()
+        ->getRepository(Presences::class)
+        ->findAll();
+
+        return $this->render(
+            'contenu/descriptionPresences.html.twig',
+            [
+                'presences' => $getPresences
+            ]
         );
     }
 

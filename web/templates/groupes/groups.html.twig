@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} -Mes Groupes {% endblock %} 
+{% block header %}
+{% endblock %}
+{% block container %}
+<div class="mesGroupes">
+    <div class="jumbotron" style="font-size: 1.3em;">
+        <div class="text-center">
+            <h3 class="display-3">Vos groupes</h3>
+        </div>  
+        <div class="row d-flex justify-content-center">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}  
+        </div> 
+        <div class="row d-flex justify-content-center">
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-error">
+                    {{ message }}
+                </div>
+            {% endfor %}  
+        </div>      
+        <div class="row d-flex justify-content-center">
+            <h4 class="display-10">Choisissez l'école dans laquelle vous souhaitez grouper les classes: </h1>
+            <div class="col-8">
+                <select name="ecole" id="ecole" class="custom-select my-1 mr-sm-2" onchange="location = this.value">
+                    <option value=""></option>
+                    {% for key, value in ecoles %}
+                        <option value="{{path('new_group', {idEcole: value.id})}}">{{value.nomEcole}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div> 
+        <br>
+        <div style="text-align: center">
+            <table class="table">  
+                <tr>
+                    <th>Nom école</th>
+                    <th>Groupes</th>
+                    <th>Nombre d'élèves</th>
+                </tr> 
+            {% for row in groups|batch(2) %}
+                {% for key, value in row %}
+                    <tr>                
+                        <td>{{value.ecole}} </td>          
+                        <td>
+                            <a href="{{path("group", {idGroup: value.groups_id})}}">{{ value.groupes|upper }}</a> 
+                        </td> 
+                        <td>{{value.nombreEleves}}</td>                                    
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+            <table>     
+        </div>
+    </div>
+</div>
+
+{% endblock %}

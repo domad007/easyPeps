@@ -1,0 +1,206 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} -Journal de classe {% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/CSS/scripts/editable.css">
+{% endblock %}
+
+{% block scripts %}
+    <script src="/JS/scripts/editable.js"></script>
+    <script src="/JS/main.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#tableJournal span').editable();
+            $('#tablePeriode span').editable(); 
+        });
+    </script>
+{% endblock %}
+{% block container %}
+
+<div class="jumbotron" style="font-size: 1.3em;">
+    <h3 class="display-7" style="text-align: center">Journal de classe</h3>
+    <h5 class="display-10" style="text-align: center">{{ecole.0.ecole.nomEcole}}</h3>
+
+    <div class="row d-flex justify-content-center">
+        <a href="{{path('new_cours', {idGroup: ecole.0.groups.id})}}" style="margin-right:10px;" class="btn btn-primary btn-md" style="text-align: center">Nouveau cours</a>
+        <a href="{{path('new_evaluation', {idGroup: ecole.0.groups.id})}}" style="margin-right:10px;" class="btn btn-primary btn-md" style="text-align: center">Nouvelle évaluation</a>
+        <a href="#" class="btn btn-primary btn-md" style="text-align: center">Plannification de cycle</a>
+    </div>
+    <br>
+    <div class="row d-flex justify-content-center">  
+        <div class="col col-md-3" style="font-size: 0.7em;">
+            <input type="checkbox" name="checkboxCours" id="checkboxCours" onchange="coursEvaluation()" checked>
+            <label for="checkboxCours">Cours</label>
+        </div>
+        <div class="col col-md-3" style="font-size: 0.7em;">
+            <input type="checkbox" name="checkboxEval" id="checkboxEval" onchange="coursEvaluation()" checked>
+            <label for="checkboxEval">Evaluations</label>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-center">
+        {% for key, value in periodes %}
+            <div class="col col-md-3" style="font-size: 0.7em;">
+                <input type="checkbox" name="{{value.id}}" id="{{value.id}}" onchange="coursEvaluationPeriode(this, {{value.id}})" checked>
+                <label for="{{value.id}}">{{value.nomPeriode}}</label>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="row">
+        <div class="col">                    
+            <button id="description" class="btn btn-default" data-toggle="collapse" data-target="#cours" aria-expanded="false" aria-controls="cours" style="font-size: 0.7em;">Description des cours > </button>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table" id="tableJournal">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nom</th>
+                    <th>Prenom</th>
+                    <th>Classe</th>
+                        {% for key, value in eleves.0.0.0.coursGroupes|sort((a,b) => a.coursId.dateCours <=> b.coursId.dateCours) %}                           
+                            {% set dateCours = date(value.coursId.dateCours.date) %}
+                            <td colspan="2" class="text-center periodeCours periodeCours{{value.coursId.periode.id}}" style="font-size: 0.8em">
+                                <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_intitule_cours')}}" data-name="intitule"> {{value.coursId.intitule}} </span>                             
+                                <div id="cours" class="collapse">                               
+                                    <p>
+                                        <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_date_cours')}}" data-name="cours"> {{dateCours | date('d-m-Y')}}</span>
+                                    </p>
+                                    <p>
+                                        <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_heures_cours')}}" data-name="heures">{{value.coursId.nombreHeures}}</span>h
+                                    </p>
+                                    <p>
+                                    <p>
+                                        Evalué sur <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_cote_cours')}}">{{value.coursId.surCombien}}</span>
+                                    </p>
+                                </div>
+                            </td>
+                        {% endfor %}                
+                    {% for key, value in eleves.0.0.0.evaluationGroups|sort((a,b) => a.evaluation.dateEvaluation <=> b.evaluation.dateEvaluation) %}
+                        {% set dateEval = date(value.evaluation.dateEvaluation) %}
+
+                        <td class="text-center periodeEval periodeEval{{value.evaluation.periode.id}}" style="font-size: 0.8em">
+                            <span data-pk="{{value.evaluation.id}}" data-url="{{path('modif_inititule_eval')}}">{{value.evaluation.intitule}}</span>
+                            <div id="cours" class="collapse">
+                                <p>
+                                    <span data-pk="{{value.evaluation.id}}" data-url="{{path('modif_date_eval')}}">{{dateEval | date('d-m-Y')}}</span>
+                                </p>
+                                <p>
+                                    <span data-pk="{{value.evaluation.id}}" data-url="{{path('modif_heures_eval')}}">{{value.evaluation.heuresCompetence}}</span>h
+                                </p>
+                                <p>
+                                    <select name="competences" id="competences" class="custom-select" style="width: 70px" onchange="modifCompetence(this)">
+                                        {% for key, val in competences %}
+                                            <option value=" {{val.id}}, {{value.evaluation.id}}">{{val.nom}}</option>
+                                        {% endfor %}
+                                        <option value="{{value.evaluation.competence.id}}" selected>{{value.evaluation.competence.nom}}</option>
+                                    </select>
+                                </p>
+                                <p>
+                                    Evalué sur <span data-pk="{{value.evaluation.id}}" data-url="{{path('modif_cote_eval')}}">{{value.evaluation.surCombien}}</span>
+                                </p>
+                            </div>
+                        </td>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody> 
+                {% for key, value in eleves %}
+                    <tr>
+                        <td id="nombreEleve">{{loop.index}}</td>
+                        {% for key, val in value %}
+                            <td id="nom">{{val.nom}}</td>
+                            <td id="prenom">{{val.prenom}}</td>
+                            <td>{{val.classe.nomClasse}}</td>       
+                            {% for key, value in val.coursGroupes|sort((a, b) => a.coursId.dateCours <=> b.coursId.dateCours) %}
+                                <td class="periodeCours periodeCours{{value.coursId.periode.id}}">
+                                    <select name="presence" id="presence" onchange="presenceEleve(this)" class="custom-select" style="width: 60px">
+                                        {% if value.presences.id != 1 %}
+                                            <option value="{{value.coursId.id}},{{val.id}},{{value.presences.id}}" selected>{{value.presences.abreviation}}</option>
+                                        {% endif %}
+                                        {% for key, presence in presences %}
+                                            <option value="{{value.coursId.id}},{{val.id}},{{presence.id}}">{{presence.abreviation}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td class="periodeCours periodeCours{{value.coursId.periode.id}}">
+                                    <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_points_cours')}}" data-name="{{val.id}}">{{value.points}}</span>
+                                </td>
+                            {% endfor %}
+                            {% for key, value in val.evaluationGroups|sort((a,b) => a.evaluation.dateEvaluation <=> b.evaluation.dateEvaluation) %}
+                                <td class="periodeEval periodeEval{{value.evaluation.periode.id}}" style="text-align: center">
+                                    <span data-pk="{{value.evaluation.id}}" data-name="{{val.id}}" data-url="{{path('modif_points_evaluation')}}">{{value.points}}</span>
+                                </td>
+                            {% endfor %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}                   
+            </tbody>
+        </table>
+    </div>      
+</div>
+<div class="jumbotron my-4">
+    <h5 class="display-7" style="text-align: center">Changez le groupe: </h3>
+    <div class="row d-flex justify-content-center">
+        <select name="groups" id="groups" class="custom-select col-md-6" onchange="window.location.href=this.value">
+            <option value="#"></option>
+            {% for key, value in groups %}
+                <optgroup label="{{value.ecole}}">
+                    <option value="{{path('journal_de_classe', {idGroup: value.groups_id})}}">{{value.groupes}}</option>
+                </optgroup>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+<div class="jumbotron" style="font-size: 1.3em;">
+    <h3 class="display-7" style="text-align: center">Pourcentage des périodes pour le travail journalier et evaluation</h3>
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+    <div class="row d-flex justify-content-center">        
+        <a href="{{path('new_periode', {idGroup: eleves.0.0.0.classe.groups.id})}}">Ajouter les périodes</a>
+        <table class="table" id="tablePeriode">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    {% for key, value in periodes %}
+                        <th>{{value.nomPeriode}}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Cours</td>
+                    {% for key, value in periodes %}
+                        {% if eleves.0.0.0.classe.groups.calculAutomatique == 0 %}
+                            <td>
+                                <span data-pk="{{value.id}}" data-url="{{path('modif_periode')}}" data-name="periode"> {{value.pourcentage}} </span>%
+                            </td>
+                        {% else %}
+                            <td>{{value.pourcentageCours|number_format(2)}}</td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Evaluations</td>
+                    {% for key, value in periodes %}
+                        {% if eleves.0.0.0.classe.groups.calculAutomatique == 0 %}
+                            <td>
+                                <span data-pk="{{value.id}}" data-url="{{path('modif_periode')}}" data-name="periode"> {{value.pourcentage}} </span>%
+                            </td>
+                        {% else %}
+                            <td>{{value.pourcentageEval|number_format(2)}}</td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
