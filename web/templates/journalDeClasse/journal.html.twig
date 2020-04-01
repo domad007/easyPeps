@@ -130,15 +130,28 @@
                             <td id="prenom">{{val.prenom}}</td>
                             <td>{{val.classe.nomClasse}}</td>       
                             {% for key, value in val.coursGroupes|sort((a, b) => a.coursId.dateCours <=> b.coursId.dateCours) %}
-                                <td class="periodeCours periodeCours{{value.coursId.periode.id}}">
-                                    <select name="presence" id="presence" onchange="presenceEleve(this)" class="custom-select" style="width: 60px">
-                                        {% if value.presences.id != 1 %}
-                                            <option value="{{value.coursId.id}},{{val.id}},{{value.presences.id}}" selected>{{value.presences.abreviation}}</option>
-                                        {% endif %}
-                                        {% for key, presence in presences %}
-                                            <option value="{{value.coursId.id}},{{val.id}},{{presence.id}}">{{presence.abreviation}}</option>
-                                        {% endfor %}
-                                    </select>
+                                <td class="periodeCours periodeCours{{value.coursId.periode.id}}">                           
+                                    {% if value.customizedPresences is null %}
+                                        <select name="presence" id="presence" onchange="presenceEleve(this)" class="custom-select" style="width: 60px">
+                                            {% if value.presences.id != 1 %}
+                                                <option value="{{value.coursId.id}},{{val.id}},{{value.presences.id}}" selected>{{value.presences.abreviation}}</option>
+                                            {% endif %}
+                                            {% for key, presence in presences %}
+                                                <option value="{{value.coursId.id}},{{val.id}},{{presence.id}}">{{presence.abreviation}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    {% else %} 
+                                        <select name="presence" id="presence" onchange="presenceEleveCustomized(this)" class="custom-select" style="width: 60px">
+  
+                                            {% if value.customizedPresences.typePresence.id != 1 %}
+                                                <option value="{{value.coursId.id}},{{val.id}},{{value.customizedPresences.id}}" selected>{{value.customizedPresences.abreviationCustomized}}</option>
+                                            {% endif %} 
+                                            {% for key, presence in presencesCustomized %}
+                                                <option value="{{value.coursId.id}},{{val.id}},{{presence.id}}">{{presence.abreviationCustomized}}</option>
+                                            {% endfor %}
+                                        </select>    
+                                    {% endif %}    
+                                
                                 </td>
                                 <td class="periodeCours periodeCours{{value.coursId.periode.id}}">
                                     <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_points_cours')}}" data-name="{{val.id}}">{{value.points}}</span>

@@ -80,6 +80,17 @@ function presenceEleve(value){
 
 }
 
+function presenceEleveCustomized(value){
+    $.ajax({
+        url: '/presencesCustomized',
+        method: 'POST',
+        data: $(value)
+    });
+
+}
+
+
+
 function modifCompetence(value){
     $.ajax({
         url: '/changementCompetence',

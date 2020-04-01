@@ -12,6 +12,7 @@ use App\Entity\Evaluation;
 use App\Entity\Competences;
 use App\Entity\CoursGroupe;
 use App\Entity\EvaluationGroup;
+use App\Entity\CustomizedPresences;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -115,6 +116,14 @@ class journalController extends AbstractController {
         ->getRepository(EvaluationGroup::class)
         ->findById($getEvaluations);
 
+        $getPresencesCustomized = $manager
+        ->getRepository(CustomizedPresences::class)
+        ->findBy(
+            [
+                'user' => $user->getId()
+            ]
+        );
+
         foreach($group as $key => $value){           
             $eleves [] = $manager
             ->getRepository(Eleve::class)
@@ -150,6 +159,7 @@ class journalController extends AbstractController {
                 'eleves' => $eleves,   
                 'periodes' => $getPeriodes,
                 'presences' => $getPresences,
+                'presencesCustomized' => $getPresencesCustomized,
                 'competences' => $getCompetences,
             ]
         );
@@ -210,6 +220,37 @@ class journalController extends AbstractController {
             $manager->flush();
         }    
         return new Response("");
+    }
+
+    /**
+     * @Route("/presencesCustomized", name="presences_customized")
+     */
+    public function presencesCustomized(Request $request){
+        $manager = $this->getDoctrine()->getManager();
+
+        if($request->isMethod('post')){
+            $presence = $request->request->all();
+            $values = explode(",", $presence['presence']);
+            
+            $typePresence = $this->getDoctrine()
+            ->getRepository(CustomizedPresences::class)
+            ->findOneById($values[2]);
+
+            $presenceEleve = $this->getDoctrine()
+            ->getRepository(CoursGroupe::class)
+            ->findOneBy(
+                [
+                    'coursId' => $values[0],
+                    'eleveId' => $values[1]
+                ]
+            );
+
+            $presenceEleve->setCustomizedPresences($typePresence);
+            $manager->persist($presenceEleve);
+            $manager->flush();
+        }
+
+        return new Response();
     }
 
     /**

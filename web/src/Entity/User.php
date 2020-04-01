@@ -88,10 +88,16 @@ class User implements UserInterface
      */
     private $classes;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\CustomizedPresences", mappedBy="user")
+     */
+    private $customizedPresences;
+
 
     public function __construct()
     {
         $this->classes = new ArrayCollection();
+        $this->customizedPresences = new ArrayCollection();
     }
 
 
@@ -246,6 +252,37 @@ class User implements UserInterface
             // set the owning side to null (unless already changed)
             if ($class->getProfesseur() === $this) {
                 $class->setProfesseur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CustomizedPresences[]
+     */
+    public function getCustomizedPresences(): Collection
+    {
+        return $this->customizedPresences;
+    }
+
+    public function addCustomizedPresence(CustomizedPresences $customizedPresence): self
+    {
+        if (!$this->customizedPresences->contains($customizedPresence)) {
+            $this->customizedPresences[] = $customizedPresence;
+            $customizedPresence->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCustomizedPresence(CustomizedPresences $customizedPresence): self
+    {
+        if ($this->customizedPresences->contains($customizedPresence)) {
+            $this->customizedPresences->removeElement($customizedPresence);
+            // set the owning side to null (unless already changed)
+            if ($customizedPresence->getUser() === $this) {
+                $customizedPresence->setUser(null);
             }
         }
 

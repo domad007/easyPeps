@@ -3,8 +3,18 @@
 {% block header %}
 
 {% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="/CSS/scripts/editable.css">
+{% endblock %}
 
-
+{% block scripts %}
+    <script src="/JS/scripts/editable.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('td span').editable();
+        });
+    </script>
+{% endblock %}    
 {% block container %}
     <div class="jumbotron" style="font-size: 1.3em;">
         <h3 class="display-3" style="text-align: center">Prise des présences</h3>
@@ -19,12 +29,21 @@
                         </tr>    
                     </thead>
                     <tbody>
-                        {% for key, value in presences %}
-                        <tr>
-                            <td>{{value.abreviation}}</td>
-                            <td>{{value.libelle}}</td>
-                        </tr>
-                        {% endfor %}
+                        {% if presencesCustomized is empty %}
+                            {% for key, value in presences %}
+                                <tr>
+                                    <td><span data-pk="{{value.id}}" data-url="{{path('presences_customizedd')}}" data-name="presences_customized">{{value.abreviation}}</span></td>
+                                    <td>{{value.libelle}}</td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}   
+                            {% for key, value in presencesCustomized %}
+                                <tr>
+                                    <td><span data-pk="{{value.id}}" data-url="{{path('presences_customizedd')}}" data-name="presences_customized">{{value.abreviationCustomized}}</span></td>
+                                    <td>{{value.typePresence.libelle}}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
                     </tbody>
                 </table>
             </div>

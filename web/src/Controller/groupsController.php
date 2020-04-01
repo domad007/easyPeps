@@ -19,6 +19,7 @@ use App\Entity\CoursGroupe;
 use App\Form\GroupPeriodeType;
 use App\Entity\EvaluationGroup;
 use App\Form\NewEvaluationType;
+use App\Entity\CustomizedPresences;
 use App\Form\AddNewEvaluationsType;
 use App\Form\NewEvaluationCoursType;
 use Doctrine\ORM\Query\ResultSetMapping;
@@ -179,7 +180,7 @@ class groupsController extends AbstractController {
     /**
      * @Route("/newCours/{idGroup}", name="new_cours")
      */
-    public function newCours(Request $request, $idGroup){
+    public function newCours(Request $request, $idGroup, UserInterface $user){
         $cours = new Cours();
 
         $periodes = $this->getDoctrine()
@@ -203,6 +204,15 @@ class groupsController extends AbstractController {
         $getGroup->setParameter(1, $idGroup);
         $group = $getGroup->getResult();
 
+        $presencesCustomized = $manager
+        ->getRepository(CustomizedPresences::class)
+        ->findOneBy(
+            [
+                'user' => $user->getId(),
+                'typePresence' => 1
+            ]
+        );
+        
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()){
@@ -239,15 +249,30 @@ class groupsController extends AbstractController {
                 );
             }
 
-            foreach($eleve as $key => $value){
-                $coursGroupe = new CoursGroupe();
-                $coursGroupe
-                ->setCoursId($cours)
-                ->setEleveId($value)
-                ->setPresences($getPresence);
+            if(!empty($presencesCustomized)){
+                foreach($eleve as $key => $value){
+                    $coursGroupe = new CoursGroupe();
+                    $coursGroupe
+                    ->setCoursId($cours)
+                    ->setEleveId($value)
+                    ->setPresences($getPresence)
+                    ->setCustomizedPresences($presencesCustomized);
 
-                $manager->persist($coursGroupe);
+                    $manager->persist($coursGroupe);
+                }
             }
+            else {
+                foreach($eleve as $key => $value){
+                    $coursGroupe = new CoursGroupe();
+                    $coursGroupe
+                    ->setCoursId($cours)
+                    ->setEleveId($value)
+                    ->setPresences($getPresence);
+
+                    $manager->persist($coursGroupe);
+                }
+            }
+
            
             $manager->flush();
 
