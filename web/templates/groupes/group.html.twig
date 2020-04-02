@@ -78,6 +78,7 @@
             <table class="table" id="table">
                 <thead>
                     <tr>
+                        <th>#</th>
                         <th>Nom</th>
                         <th>Prénom</th>
                         <th>Date de naissance</th>
@@ -90,6 +91,7 @@
                     {% for key, value in group %}
                         {% set dateNaissance = date(value.dateNaissance.date) %}
                         <tr id="deleteRow_{{value.id}}">
+                            <td>{{loop.index}}</td>
                             <td><span title="Modifiez le nom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="nom">{{value.nom}}</p></span></td>
                             <td><span title="Modifiez le prénom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="prenom">{{value.prenom}}</p></span></td>
                             <td>{{dateNaissance | date('d-m-Y')}}</td>

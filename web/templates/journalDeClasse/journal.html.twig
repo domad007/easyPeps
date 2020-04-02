@@ -39,8 +39,8 @@
     <h5 class="display-10" style="text-align: center">{{ecole.0.ecole.nomEcole}}</h3>
 
     <div class="row d-flex justify-content-center">
-        <a href="{{path('new_cours', {idGroup: ecole.0.groups.id})}}" style="margin-right:10px;" class="btn btn-primary btn-md" style="text-align: center">Nouveau cours</a>
-        <a href="{{path('new_evaluation', {idGroup: ecole.0.groups.id})}}" style="margin-right:10px;" class="btn btn-primary btn-md" style="text-align: center">Nouvelle évaluation</a>
+        <a href="{{path('new_cours', {group: ecole.0.groups.id})}}" style="margin-right:10px;" class="btn btn-primary btn-md" style="text-align: center">Nouveau cours</a>
+        <a href="{{path('new_evaluation', {group: ecole.0.groups.id})}}" style="margin-right:10px;" class="btn btn-primary btn-md" style="text-align: center">Nouvelle évaluation</a>
         <a href="#" class="btn btn-primary btn-md" style="text-align: center">Plannification de cycle</a>
     </div>
     <br>
@@ -174,7 +174,7 @@
             <option value="#"></option>
             {% for key, value in groups %}
                 <optgroup label="{{value.ecole}}">
-                    <option value="{{path('journal_de_classe', {idGroup: value.groups_id})}}">{{value.groupes}}</option>
+                    <option value="{{path('journal_de_classe', {group: value.groups_id})}}">{{value.groupes}}</option>
                 </optgroup>
             {% endfor %}
         </select>

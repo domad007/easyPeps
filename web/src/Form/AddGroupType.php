@@ -50,9 +50,9 @@ class AddGroupType extends AbstractType
             'label' => "Choix des compétences",
             'choices' => 
             [
-                "Socles" => 1,
-                "Terminales" => 2,
+               $options['degre']
             ],
+            'choice_label' => 'intitule' ,
             'expanded' => true
         ])
         ->add('save', SubmitType::class, $contact->getConfig("Effectuez le groupement", "", "btn-primary btn-lg"))
@@ -63,9 +63,11 @@ class AddGroupType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Groups::class,
-            'classes' => array()
+            'classes' => array(),
+            'degre' => array()
         ]);
 
         $resolver->setAllowedTypes('classes', 'array');
+        $resolver->setAllowedTypes('degre', 'array');
     }
 }

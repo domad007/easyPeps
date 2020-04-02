@@ -43,7 +43,7 @@
         </div>
     {% endfor %}
     <div class="row d-flex justify-content-center">        
-        <a href="{{path('new_periode', {idGroup: eleves.0.0.classe.groups.id})}}">Ajouter les périodes</a>
+        <a href="{{path('new_periode', {group: eleves.0.0.classe.groups.id})}}">Ajouter les périodes</a>
         <table class="table" id="tablePeriode">
             <thead>
                 <tr>

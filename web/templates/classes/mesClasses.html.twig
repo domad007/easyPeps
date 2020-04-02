@@ -22,7 +22,7 @@
                     <tr>
                     {% for key, value in row|sort((a, b) => a.ecole.nomEcole <=> b.ecole.nomEcole) %}               
                         <td>
-                            <a href="{{path("class", {idEcole: value.ecole.id, idClasse: value.id})}}">{{ value.nomClasse|upper }} ({{value.ecole.nomEcole}})</a> 
+                            <a href="{{path("class", {classe: value.id})}}">{{ value.nomClasse|upper }} ({{value.ecole.nomEcole}})</a> 
                         <td>                                      
                     {% endfor %}
                     </tr>

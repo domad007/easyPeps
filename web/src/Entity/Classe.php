@@ -34,7 +34,7 @@ class Classe
     private $titulaire;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Eleve", mappedBy="classe")
+     * @ORM\OneToMany(targetEntity="App\Entity\Eleve", mappedBy="classe", cascade={"persist"})
      */
     private $eleves;
 

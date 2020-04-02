@@ -29,7 +29,7 @@
                 <select name="ecole" id="ecole" class="custom-select my-1 mr-sm-2" onchange="location = this.value">
                     <option value=""></option>
                     {% for key, value in ecoles %}
-                        <option value="{{path('new_group', {idEcole: value.id})}}">{{value.nomEcole}}</option>
+                        <option value="{{path('new_group', {ecole: value.id})}}">{{value.nomEcole}}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -47,7 +47,7 @@
                     <tr>                
                         <td>{{value.ecole}} </td>          
                         <td>
-                            <a href="{{path("group", {idGroup: value.groups_id})}}">{{ value.groupes|upper }}</a> 
+                            <a href="{{path("group", {group: value.groups_id})}}">{{ value.groupes|upper }}</a> 
                         </td> 
                         <td>{{value.nombreEleves}}</td>                                    
                     </tr>

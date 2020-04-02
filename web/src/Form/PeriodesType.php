@@ -17,7 +17,7 @@ class PeriodesType extends AbstractType
         $contact = new ContactType();
         $builder
             ->add('nomPeriode', TextType::class, $contact->getConfig("Intitulé de la période", "Intitulé"))
-            ->add('pourcentage', IntegerType::class, 
+            ->add('pourcentageCours', IntegerType::class, 
             [
                 'label' => "Pourcentage de la période",
                 'attr' => 

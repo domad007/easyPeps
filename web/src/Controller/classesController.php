@@ -22,6 +22,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
@@ -30,6 +32,7 @@ class classesController extends AbstractController {
     /**
      * Affichage des classes selon l'utilisateur
      * @Route("/classes", name="classes")
+     * @Security("is_granted('ROLE_USER')")
      */
     public function classes(UserInterface $user){
          $classes = $this->getDoctrine()
@@ -50,6 +53,7 @@ class classesController extends AbstractController {
     /**
      * Formulaire permettant d'ajouter une nouvelle classe
      * @Route("/classes/newClass", name="newClass")
+     * @IsGranted("ROLE_USER")
      */
     public function newClass(Request $request){
         $class = new Classe();
@@ -128,23 +132,18 @@ class classesController extends AbstractController {
     }
 
     /**
-     * @Route("/classes/{idEcole}/{idClasse}", name="class")
+     * @Route("/classes/{classe}", name="class")
+     * @Security("is_granted('ROLE_USER') and user === classe.getProfesseur()")
      */
-    public function class(Request $request, $idEcole, $idClasse, UserInterface $user){
+    public function class(Classe $classe, Request $request, UserInterface $user){
         $manager = $this->getDoctrine()->getManager();
-
-        $nomEcole = $manager->getRepository(Ecole::class)
-        ->findOneById($idEcole);
-
-        $nomClasse = $manager->getRepository(Classe::class)
-        ->findOneById($idClasse);
-
+        $class = new Classe();
         $eleves = $manager->getRepository(Eleve::class)
-        ->findByClasse($idClasse);
+        ->findByClasse($classe->getId());
 
         $cours = $manager
         ->getRepository(Cours::class)
-        ->findBygroupe($nomClasse->getGroups());
+        ->findBygroupe($classe->getGroups());
 
         $presencesCustom = $manager
         ->getRepository(CustomizedPresences::class)
@@ -161,20 +160,18 @@ class classesController extends AbstractController {
 
         $evaluations = $manager
         ->getRepository(Evaluation::class)
-        ->findBygroupe($nomClasse->getGroups());
+        ->findBygroupe($classe->getGroups());
 
-        $classe = new Classe();
         $eleve = new Eleve();
 
-        $formAddStudent= $this->createForm(AddEleveType::class, $classe);
+        $formAddStudent= $this->createForm(AddEleveType::class, $class);
         $formAddStudent->handleRequest($request);
 
         if($formAddStudent->isSubmitted() && $formAddStudent->isValid()){
             
-            foreach($classe->getEleves() as $eleves){
-                $eleves->setClasse($nomClasse);             
+            foreach($class->getEleves() as $eleves){   
+                $eleves->setClasse($classe);
                 $manager->persist($eleves);
-
                 if(!empty($evaluations)){
                     foreach($evaluations as $key => $value){
                         $evaluationGroupe = new EvaluationGroup();
@@ -217,13 +214,12 @@ class classesController extends AbstractController {
             }
 
             $this->addFlash('success', "L'élève ou les élèves ont été rajouté avec succès");
-            return $this->redirectToRoute('class', ['idEcole' => $idEcole, 'idClasse' => $idClasse]);
+            return $this->redirectToRoute('class', ['classe' => $classe->getId()]);
         }
 
         return $this->render(
             'classes/class.html.twig', [
-                'nomEcole' => $nomEcole,
-                'nomClasse' => $nomClasse,
+                'classe' => $classe,
                 'eleves' => $eleves,
                 'form' => $formAddStudent->createView()
             ]
@@ -232,15 +228,12 @@ class classesController extends AbstractController {
     }
 
     /**
-     * @Route("/changeClasse/{idEleve}", name="change_class")
+     * @Route("/changeClasse/{eleve}", name="change_class")
+     * @Security("is_granted('ROLE_USER') and user === eleve.getClasse().getProfesseur()")
      */
-    public function changeClasse(Request $request, $idEleve, UserInterface $user){
+    public function changeClasse(Eleve $eleve, Request $request, UserInterface $user){
 
         $manager = $this->getDoctrine()->getManager();
-
-        $eleve = $manager
-        ->getRepository(Eleve::class)
-        ->findOneById($idEleve);
 
         $classes = $manager
         ->getRepository(Classe::class)
@@ -321,11 +314,9 @@ class classesController extends AbstractController {
 
             $this->addFlash('success', "L'élève a bien été changé");
             return $this->redirectToRoute('class', [
-                'idEcole' => $eleve->getClasse()->getEcole()->getId(),
-                'idClasse' => $eleve->getClasse()->getId()
+                'classe' => $eleve->getClasse()->getId()
             ]);
         }
-        //dump($eleve);
 
         return $this->render(
             '/classes/changeClasse.html.twig', [

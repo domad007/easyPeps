@@ -6,6 +6,7 @@ use DateTime;
 use App\Entity\Cours;
 use App\Entity\Eleve;
 use App\Entity\Classe;
+use App\Entity\Groups;
 use App\Entity\Periodes;
 use App\Entity\Presences;
 use App\Entity\Evaluation;
@@ -18,12 +19,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class journalController extends AbstractController {
 
     /**
      * @Route("/journalDeClasse", name="journal")
+     * @Security("is_granted('ROLE_USER')")
      */
     public function journal(UserInterface $user){
 
@@ -54,24 +57,22 @@ class journalController extends AbstractController {
     }
     
     /**
-     * @Route("/journalDeClasse/{idGroup}", name="journal_de_classe")
+     * @Route("/journalDeClasse/{group}", name="journal_de_classe")
+     * @Security("is_granted('ROLE_USER') and user === group.getProfesseur()")
      */
-    public function journalDeCalsse(UserInterface $user, $idGroup){
+    public function journalDeCalsse(Groups $group, UserInterface $user){
         $manager = $this->getDoctrine()->getManager();
         $getCours = $manager
         ->getRepository(Cours::class)
-        ->findBygroupe($idGroup, 
-        [
-            'dateCours' => 'ASC'
-        ]);
+        ->findBygroupe($group->getId());
 
         $getPeriodes = $this->getDoctrine()
         ->getRepository(Periodes::class)
-        ->findBygroupe($idGroup);
+        ->findBygroupe($group->getId());
 
-        $group = $manager
+        $classes = $manager
         ->getRepository(Classe::class)
-        ->findByGroups($idGroup);
+        ->findByGroups($group->getId());
 
         $getCoursGroupe = $manager
         ->getRepository(CoursGroupe::class)
@@ -101,16 +102,16 @@ class journalController extends AbstractController {
 
         $getCompetences = $this->getDoctrine()
         ->getRepository(Competences::class)
-        ->findBydegre($group[0]->getGroups()->getDegre()->getId());
+        ->findBydegre($classes[0]->getGroups()->getDegre()->getId());
 
         $getCompetencesPeriode = $this->forward('App\Controller\calculController::getMoyenneCompetence', 
         [
-            'idGroup' => $idGroup
+            'idGroup' => $group->getId()
         ]);
         
         $getEvaluations = $this->getDoctrine()
         ->getRepository(Evaluation::class)
-        ->findBygroupe($idGroup);
+        ->findBygroupe($group->getId());
         
         $getEvaluationsGroupe = $this->getDoctrine()
         ->getRepository(EvaluationGroup::class)
@@ -126,7 +127,7 @@ class journalController extends AbstractController {
 
         $eleves = $manager
         ->getRepository(Eleve::class)
-        ->findByclasse($group);
+        ->findByclasse($classes);
 
         foreach($eleves as $key => $value){
             foreach($getCoursGroupe as $key => $value){
@@ -145,7 +146,7 @@ class journalController extends AbstractController {
             'journalDeClasse/journal.html.twig', 
             [
                 'groups' => $groups,
-                'ecole' => $group,
+                'ecole' => $classes,
                 'eleves' => $eleves,   
                 'periodes' => $getPeriodes,
                 'presences' => $getPresences,

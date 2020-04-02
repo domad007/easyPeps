@@ -2,7 +2,9 @@
 
 namespace App\DataFixtures;
 
+use DateTime;
 use Faker\Factory;
+use App\Entity\Role;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -20,8 +22,28 @@ class UserFixtures extends Fixture
     {
         $faker = Factory::create('FR-fr');
         //Gestion des utilisateurs
+        $adminRole = new Role();
+        $adminRole->setTitle('ROLE_ADMIN');
+        $manager->persist($adminRole);
 
-        for($i = 1; $i<=5; $i++){
+        $adminUser = new User();
+
+        $adminUser
+            ->setNom("Fiedorczuk")
+            ->setPrenom("Dominik")
+            ->setNomUser("domad007")
+            ->setMail("dominikfiedorczuk69@gmail.com")
+            ->setMdp( $this->encoder->encodePassword($adminUser, 'domad1997'))
+            ->setSexe("Homme")
+            ->setDateNaiss(new \DateTime('16-12-1997'))
+            ->addUserRole($adminRole)
+            ->setResetToken(NULL);
+
+        $manager->persist($adminUser);
+
+        $manager->flush();
+
+        /*for($i = 1; $i<=5; $i++){
             $user = new User();
             $password = $this->encoder->encodePassword($user, 'password');
             
@@ -36,6 +58,6 @@ class UserFixtures extends Fixture
             $manager->persist($user);  
         }
 
-        $manager->flush();
+        $manager->flush();*/
     }
 }

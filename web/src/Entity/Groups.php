@@ -48,6 +48,11 @@ class Groups
      */
     private $evaluations;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="groups")
+     */
+    private $professeur;
+
     public function __construct()
     {
         $this->classes = new ArrayCollection();
@@ -205,6 +210,18 @@ class Groups
                 $evaluation->setGroupe(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getProfesseur(): ?User
+    {
+        return $this->professeur;
+    }
+
+    public function setProfesseur(?User $professeur): self
+    {
+        $this->professeur = $professeur;
 
         return $this;
     }
