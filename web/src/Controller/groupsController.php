@@ -263,7 +263,7 @@ class groupsController extends AbstractController {
             }
             $manager->flush();
 
-            $this->forward('App\Controller\calculController::getMoyenneCours', [
+            $this->forward('App\Controller\cahierCoteController::getMoyenneCours', [
                 'idGroup' => $idGroup
             ]);
             
@@ -354,12 +354,12 @@ class groupsController extends AbstractController {
 
             $manager->flush();
 
-            $this->forward('App\Controller\calculController::getMoyenneEvaluation', 
+            $this->forward('App\Controller\cahierCoteController::getMoyenneEvaluation', 
             [
                 'idGroup' => $idGroup
             ]);
 
-            $this->forward('App\Controller\calculController::getMoyenneCompetence', 
+            $this->forward('App\Controller\cahierCoteController::getMoyenneCompetence', 
             [
                 'idGroup' => $idGroup
             ]);

@@ -307,7 +307,7 @@ class journalController extends AbstractController {
             $manager->persist($cours);
             $manager->flush();
 
-            $this->forward('App\Controller\calculController::getMoyenneCours', 
+            $this->forward('App\Controller\cahierCoteController::getMoyenneCours', 
             [
                 'idGroup' => $cours->getGroupe()->getId()
             ]);
@@ -355,12 +355,12 @@ class journalController extends AbstractController {
             $manager->persist($evaluation);
             $manager->flush();
 
-            $this->forward('App\Controller\calculController::getMoyenneEvaluation', 
+            $this->forward('App\Controller\cahierCoteController::getMoyenneEvaluation', 
             [
                 'idGroup' => $evaluation->getGroupe()->getId()
             ]);
 
-            $this->forward('App\Controller\calculController::getMoyenneCompetence', 
+            $this->forward('App\Controller\cahierCoteController::getMoyenneCompetence', 
             [
                 'idGroup' => $evaluation->getGroupe()->getId()
             ]);
