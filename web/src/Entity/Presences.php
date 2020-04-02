@@ -33,9 +33,15 @@ class Presences
      */
     private $cours;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\CustomizedPresences", mappedBy="typePresence")
+     */
+    private $customizedPresences;
+
     public function __construct()
     {
         $this->cours = new ArrayCollection();
+        $this->customizedPresences = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -92,6 +98,37 @@ class Presences
             // set the owning side to null (unless already changed)
             if ($cour->getPresences() === $this) {
                 $cour->setPresences(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CustomizedPresences[]
+     */
+    public function getCustomizedPresences(): Collection
+    {
+        return $this->customizedPresences;
+    }
+
+    public function addCustomizedPresence(CustomizedPresences $customizedPresence): self
+    {
+        if (!$this->customizedPresences->contains($customizedPresence)) {
+            $this->customizedPresences[] = $customizedPresence;
+            $customizedPresence->setTypePresence($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCustomizedPresence(CustomizedPresences $customizedPresence): self
+    {
+        if ($this->customizedPresences->contains($customizedPresence)) {
+            $this->customizedPresences->removeElement($customizedPresence);
+            // set the owning side to null (unless already changed)
+            if ($customizedPresence->getTypePresence() === $this) {
+                $customizedPresence->setTypePresence(null);
             }
         }
 

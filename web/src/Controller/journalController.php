@@ -148,9 +148,7 @@ class journalController extends AbstractController {
                 }
             }
         }
-
-        
-        
+        dump($eleves);
         return $this->render(
             'journalDeClasse/journal.html.twig', 
             [
@@ -245,7 +243,9 @@ class journalController extends AbstractController {
                 ]
             );
 
-            $presenceEleve->setCustomizedPresences($typePresence);
+            $presenceEleve
+            ->setCustomizedPresences($typePresence)
+            ->setPresences($typePresence->getTypePresence());
             $manager->persist($presenceEleve);
             $manager->flush();
         }

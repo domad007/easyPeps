@@ -19,12 +19,6 @@ class CustomizedPresences
     private $id;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Presences", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $typePresence;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="customizedPresences")
      */
     private $user;
@@ -39,6 +33,11 @@ class CustomizedPresences
      */
     private $cours;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Presences", inversedBy="customizedPresences")
+     */
+    private $typePresence;
+
     public function __construct()
     {
         $this->cours = new ArrayCollection();
@@ -49,17 +48,6 @@ class CustomizedPresences
         return $this->id;
     }
 
-    public function getTypePresence(): ?Presences
-    {
-        return $this->typePresence;
-    }
-
-    public function setTypePresence(Presences $typePresence): self
-    {
-        $this->typePresence = $typePresence;
-
-        return $this;
-    }
 
     public function getUser(): ?User
     {
@@ -112,6 +100,18 @@ class CustomizedPresences
                 $cour->setCustomizedPresences(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTypePresence(): ?Presences
+    {
+        return $this->typePresence;
+    }
+
+    public function setTypePresence(?Presences $typePresence): self
+    {
+        $this->typePresence = $typePresence;
 
         return $this;
     }

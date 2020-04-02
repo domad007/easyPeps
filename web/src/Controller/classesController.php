@@ -3,14 +3,18 @@
 namespace App\Controller;
 use DateTime;
 use App\Entity\User;
+use App\Entity\Cours;
 use App\Entity\Ecole;
 use App\Entity\Eleve;
 use App\Entity\Classe;
 use App\Form\EleveType;
+use App\Entity\Presences;
 use App\Form\AddEleveType;
 use App\Form\NewClassType;
+use App\Entity\CoursGroupe;
 use App\Entity\EleveSupprime;
 use App\Form\ChangeClassType;
+use App\Entity\CustomizedPresences;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Response;
@@ -124,7 +128,7 @@ class classesController extends AbstractController {
     /**
      * @Route("/classes/{idEcole}/{idClasse}", name="class")
      */
-    public function class(Request $request, $idEcole, $idClasse){
+    public function class(Request $request, $idEcole, $idClasse, UserInterface $user){
         $manager = $this->getDoctrine()->getManager();
 
         $nomEcole = $manager->getRepository(Ecole::class)
@@ -135,6 +139,23 @@ class classesController extends AbstractController {
 
         $eleves = $manager->getRepository(Eleve::class)
         ->findByClasse($idClasse);
+
+        $cours = $manager
+        ->getRepository(Cours::class)
+        ->findBygroupe($nomClasse->getGroups());
+
+        $presencesCustom = $manager
+        ->getRepository(CustomizedPresences::class)
+        ->findOneBy(
+            [
+                'typePresence' => 1,
+                'user' => $user
+            ]
+        );
+
+        $presences = $manager
+        ->getRepository(Presences::class)
+        ->findOneById(1);
 
         $classe = new Classe();
         $eleve = new Eleve();
@@ -147,6 +168,34 @@ class classesController extends AbstractController {
             foreach($classe->getEleves() as $eleves){
                 $eleves->setClasse($nomClasse);             
                 $manager->persist($eleves);
+
+                if(!empty($cours)){
+                    foreach($cours as $key => $value){
+                        if(!empty($presencesCustom)){
+                            $coursGroupe = new CoursGroupe();
+                            $coursGroupe
+                            ->setCoursId($value)
+                            ->setEleveId($eleves)
+                            ->setPoints("0")
+                            ->setPresences($presences)
+                            ->setCustomizedPresences($presencesCustom);
+    
+                            $manager->persist($coursGroupe);
+                        }
+                        else {
+                            $coursGroupe = new CoursGroupe();
+                            $coursGroupe
+                            ->setCoursId($value)
+                            ->setEleveId($eleves)
+                            ->setPoints("0")
+                            ->setPresences($presences)
+                            ->setCustomizedPresences($presencesCustom);
+    
+                            $manager->persist($coursGroupe);
+                        }
+                        
+                    }
+                }
                 $manager->flush();
             }
 
@@ -168,7 +217,7 @@ class classesController extends AbstractController {
     /**
      * @Route("/changeClasse/{idEleve}", name="change_class")
      */
-    public function changeClasse(Request $request, $idEleve){
+    public function changeClasse(Request $request, $idEleve, UserInterface $user){
 
         $manager = $this->getDoctrine()->getManager();
 
@@ -188,6 +237,49 @@ class classesController extends AbstractController {
             $classe = $manager
             ->getRepository(Classe::class)
             ->findOneById($data['classe']);
+
+            $cours = $manager
+            ->getRepository(Cours::class)
+            ->findBygroupe($classe->getGroups());
+
+            $presencesCustom = $manager
+            ->getRepository(CustomizedPresences::class)
+            ->findOneBy(
+                [
+                    'typePresence' => 1,
+                    'user' => $user
+                ]
+            );
+            $presences = $manager
+            ->getRepository(Presences::class)
+            ->findOneById(1);
+
+            if(!empty($cours)){
+                foreach($cours as $key => $value){
+                    if(!empty($presencesCustom)){
+                        $coursGroupe = new CoursGroupe();
+                        $coursGroupe
+                        ->setCoursId($value)
+                        ->setEleveId($eleve)
+                        ->setPoints("0")
+                        ->setPresences($presencesCustom->getTypePresence())
+                        ->setCustomizedPresences($presencesCustom);
+
+                        $manager->persist($coursGroupe);
+                    }
+                    else {
+                        $coursGroupe = new CoursGroupe();
+                        $coursGroupe
+                        ->setCoursId($value)
+                        ->setEleveId($eleve)
+                        ->setPoints("0")
+                        ->setPresences($presences->getId());
+
+                        $manager->persist($coursGroupe);
+                    }
+
+                }
+            }
 
             $eleve->setClasse($classe);
 
