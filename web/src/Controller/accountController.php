@@ -38,6 +38,7 @@ class accountController extends AbstractController {
 
             $mdp = $encoder->encodePassword($user, $user->getMdp());
             $user->setMdp($mdp);
+            $user->setUserActif(0);
 
             $manager->persist($user);
             $manager->flush();

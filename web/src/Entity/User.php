@@ -103,6 +103,12 @@ class User implements UserInterface
      */
     private $groups;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $userActif;
+
+
 
     public function __construct()
     {
@@ -362,6 +368,18 @@ class User implements UserInterface
                 $group->setProfesseur(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUserActif(): ?bool
+    {
+        return $this->userActif;
+    }
+
+    public function setUserActif(bool $userActif): self
+    {
+        $this->userActif = $userActif;
 
         return $this;
     }
