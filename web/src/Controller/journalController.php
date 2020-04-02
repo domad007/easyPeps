@@ -124,27 +124,19 @@ class journalController extends AbstractController {
             ]
         );
 
-        foreach($group as $key => $value){           
-            $eleves [] = $manager
-            ->getRepository(Eleve::class)
-            ->findBy(
-                [
-                    'classe' => $value->getId()
-                ]
-            );
-        }
+        $eleves = $manager
+        ->getRepository(Eleve::class)
+        ->findByclasse($group);
 
         foreach($eleves as $key => $value){
-            foreach($value as $key => $val){
-                foreach($getCoursGroupe as $key => $value){
-                    if($value->getEleveId()->getId() == $val->getId()){
-                        $val->addCoursGroupe($value);                      
-                    }
+            foreach($getCoursGroupe as $key => $value){
+                if($value->getEleveId()->getId() == $value->getId()){
+                    $value->addCoursGroupe($value);                      
                 }
-                foreach($getEvaluationsGroupe as $key => $value){
-                    if($value->getEleve()->getId() == $val->getId()){
-                        $val->addEvaluationGroup($value);
-                    }
+            }
+            foreach($getEvaluationsGroupe as $key => $value){
+                if($value->getEleve()->getId() == $value->getId()){
+                    $value->addEvaluationGroup($value);
                 }
             }
         }

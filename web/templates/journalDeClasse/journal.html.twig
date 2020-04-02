@@ -75,7 +75,7 @@
                     <th>Nom</th>
                     <th>Prenom</th>
                     <th>Classe</th>
-                        {% for key, value in eleves.0.0.0.coursGroupes|sort((a,b) => a.coursId.dateCours <=> b.coursId.dateCours) %}                           
+                        {% for key, value in eleves.0.0.coursGroupes|sort((a,b) => a.coursId.dateCours <=> b.coursId.dateCours) %}                           
                             {% set dateCours = date(value.coursId.dateCours.date) %}
                             <td colspan="2" class="text-center periodeCours periodeCours{{value.coursId.periode.id}}" style="font-size: 0.8em">
                                 <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_intitule_cours')}}" data-name="intitule" class="editable editable-click editable-empty editable-open"> {{value.coursId.intitule}} </span>                             
@@ -93,7 +93,7 @@
                                 </div>
                             </td>
                         {% endfor %}                
-                    {% for key, value in eleves.0.0.0.evaluationGroups|sort((a,b) => a.evaluation.dateEvaluation <=> b.evaluation.dateEvaluation) %}
+                    {% for key, value in eleves.0.0.evaluationGroups|sort((a,b) => a.evaluation.dateEvaluation <=> b.evaluation.dateEvaluation) %}
                         {% set dateEval = date(value.evaluation.dateEvaluation) %}
 
                         <td class="text-center periodeEval periodeEval{{value.evaluation.periode.id}}" style="font-size: 0.8em">
@@ -122,49 +122,47 @@
                 </tr>
             </thead>
             <tbody> 
-                {% for key, value in eleves %}
-                    {% for key, val in value %}
-                        <tr>
-                            <td id="nombreEleve">{{loop.index}}</td>
-                            <td id="nom">{{val.nom}}</td>
-                            <td id="prenom">{{val.prenom}}</td>
-                            <td>{{val.classe.nomClasse}}</td>       
-                            {% for key, value in val.coursGroupes|sort((a, b) => a.coursId.dateCours <=> b.coursId.dateCours) %}
-                                <td class="periodeCours periodeCours{{value.coursId.periode.id}}">                           
-                                    {% if value.customizedPresences is null %}
-                                        <select name="presence" id="presence" onchange="presenceEleve(this)" class="custom-select" style="width: 60px">
-                                            {% if value.presences.id != 1 %}
-                                                <option value="{{value.coursId.id}},{{val.id}},{{value.presences.id}}" selected>{{value.presences.abreviation}}</option>
-                                            {% endif %}
-                                            {% for key, presence in presences %}
-                                                <option value="{{value.coursId.id}},{{val.id}},{{presence.id}}">{{presence.abreviation}}</option>
-                                            {% endfor %}
-                                        </select>
-                                    {% else %} 
-                                        <select name="presence" id="presence" onchange="presenceEleveCustomized(this)" class="custom-select" style="width: 60px">
+                {% for key, val in eleves %}
+                    <tr>
+                        <td id="nombreEleve">{{loop.index}}</td>
+                        <td id="nom">{{val.nom}}</td>
+                        <td id="prenom">{{val.prenom}}</td>
+                        <td>{{val.classe.nomClasse}}</td>       
+                        {% for key, value in val.coursGroupes|sort((a, b) => a.coursId.dateCours <=> b.coursId.dateCours) %}
+                            <td class="periodeCours periodeCours{{value.coursId.periode.id}}">                           
+                                {% if value.customizedPresences is null %}
+                                    <select name="presence" id="presence" onchange="presenceEleve(this)" class="custom-select" style="width: 60px">
+                                        {% if value.presences.id != 1 %}
+                                            <option value="{{value.coursId.id}},{{val.id}},{{value.presences.id}}" selected>{{value.presences.abreviation}}</option>
+                                        {% endif %}
+                                        {% for key, presence in presences %}
+                                            <option value="{{value.coursId.id}},{{val.id}},{{presence.id}}">{{presence.abreviation}}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% else %} 
+                                    <select name="presence" id="presence" onchange="presenceEleveCustomized(this)" class="custom-select" style="width: 60px">
 
-                                            {% if value.customizedPresences.typePresence.id != 1 %}
-                                                <option value="{{value.coursId.id}},{{val.id}},{{value.customizedPresences.id}}" selected>{{value.customizedPresences.abreviationCustomized}}</option>
-                                            {% endif %} 
-                                            {% for key, presence in presencesCustomized %}
-                                                <option value="{{value.coursId.id}},{{val.id}},{{presence.id}}">{{presence.abreviationCustomized}}</option>
-                                            {% endfor %}
-                                        </select>    
-                                    {% endif %}    
-                                
-                                </td>
-                                <td class="periodeCours periodeCours{{value.coursId.periode.id}}">
-                                    <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_points_cours')}}" data-name="{{val.id}}">{{value.points}}</span>
-                                </td>
-                            {% endfor %}
-                            {% for key, value in val.evaluationGroups|sort((a,b) => a.evaluation.dateEvaluation <=> b.evaluation.dateEvaluation) %}
-                                <td class="periodeEval periodeEval{{value.evaluation.periode.id}}" style="text-align: center">
-                                    <span data-pk="{{value.evaluation.id}}" data-name="{{val.id}}" data-url="{{path('modif_points_evaluation')}}">{{value.points}}</span>
-                                </td>
-                            {% endfor %}
-                        </tr>
-                    {% endfor %}
-                {% endfor %}                   
+                                        {% if value.customizedPresences.typePresence.id != 1 %}
+                                            <option value="{{value.coursId.id}},{{val.id}},{{value.customizedPresences.id}}" selected>{{value.customizedPresences.abreviationCustomized}}</option>
+                                        {% endif %} 
+                                        {% for key, presence in presencesCustomized %}
+                                            <option value="{{value.coursId.id}},{{val.id}},{{presence.id}}">{{presence.abreviationCustomized}}</option>
+                                        {% endfor %}
+                                    </select>    
+                                {% endif %}    
+                            
+                            </td>
+                            <td class="periodeCours periodeCours{{value.coursId.periode.id}}">
+                                <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_points_cours')}}" data-name="{{val.id}}">{{value.points}}</span>
+                            </td>
+                        {% endfor %}
+                        {% for key, value in val.evaluationGroups|sort((a,b) => a.evaluation.dateEvaluation <=> b.evaluation.dateEvaluation) %}
+                            <td class="periodeEval periodeEval{{value.evaluation.periode.id}}" style="text-align: center">
+                                <span data-pk="{{value.evaluation.id}}" data-name="{{val.id}}" data-url="{{path('modif_points_evaluation')}}">{{value.points}}</span>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}                  
             </tbody>
         </table>
     </div>      

@@ -75,15 +75,9 @@ class cahierCoteController extends AbstractController {
         ->getRepository(Periodes::class)
         ->findBygroupe($idGroup);
 
-        foreach($group as $key => $value){           
-            $eleves [] = $manager
-            ->getRepository(Eleve::class)
-            ->findBy(
-                [
-                    'classe' => $value->getId()
-                ]
-            );
-        }
+        $eleves =  $manager
+        ->getRepository(Eleve::class)
+        ->findByclasse($group);
 
         $getCompetencesPeriode = $this->forward('App\Controller\calculController::getMoyenneCompetence', 
         [

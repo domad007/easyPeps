@@ -123,16 +123,10 @@ class groupsController extends AbstractController {
         $group = $manager
         ->getRepository(Classe::class)
         ->findByGroups($idGroup);
-
-        foreach($group as $key => $value){           
-            $eleves [] = $manager
-            ->getRepository(Eleve::class)
-            ->findBy(
-                [
-                    'classe' => $value->getId()
-                ]
-            );
-        }
+        
+        $eleves = $manager
+        ->getRepository(Eleve::class)
+        ->findByclasse($group);
 
         return $this->render(
             'groupes/group.html.twig',[
@@ -239,15 +233,9 @@ class groupsController extends AbstractController {
             ->getRepository(Cours::class)
             ->findOneById($cours->getId());
             
-            foreach($group as $key => $value){           
-                $eleve [] = $manager
-                ->getRepository(Eleve::class)
-                ->findOneBy(
-                    [
-                        'classe' => $value->getId()
-                    ]
-                );
-            }
+            $eleve = $manager
+            ->getRepository(Eleve::class)
+            ->findByclasse($group);
 
             if(!empty($presencesCustomized)){
                 foreach($eleve as $key => $value){
@@ -271,9 +259,8 @@ class groupsController extends AbstractController {
 
                     $manager->persist($coursGroupe);
                 }
+                
             }
-
-           
             $manager->flush();
 
             $this->forward('App\Controller\calculController::getMoyenneCours', [
@@ -336,23 +323,18 @@ class groupsController extends AbstractController {
             ]
         );
 
+
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
             $classes = $manager
             ->getRepository(Classe::class)
             ->findByGroups($idGroup);
 
-            $data = $form->getData();
+            $eleve = $manager
+            ->getRepository(Eleve::class)
+            ->findByclasse($classes);
 
-            foreach($classes as $key => $value){           
-                $eleve [] = $manager
-                ->getRepository(Eleve::class)
-                ->findOneBy(
-                    [
-                        'classe' => $value->getId()
-                    ]
-                );
-            }
+            $data = $form->getData();
             
             foreach($evaluation->getEvaluations() as $evaluations){
                 $evaluations
