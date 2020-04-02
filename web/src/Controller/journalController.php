@@ -60,7 +60,7 @@ class journalController extends AbstractController {
      * @Route("/journalDeClasse/{group}", name="journal_de_classe")
      * @Security("is_granted('ROLE_USER') and user === group.getProfesseur()")
      */
-    public function journalDeCalsse(Groups $group, UserInterface $user){
+    public function journalDeCalsse(Groups $group){
         $manager = $this->getDoctrine()->getManager();
         $getCours = $manager
         ->getRepository(Cours::class)
@@ -91,7 +91,7 @@ class journalController extends AbstractController {
         group by groups_id";
 
         $getGroups = $manager->createNativeQuery($groupsSql, $rsm);
-        $getGroups->setParameter(1, $user->getId());
+        $getGroups->setParameter(1, $group->getProfesseur());
 
         $groups = $getGroups->getResult();
 
@@ -121,7 +121,7 @@ class journalController extends AbstractController {
         ->getRepository(CustomizedPresences::class)
         ->findBy(
             [
-                'user' => $user->getId()
+                'user' => $group->getProfesseur()->getId()
             ]
         );
 

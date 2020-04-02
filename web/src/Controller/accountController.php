@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -77,6 +78,7 @@ class accountController extends AbstractController {
      * Ne modifie pas le mot de passe
      *
      * @Route("/compte/profil", name="mon_profil")
+     * @Security("is_granted('ROLE_USER')")
      */
     public function modifProfil(Request $request){
         $user = $this->getUser();
@@ -104,6 +106,7 @@ class accountController extends AbstractController {
     /**
      * Modification du mot de passe
      * @Route("/compte/mdpOublie", name="mon_mdp")
+     * @Security("is_granted('ROLE_USER')")
      */
     public function modifMdp(Request $request, UserPasswordEncoderInterface $encoder){
         $mdp = new ModifMdp();

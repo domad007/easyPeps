@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} -Pas de droit {% endblock %}
+
+{% block header %}
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">Error 403</h1>
+    </header>
+{% endblock %}
+
+{% block container %}
+    <div class="jumbotron my-4" style="font-size: 1.3em;">
+        <h3 class="display-5">Vous n'avez pas les droits d'acceder à cette page la </h1>
+        <div class="row d-flex justify-content-center">
+            <a href="{{path('homepage')}}" class="btn btn-primary">Retour à l'acceuil</a>
+        </div>
+    </div>
+{% endblock %}

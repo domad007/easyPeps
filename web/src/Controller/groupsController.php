@@ -153,7 +153,7 @@ class groupsController extends AbstractController {
      * @Route("/newCours/{group}", name="new_cours")
      * @Security("is_granted('ROLE_USER') and user === group.getProfesseur()")
      */
-    public function newCours(Groups $group, Request $request, UserInterface $user){
+    public function newCours(Groups $group, Request $request){
         $cours = new Cours();
 
         $periodes = $this->getDoctrine()
@@ -181,7 +181,7 @@ class groupsController extends AbstractController {
         ->getRepository(CustomizedPresences::class)
         ->findOneBy(
             [
-                'user' => $user->getId(),
+                'user' => $group->getProfesseur()->getId(),
                 'typePresence' => 1
             ]
         );
