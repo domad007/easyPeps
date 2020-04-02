@@ -9,11 +9,13 @@ use App\Entity\Eleve;
 use App\Entity\Classe;
 use App\Form\EleveType;
 use App\Entity\Presences;
+use App\Entity\Evaluation;
 use App\Form\AddEleveType;
 use App\Form\NewClassType;
 use App\Entity\CoursGroupe;
 use App\Entity\EleveSupprime;
 use App\Form\ChangeClassType;
+use App\Entity\EvaluationGroup;
 use App\Entity\CustomizedPresences;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -157,6 +159,10 @@ class classesController extends AbstractController {
         ->getRepository(Presences::class)
         ->findOneById(1);
 
+        $evaluations = $manager
+        ->getRepository(Evaluation::class)
+        ->findBygroupe($nomClasse->getGroups());
+
         $classe = new Classe();
         $eleve = new Eleve();
 
@@ -169,6 +175,17 @@ class classesController extends AbstractController {
                 $eleves->setClasse($nomClasse);             
                 $manager->persist($eleves);
 
+                if(!empty($evaluations)){
+                    foreach($evaluations as $key => $value){
+                        $evaluationGroupe = new EvaluationGroup();
+                        $evaluationGroupe
+                        ->setEvaluation($value)
+                        ->setEleve($eleves)
+                        ->setPoints("0");
+
+                        $manager->persist($evaluationGroupe);
+                    }
+                }
                 if(!empty($cours)){
                     foreach($cours as $key => $value){
                         if(!empty($presencesCustom)){
@@ -189,7 +206,7 @@ class classesController extends AbstractController {
                             ->setEleveId($eleves)
                             ->setPoints("0")
                             ->setPresences($presences)
-                            ->setCustomizedPresences($presencesCustom);
+                            ->setCustomizedPresences(null);
     
                             $manager->persist($coursGroupe);
                         }
@@ -253,6 +270,22 @@ class classesController extends AbstractController {
             $presences = $manager
             ->getRepository(Presences::class)
             ->findOneById(1);
+
+            $evaluations = $manager
+            ->getRepository(Evaluation::class)
+            ->findBygroupe($classe->getGroups());
+
+            if(!empty($evaluations)){
+                foreach($evaluations as $key => $value){
+                    $evaluationGroup = new EvaluationGroup();
+                    $evaluationGroup
+                    ->setEvaluation($value)
+                    ->setEleve($eleve)
+                    ->setPoints("0");
+
+                    $manager->persist($evaluationGroup);
+                }
+            }
 
             if(!empty($cours)){
                 foreach($cours as $key => $value){

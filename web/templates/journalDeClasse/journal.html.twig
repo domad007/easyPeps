@@ -123,9 +123,9 @@
             </thead>
             <tbody> 
                 {% for key, value in eleves %}
-                    <tr>
-                        <td id="nombreEleve">{{loop.index}}</td>
-                        {% for key, val in value %}
+                    {% for key, val in value %}
+                        <tr>
+                            <td id="nombreEleve">{{loop.index}}</td>
                             <td id="nom">{{val.nom}}</td>
                             <td id="prenom">{{val.prenom}}</td>
                             <td>{{val.classe.nomClasse}}</td>       
@@ -142,7 +142,7 @@
                                         </select>
                                     {% else %} 
                                         <select name="presence" id="presence" onchange="presenceEleveCustomized(this)" class="custom-select" style="width: 60px">
-  
+
                                             {% if value.customizedPresences.typePresence.id != 1 %}
                                                 <option value="{{value.coursId.id}},{{val.id}},{{value.customizedPresences.id}}" selected>{{value.customizedPresences.abreviationCustomized}}</option>
                                             {% endif %} 
@@ -162,8 +162,8 @@
                                     <span data-pk="{{value.evaluation.id}}" data-name="{{val.id}}" data-url="{{path('modif_points_evaluation')}}">{{value.points}}</span>
                                 </td>
                             {% endfor %}
-                        {% endfor %}
-                    </tr>
+                        </tr>
+                    {% endfor %}
                 {% endfor %}                   
             </tbody>
         </table>

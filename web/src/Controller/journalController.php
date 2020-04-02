@@ -148,7 +148,7 @@ class journalController extends AbstractController {
                 }
             }
         }
-        dump($eleves);
+    
         return $this->render(
             'journalDeClasse/journal.html.twig', 
             [
