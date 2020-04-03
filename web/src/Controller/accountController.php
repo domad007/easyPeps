@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller;
+use App\Entity\Role;
 use App\Entity\User;
 use App\Form\MdpType;
 use App\Entity\ModifMdp;
@@ -35,10 +36,14 @@ class accountController extends AbstractController {
 
         if($formInscription->isSubmitted() && $formInscription->isValid()){
             $manager = $this->getDoctrine()->getManager();
-
+            $role = $manager
+            ->getRepository(Role::class)
+            ->findOneBytitle("ROLE_ACTIF");
             $mdp = $encoder->encodePassword($user, $user->getMdp());
             $user->setMdp($mdp);
             $user->setUserActif(0);
+            $user->addUserRole($role);
+            
 
             $manager->persist($user);
             $manager->flush();
@@ -88,9 +93,42 @@ class accountController extends AbstractController {
 
         if($profilForm->isSubmitted() && $profilForm->isValid()){
             $manager = $this->getDoctrine()->getManager();
+            if($user->getUserActif() === true){
+                $roleInactif = $manager
+                ->getRepository(Role::class)
+                ->findOneBytitle("ROLE_INACTIF");
 
-            $manager->persist($user);
-            $manager->flush();
+                $roleActif = $manager
+                ->getRepository(Role::class)
+                ->findOneBytitle("ROLE_ACTIF");
+
+
+                $user->addUserRole($roleInactif);
+                $user->removeUserRole($roleActif);
+                $manager->persist($user);
+                $manager->flush();
+
+                $this->addFlash('success', "Votre compte a bien été désactivé");
+                return $this->redirectToRoute('homepage');
+            }
+            else {
+                $roleInactif = $manager
+                ->getRepository(Role::class)
+                ->findOneBytitle("ROLE_INACTIF");
+                $roleActif =  $manager
+                ->getRepository(Role::class)
+                ->findOneBytitle("ROLE_ACTIF");
+
+                $user->addUserRole($roleActif);
+                $user->removeUserRole($roleInactif);
+                
+                $manager->persist($user);
+                $manager->flush();
+
+                $this->addFlash('success', "Votre profil a bien été modifié");
+                return $this->redirectToRoute('homepage');
+
+            }
 
             $this->addFlash(
                 'success',

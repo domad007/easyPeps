@@ -37,7 +37,7 @@ class groupsController extends AbstractController {
     
     /**
      * @Route("/groups", name="groups")
-     * @Security("is_granted('ROLE_USER')")
+     * @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
     public function groups(UserInterface $user){
         $manager = $this->getDoctrine()->getManager();
@@ -79,7 +79,7 @@ class groupsController extends AbstractController {
 
     /**
      * @Route("/newGroup/{ecole}", name="new_group")
-     * @Security("is_granted('ROLE_USER')")
+     * @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
     public function newGroup(Ecole $ecole, Request $request, UserInterface $user){
         $manager = $this->getDoctrine()->getManager();
@@ -128,7 +128,7 @@ class groupsController extends AbstractController {
 
     /**
      * @Route("/group/{group}", name="group")
-     * @Security("is_granted('ROLE_USER') and user === group.getProfesseur()")
+     * @Security("is_granted('ROLE_ACTIF') and user === group.getProfesseur()", statusCode=405)
      */
     public function group(Groups $group){
         $manager = $this->getDoctrine()->getManager();
@@ -151,7 +151,7 @@ class groupsController extends AbstractController {
     
     /**
      * @Route("/newCours/{group}", name="new_cours")
-     * @Security("is_granted('ROLE_USER') and user === group.getProfesseur()")
+     * @Security("is_granted('ROLE_ACTIF') and user === group.getProfesseur()", statusCode=405)
      */
     public function newCours(Groups $group, Request $request){
         $cours = new Cours();
@@ -261,7 +261,7 @@ class groupsController extends AbstractController {
 
     /**
      * @Route("/newEvaluation/{group}", name="new_evaluation")
-     * @Security("is_granted('ROLE_USER') and user === group.getProfesseur()")
+     * @Security("is_granted('ROLE_ACTIF') and user === group.getProfesseur()", statusCode=405)
      */
     public function newEvaluation(Groups $group, Request $request){
         $manager = $this->getDoctrine()->getManager();

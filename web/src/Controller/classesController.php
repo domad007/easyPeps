@@ -32,7 +32,7 @@ class classesController extends AbstractController {
     /**
      * Affichage des classes selon l'utilisateur
      * @Route("/classes", name="classes")
-     * @Security("is_granted('ROLE_USER')")
+     * @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
     public function classes(UserInterface $user){
          $classes = $this->getDoctrine()
@@ -53,7 +53,7 @@ class classesController extends AbstractController {
     /**
      * Formulaire permettant d'ajouter une nouvelle classe
      * @Route("/classes/newClass", name="newClass")
-     * @IsGranted("ROLE_USER")
+     * @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
     public function newClass(Request $request){
         $class = new Classe();
@@ -82,6 +82,7 @@ class classesController extends AbstractController {
 
      /**
      * @Route("/modifEleve", name="modif_eleve")
+     * 
      */
     public function modifEleve(Request $request){
         if($request->isMethod('post')){
@@ -133,7 +134,7 @@ class classesController extends AbstractController {
 
     /**
      * @Route("/classes/{classe}", name="class")
-     * @Security("is_granted('ROLE_USER') and user === classe.getProfesseur()")
+     * @Security("is_granted('ROLE_ACTIF') and user === classe.getProfesseur()", statusCode=405)
      */
     public function class(Classe $classe, Request $request, UserInterface $user){
         $manager = $this->getDoctrine()->getManager();
@@ -229,7 +230,7 @@ class classesController extends AbstractController {
 
     /**
      * @Route("/changeClasse/{eleve}", name="change_class")
-     * @Security("is_granted('ROLE_USER') and user === eleve.getClasse().getProfesseur()")
+     * @Security("is_granted('ROLE_ACTIF') and user === eleve.getClasse().getProfesseur()", statusCode=405)
      */
     public function changeClasse(Eleve $eleve, Request $request, UserInterface $user){
 

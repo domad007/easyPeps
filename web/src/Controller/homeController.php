@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
@@ -208,7 +209,7 @@ class homeController extends AbstractController {
 
     /**
      * @Route("/descriptionPresences", name="description_presences")
-     * @Security("is_granted('ROLE_USER')")
+     * @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
     public function descriptionPresecnes(UserInterface $user){
         $getPresences = $this->getDoctrine()

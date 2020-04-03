@@ -26,7 +26,7 @@ class journalController extends AbstractController {
 
     /**
      * @Route("/journalDeClasse", name="journal")
-     * @Security("is_granted('ROLE_USER')")
+     *  @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
     public function journal(UserInterface $user){
 
@@ -58,7 +58,7 @@ class journalController extends AbstractController {
     
     /**
      * @Route("/journalDeClasse/{group}", name="journal_de_classe")
-     * @Security("is_granted('ROLE_USER') and user === group.getProfesseur()")
+     * @Security("is_granted('ROLE_ACTIF') and user === group.getProfesseur()", statusCode=405)
      */
     public function journalDeCalsse(Groups $group){
         $manager = $this->getDoctrine()->getManager();

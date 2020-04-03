@@ -19,6 +19,7 @@ class cahierCoteController extends AbstractController {
 
     /**
      * @Route("/choixCahier", name="choix_cahier")
+     * @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
     public function choixCahier(UserInterface $user){
         $manager = $this->getDoctrine()->getManager();
@@ -50,6 +51,7 @@ class cahierCoteController extends AbstractController {
 
     /**
      * @Route("/cahierCotes/{idGroup}", name="cahier_cotes")
+     * @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
     public function cahierCotes(UserInterface $user, $idGroup){
 
@@ -102,7 +104,7 @@ class cahierCoteController extends AbstractController {
 
     /**
      * @Route("/newPeriode/{group}", name="new_periode")
-     * @Security("is_granted('ROLE_USER') and user === group.getProfesseur()")
+     * @Security("is_granted('ROLE_ACTIF') and user === group.getProfesseur()", statusCode=405)
      */
     public function newPeriode(Groups $group, Request $request){
         $manager = $this->getDoctrine()->getManager();
