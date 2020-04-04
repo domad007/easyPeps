@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Cours;
 use App\Entity\Eleve;
 use App\Entity\Classe;
 use App\Entity\Groups;
 use App\Entity\Periodes;
+use App\Entity\Evaluation;
 use App\Form\GroupPeriodeType;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,10 +52,10 @@ class cahierCoteController extends AbstractController {
 
 
     /**
-     * @Route("/cahierCotes/{idGroup}", name="cahier_cotes")
+     * @Route("/cahierCotes/{group}", name="cahier_cotes")
      * @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
-    public function cahierCotes(UserInterface $user, $idGroup){
+    public function cahierCotes(UserInterface $user, Groups $group){
 
         $manager = $this->getDoctrine()->getManager();
         $rsm = new ResultSetMapping();
@@ -73,138 +75,80 @@ class cahierCoteController extends AbstractController {
 
         $groups = $getGroups->getResult();
 
-        $group = $manager
+        $classes = $manager
         ->getRepository(Classe::class)
-        ->findByGroups($idGroup);
-
-        $getPeriodes = $this->getDoctrine()
-        ->getRepository(Periodes::class)
-        ->findBygroupe($idGroup);
+        ->findByGroups($group);
 
         $eleves =  $manager
         ->getRepository(Eleve::class)
-        ->findByclasse($group);
-
-        $getCompetencesPeriode = $this->forward('App\Controller\calculController::getMoyenneCompetence', 
-        [
-            'idGroup' => $idGroup
-        ]);
+        ->findByclasse($classes);
         
+        $moyenneCoursEval = [$this->getMoyenneCours($group), $this->getMoyenneEvaluation($group)];
         return $this->render(
             '/cahierCotes/cahierCotes.html.twig',
             [
-                'ecole' => $group,
-                'eleves' => $eleves,   
-                'competencesPeriode' => $getCompetencesPeriode,
-                'periodes' => $getPeriodes,
+                'ecole' => $classes,
+                'eleves' => $eleves, 
                 'groups' => $groups,
+                'moyennePeriodes' => $moyenneCoursEval
             ]
         );
     }
 
 
-    public function getMoyenneCours($idGroup){
-        $nombreHeuresPeriode = 0;
-        $nombreHeuresTotal = 0;
-        $moyenne = 0;
-
+    public function getMoyenneCours($group){
         $manager = $this->getDoctrine()->getManager();
-
-        $coursPeriodes = $this->getDoctrine()
+        $nombreTotalHeures = 0;
+        $nombreHeuresPeriode = 0;
+        $coursPeriode = $manager
         ->getRepository(Cours::class)
-        ->findBygroupe($idGroup);
-        
-        $periodes = $this->getDoctrine()
-        ->getRepository(Periodes::class)
-        ->findBygroupe($idGroup); 
-        
-        foreach($coursPeriodes as $key => $val){
-            $nombreHeuresTotal += $val->getNombreHeures();
-            if($val->getPeriode()->getId()){                  
-                $heures[$val->getPeriode()->getId()][] = $val->getNombreHeures();
+        ->findBygroupe($group);
+
+        foreach($coursPeriode as $key => $value){
+            $nombreTotalHeures += $value->getNombreHeures();
+            if($value->getPeriode()){
+                $nombreTotalPeriode[$value->getPeriode()->getNomPeriode()][] =  $value->getNombreHeures();
             }
         }
-
-        foreach($heures as $key => $value){
+        
+        foreach($nombreTotalPeriode as $key => $value){
             $nombreHeuresPeriode = array_sum($value);
-            foreach($periodes as $cle => $val){
-                if($val->getId() == $key){
-                    $moyenne = ($nombreHeuresPeriode/$nombreHeuresTotal)*100;
-                    $val->setPourcentageCours($moyenne);
-                    $manager->persist($val);
-                }
-            }
+            $nombreTotalPeriode[$key] = $nombreHeuresPeriode;           
+            $nombreTotalHeures = array_sum($nombreTotalPeriode);
         }
-        $manager->flush();
-    }
-    
-    public function getMoyenneEvaluation($idGroup){
-        $nombreHeuresPeriode = 0;
-        $nombreHeuresTotal = 0;
-        $heuresCompetence = 0;
-        $moyenne = 0;
 
+        foreach($nombreTotalPeriode as $key => $value){
+            $moyennesCours[$key] = ($value/$nombreTotalHeures)*100;
+        }
+
+        return $moyennesCours;
+    }
+
+    public function getMoyenneEvaluation($group){
         $manager = $this->getDoctrine()->getManager();
-
-        $evaluation = $this->getDoctrine()
+        $nombreTotalHeures = 0;
+        $nombreHeuresPeriode = 0;
+        $coursEvaluation = $manager
         ->getRepository(Evaluation::class)
-        ->findBygroupe($idGroup);
-        
-        $periodes = $this->getDoctrine()
-        ->getRepository(Periodes::class)
-        ->findBygroupe($idGroup); 
-        
-        foreach($evaluation as $key => $val){
-            $nombreHeuresTotal += $val->getHeuresCompetence();
-            if($val->getPeriode()->getId()){                  
-                $heures[$val->getPeriode()->getId()][] = $val->getHeuresCompetence();
+        ->findBygroupe($group);
+
+        foreach($coursEvaluation as $key => $value){
+            $nombreTotalHeures += $value->getHeuresCompetence();
+            if($value->getPeriode()){
+                $nombreTotalPeriode[$value->getPeriode()->getNomPeriode()][] =  $value->getHeuresCompetence();
             }
         }
-
-        foreach($heures as $key => $value){
+        
+        foreach($nombreTotalPeriode as $key => $value){
             $nombreHeuresPeriode = array_sum($value);
-            foreach($periodes as $cle => $val){
-                if($val->getId() == $key){
-                    $moyenne = ($nombreHeuresPeriode/$nombreHeuresTotal)*100;
-                    $val->setPourcentageEval($moyenne);
-                    $manager->persist($val);
-                }
-            }
-        }
-        $manager->flush();
-        return new Response("");
-    }
-
-    public function getMoyenneCompetence($idGroup){
-        $nombreHeuresCompetence = 0;
-        $nombreHeuresTotal = 0;
-        $moyenne = 0;
-        $heuresParPeriode = 0;
-
-        $evaluation = $this->getDoctrine()
-        ->getRepository(Evaluation::class)
-        ->findBygroupe($idGroup);
-        
-        $periodes = $this->getDoctrine()
-        ->getRepository(Periodes::class)
-        ->findBygroupe($idGroup); 
-
-        foreach($evaluation as $key => $val){
-            if($val->getPeriode()->getId()){                  
-                $heuresPeriodes[$val->getPeriode()->getId()][] = $val->getHeuresCompetence();
-            }
-            if($val->getPeriode()->getId() && $val->getCompetence()->getId()){
-                $heuresCompetence[$val->getPeriode()->getNomPeriode()][$val->getCompetence()->getNom()][] = $val->getHeuresCompetence();
-            }
+            $nombreTotalPeriode[$key] = $nombreHeuresPeriode;           
+            $nombreTotalHeures = array_sum($nombreTotalPeriode);
         }
 
-        foreach($heuresCompetence as $key => $value){
-            foreach($value as $cle => $val){
-                $nombreHeuresCompetence = array_sum($val);
-                $heures[$key][$cle] = $nombreHeuresCompetence;
-            
-            }
+        foreach($nombreTotalPeriode as $key => $value){
+            $moyennesEvaluation[$key] = ($value/$nombreTotalHeures)*100;
         }
-        return $heures;
+
+        return $moyennesEvaluation;
     }
 }

@@ -12,7 +12,7 @@
                 <option value="#"></option>
                 {% for key, value in groups %}
                     <optgroup label="{{value.ecole}}">
-                        <option value="{{path('cahier_cotes', {idGroup: value.groups_id})}}">{{value.groupes}}</option>
+                        <option value="{{path('cahier_cotes', {group: value.groups_id})}}">{{value.groupes}}</option>
                     </optgroup>
                 {% endfor %}
             </select>

@@ -276,10 +276,6 @@ class groupsController extends AbstractController {
                 
             }
             $manager->flush();
-
-            $this->forward('App\Controller\cahierCoteController::getMoyenneCours', [
-                'idGroup' =>  $group->getId()
-            ]);
             
             return $this->redirectToRoute('journal_de_classe', 
                 [
@@ -378,16 +374,6 @@ class groupsController extends AbstractController {
             }
 
             $manager->flush();
-
-            $this->forward('App\Controller\cahierCoteController::getMoyenneEvaluation', 
-            [
-                'idGroup' => $group->getId()
-            ]);
-
-            $this->forward('App\Controller\cahierCoteController::getMoyenneCompetence', 
-            [
-                'idGroup' => $group->getId()
-            ]);
             
             return $this->redirectToRoute('journal_de_classe', ['group' => $group->getId() ]);
         }
