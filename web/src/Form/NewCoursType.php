@@ -41,13 +41,14 @@ class NewCoursType extends AbstractType
             ])
             ->add('periode', ChoiceType::class, 
             [
+                'required' => false,
                 'choices' => 
                 [
-                    $options['periodes']
+                    $options['periodes'],
                 ],
+                'group_by' => 'semestres.intitule',
                 'choice_label' => 'nomPeriode',
                 'choice_value' => 'id',
-                'expanded' => true
             ])
             ->add('save', SubmitType::class, $contact->getConfig("Créez le nouveau cours !", ""))
         ;

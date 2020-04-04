@@ -129,6 +129,8 @@ class journalController extends AbstractController {
         ->getRepository(Eleve::class)
         ->findByclasse($classes);
 
+
+
         foreach($eleves as $key => $value){
             foreach($getCoursGroupe as $key => $value){
                 if($value->getEleveId()->getId() == $value->getId()){
@@ -252,12 +254,17 @@ class journalController extends AbstractController {
     public function modifDate(Request $request){
         $manager = $this->getDoctrine()->getManager();
         if($request->isMethod('post')){
+           
             $date =  $request->request->all();
             $newDate = new \DateTime($date['value']);
 
             $cours = 
             $manager->getRepository(Cours::class)
             ->findOneById($date['pk']);
+
+            $periodes = $manager
+            ->getRepository(Periodes::class)
+            ->findBygroupe($cours->getGroupe());
 
             $cours->setDateCours($newDate);
             $manager->persist($cours);
@@ -431,26 +438,6 @@ class journalController extends AbstractController {
             );
             $evalGroup->setPoints($points['value']);
             $manager->persist($evalGroup);
-            $manager->flush();
-        }
-
-        return new Response("");
-    }
-
-    /**
-     * @Route("/modifPeriode", name="modif_periode")
-     */
-    public function modifPeriode(Request $request){
-        $manager = $this->getDoctrine()->getManager();
-
-        if($request->isMethod('post')){
-            $periodeData = $request->request->all(); 
-            $getPeriode = $this->getDoctrine()
-            ->getRepository(Periodes::class)
-            ->findOneById($periodeData['pk']);
-
-            $getPeriode->setPourcentage($periodeData['value']);
-            $manager->persist($getPeriode);
             $manager->flush();
         }
 

@@ -39,9 +39,14 @@
     <h5 class="display-10" style="text-align: center">{{ecole.0.ecole.nomEcole}}</h3>
 
     <div class="row d-flex justify-content-center">
-        <a href="{{path('new_cours', {group: ecole.0.groups.id})}}" style="margin-right:10px;" class="btn btn-primary btn-md" style="text-align: center">Nouveau cours</a>
-        <a href="{{path('new_evaluation', {group: ecole.0.groups.id})}}" style="margin-right:10px;" class="btn btn-primary btn-md" style="text-align: center">Nouvelle évaluation</a>
-        <a href="#" class="btn btn-primary btn-md" style="text-align: center">Plannification de cycle</a>
+        {% if periodes is empty %}
+            <a href="{{path('new_cours', {group: ecole.0.groups.id})}}" style="margin-right:10px; text-align: center" class="btn btn-primary btn-md" onclick="periodeError(); return false;">Nouveau cours</a>
+            <a href="{{path('new_evaluation', {group: ecole.0.groups.id})}}" style="margin-right:10px; text-align: center" class="btn btn-primary btn-md" onclick="periodeError(); return false;">Nouvelle évaluation</a>
+        {% else %}
+            <a href="{{path('new_cours', {group: ecole.0.groups.id})}}" style="margin-right:10px; text-align: center" class="btn btn-primary btn-md">Nouveau cours</a>
+            <a href="{{path('new_evaluation', {group: ecole.0.groups.id})}}" style="margin-right:10px; text-align: center" class="btn btn-primary btn-md">Nouvelle évaluation</a>
+        {% endif %}
+        <a href="{{path('new_periode', {group: ecole.0.groups.id})}}" class="btn btn-primary btn-md" style="text-align: center">Nouvelle période</a>
     </div>
     <br>
     <div class="row d-flex justify-content-center">  

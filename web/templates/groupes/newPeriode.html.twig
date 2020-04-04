@@ -40,12 +40,22 @@
 </div>    
 {% endblock %}
 {% block _group_periode_periodes_entry_widget %}
-    <div class="form-row d-flex justify-content-center" id="block_{{id}}">
+    <div class="row d-flex justify-content-center" id="block_{{id}}">
         <div class="col-md-4">
-            {{form_widget(form.nomPeriode)}}
+            {{form_label(form.nomPeriode, 'Nom de la période')}}
+            {{form_widget(form.nomPeriode)}}        
+        </div>
+        <div class="col">
+             {{form_label(form.dateDebut, 'Début de la période')}}
+            {{form_widget(form.dateDebut)}}
+        </div>
+        <div class="col">
+            {{form_label(form.dateFin, 'Fin de la période')}}
+            {{form_widget(form.dateFin)}}
         </div>
         <div class="col-md-4">
-            {{form_widget(form.pourcentageCours)}}
+            {{form_label(form.semestres, 'Quel semestre ?')}}
+            {{form_widget(form.semestres)}}
         </div>
         <div class="col-md-1">
             <button type="button" data-action="delete" data-target="#block_{{id}}" class="btn btn-danger">X</button>

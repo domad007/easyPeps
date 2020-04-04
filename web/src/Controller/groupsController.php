@@ -148,6 +148,38 @@ class groupsController extends AbstractController {
         );
     }
 
+    /**
+     * @Route("/newPeriode/{group}", name="new_periode")
+     * @Security("is_granted('ROLE_ACTIF') and user === group.getProfesseur()", statusCode=405)
+     */
+    public function newPeriode(Groups $group, Request $request){
+        $manager = $this->getDoctrine()->getManager();
+        $groups = new Groups();
+        
+        $form = $this->createForm(GroupPeriodeType::class, $groups);
+        $form->handleRequest($request);        
+
+        if($form->isSubmitted() && $form->isValid()){
+            foreach($groups->getPeriodes() as $periodes){         
+                $periodes
+                ->setGroupe($group);
+                $manager->persist($periodes);
+
+            }
+            $manager->flush();
+
+            return $this->redirectToRoute('journal_de_classe', ['group' =>  $group->getId()]);
+        }
+
+        return $this->render(
+            'groupes/newPeriode.html.twig', 
+            [
+                'form' => $form->createView(),
+                'calculAuto' => $group
+            ]
+        );
+    }
+
     
     /**
      * @Route("/newCours/{group}", name="new_cours")
@@ -193,7 +225,13 @@ class groupsController extends AbstractController {
             $getPresence = $this->getDoctrine()
             ->getRepository(Presences::class)
             ->findOneById(1);
-
+            if($cours->getPeriode() == null){
+                foreach($periodes as $key => $value){
+                    if(new \DateTime() >= $value->getDateDebut() && new \DateTime() <= $value->getDateFin()){
+                        $cours->setPeriode($value);
+                    }
+                }    
+            }
             $cours
             ->setDateCours(new \DateTime())
             ->setGroupe($group);
@@ -285,7 +323,8 @@ class groupsController extends AbstractController {
         $getPeriodes = $manager
         ->getRepository(Periodes::class)
         ->findBygroupe($group->getId());
-
+        
+        
         $getCompetences = $manager
         ->getRepository(Competences::class)
         ->findBydegre($group->getDegre()->getId());
@@ -311,10 +350,22 @@ class groupsController extends AbstractController {
             $data = $form->getData();
             
             foreach($evaluation->getEvaluations() as $evaluations){
+                if($data->getPeriode() == null){
+                    foreach($getPeriodes as $key => $value){
+                        if($data->getDateEvaluation() >= $value->getDateDebut() && $data->getDateEvaluation() <= $value->getDateFin()){
+                            $evaluations
+                            ->setPeriode($value);
+                        }
+                    }
+                }
+                else {
+                    $evaluations
+                    ->setPeriode($data->getPeriode());
+                }
+
                 $evaluations
-                ->setDateEvaluation($data->getDateEvaluation())
-                ->setGroupe($group)
-                ->setPeriode($data->getPeriode());
+                    ->setDateEvaluation($data->getDateEvaluation())
+                    ->setGroupe($group);
 
                 foreach($eleve as $key => $value){
                     $evaluationGroup = new EvaluationGroup();

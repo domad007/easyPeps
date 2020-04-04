@@ -36,16 +36,6 @@ class AddGroupType extends AbstractType
             ],
             'allow_add' => true,
         ])
-        ->add('calculAutomatique', ChoiceType::class, [
-            'label' => "Pondération automatique des périodes ?",
-            'choices' => 
-            [
-                'Oui' => 1,
-                'Non' => 0
-            ],
-            'expanded' => true,
-            
-        ])
         ->add('degre', ChoiceType::class, [
             'label' => "Choix des compétences",
             'choices' => 

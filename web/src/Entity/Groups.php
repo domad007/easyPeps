@@ -34,11 +34,6 @@ class Groups
     private $periodes;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $calculAutomatique;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Degre", inversedBy="groups")
      */
     private $degre;
@@ -155,18 +150,6 @@ class Groups
                 $periode->setGroupe(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getCalculAutomatique(): ?int
-    {
-        return $this->calculAutomatique;
-    }
-
-    public function setCalculAutomatique(?int $calculAutomatique): self
-    {
-        $this->calculAutomatique = $calculAutomatique;
 
         return $this;
     }

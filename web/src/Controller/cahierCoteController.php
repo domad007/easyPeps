@@ -102,40 +102,6 @@ class cahierCoteController extends AbstractController {
         );
     }
 
-    /**
-     * @Route("/newPeriode/{group}", name="new_periode")
-     * @Security("is_granted('ROLE_ACTIF') and user === group.getProfesseur()", statusCode=405)
-     */
-    public function newPeriode(Groups $group, Request $request){
-        $manager = $this->getDoctrine()->getManager();
-        $groups = new Groups();
-        
-        $form = $this->createForm(GroupPeriodeType::class, $groups);
-        $form->handleRequest($request);        
-
-        if($form->isSubmitted() && $form->isValid()){
-            foreach($groups->getPeriodes() as $periodes){
-                
-                $periodes
-                ->setGroupe($group)
-                ->setPourcentageEval(0);
-                $manager->persist($periodes);
-
-            }
-            $manager->flush();
-
-            return $this->redirectToRoute('journal_de_classe', ['group' =>  $group->getId()]);
-        }
-
-        return $this->render(
-            'groupes/newPeriode.html.twig', 
-            [
-                'form' => $form->createView(),
-                'calculAuto' => $group
-            ]
-        );
-    }
-
 
     public function getMoyenneCours($idGroup){
         $nombreHeuresPeriode = 0;
