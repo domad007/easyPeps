@@ -84,6 +84,8 @@ class cahierCoteController extends AbstractController {
         ->findByclasse($classes);
         
         $moyenneCoursEval = [$this->getMoyenneCours($group), $this->getMoyenneEvaluation($group)];
+
+        $this->getMoyenneCompetences($group);
         return $this->render(
             '/cahierCotes/cahierCotes.html.twig',
             [
@@ -150,5 +152,29 @@ class cahierCoteController extends AbstractController {
         }
 
         return $moyennesEvaluation;
+    }
+
+    public function getMoyenneCompetences($group){
+        $manager = $this->getDoctrine()->getManager();
+        $nombreTotalHeures = 0;
+        $nombreHeuresPeriode = 0;
+        $coursEvaluationCompetences = $manager
+        ->getRepository(Evaluation::class)
+        ->findBygroupe($group);
+
+        foreach($coursEvaluationCompetences as $key => $value){
+            if($value->getCompetence()->getTypeCompetence()->getId()){
+                $nombreTotalPeriode[$value->getPeriode()->getNomPeriode()][$value->getCompetence()->getTypeCompetence()->getIntitule()][] =  $value->getHeuresCompetence();
+            }
+        }
+
+        foreach($nombreTotalPeriode as $key => $value){
+            foreach($value as $cle => $val){
+                $nombreHeuresPeriode = array_sum($val);
+                $nombreTotalPeriode[$key] = $nombreHeuresPeriode;           
+                $nombreTotalHeures = array_sum($nombreTotalPeriode);
+            }
+        }
+        
     }
 }
