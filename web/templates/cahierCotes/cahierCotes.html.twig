@@ -68,21 +68,63 @@
             </tbody>
         </table>
         <div class="row d-flex justify-content-center">                     
-            <button id="detailsEval" class="btn btn-info" data-toggle="collapse" data-target="#detailsEvaluation" aria-expanded="false" aria-controls="detailsEvaluation" style="font-size: 0.7em;">Détails des évaluations </button>    
+            <button id="detailsEval" class="btn btn-info" onclick="$('#detailsCompetence').collapse('hide')" data-toggle="collapse" data-target="#detailsEvaluation" aria-expanded="false" aria-controls="detailsEvaluation" style="font-size: 0.7em;">Détails des champs </button>    
+        </div>
+        <br>
+        <div class="row d-flex justify-content-center">                     
+            <button id="detailsComp" class="btn btn-info" onclick="$('#detailsEvaluation').collapse('hide')" data-toggle="collapse" data-target="#detailsCompetence" aria-expanded="false" aria-controls="detailsCompetence" style="font-size: 0.7em;">Détails des compétences </button>    
         </div>
         <br>
         <div id="detailsEvaluation" class="collapse">  
             <div class="table-responsive">
                 <table class="table">
                     <thead>
-                        {% for key, value in moyennePeriodes.0 %}
-                            <th>{{key}}</th>
+                        <th>Champs</th>
+                      
+                        {% for key, value in moyenneChampPeriode %}
+                            {% if loop.first %}
+                                {% for cle, valeur in value %}
+                                    <th>{{cle}}</th>
+                                {% endfor %}
+                            {% endif %}
                         {% endfor %}
                     </thead>
                     <tbody>
-                        {% for key, value in moyennePeriodes.1 %}
-                            <td>{{value|number_format(2)}} %</td>
+                        {% for key, value in moyenneChampPeriode %}
+                            <tr>
+                            <td>{{key}}</td>
+                                {% for cle, valeur in value %}               
+                                    <td>{{valeur|number_format(2)}} %</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}    
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="detailsCompetence" class="collapse">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <th>Compétences</th>
+                      
+                        {% for key, value in moyenneCompetence %}
+                            {% if loop.first %}
+                                {% for cle, valeur in value %}
+                                    <th>{{cle}}</th>
+                                {% endfor %}
+                            {% endif %}
                         {% endfor %}
+                    </thead>
+                    <tbody>
+                        {% for key, value in moyenneCompetence %}
+                            <tr>
+                            <td>{{key}}</td>
+                                {% for cle, valeur in value %}               
+                                    <td>{{valeur|number_format(2)}} %</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}    
                     </tbody>
                 </table>
             </div>

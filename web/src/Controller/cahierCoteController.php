@@ -84,15 +84,16 @@ class cahierCoteController extends AbstractController {
         ->findByclasse($classes);
         
         $moyenneCoursEval = [$this->getMoyenneCours($group), $this->getMoyenneEvaluation($group)];
-
-        $this->getMoyenneCompetences($group);
         return $this->render(
             '/cahierCotes/cahierCotes.html.twig',
             [
                 'ecole' => $classes,
                 'eleves' => $eleves, 
                 'groups' => $groups,
-                'moyennePeriodes' => $moyenneCoursEval
+                'moyennePeriodes' => $moyenneCoursEval,
+                'moyenneChampPeriode' => $this->getMoyenneChamps($group),
+                'moyenneCompetence' => $this->getMoyenneCompetences($group)
+ 
             ]
         );
     }
@@ -154,7 +155,7 @@ class cahierCoteController extends AbstractController {
         return $moyennesEvaluation;
     }
 
-    public function getMoyenneCompetences($group){
+    public function getMoyenneChamps($group){
         $manager = $this->getDoctrine()->getManager();
         $nombreTotalHeures = 0;
         $nombreHeuresPeriode = 0;
@@ -166,15 +167,100 @@ class cahierCoteController extends AbstractController {
             if($value->getCompetence()->getTypeCompetence()->getId()){
                 $nombreTotalPeriode[$value->getPeriode()->getNomPeriode()][$value->getCompetence()->getTypeCompetence()->getIntitule()][] =  $value->getHeuresCompetence();
             }
-        }
+        }       
 
         foreach($nombreTotalPeriode as $key => $value){
             foreach($value as $cle => $val){
-                $nombreHeuresPeriode = array_sum($val);
-                $nombreTotalPeriode[$key] = $nombreHeuresPeriode;           
-                $nombreTotalHeures = array_sum($nombreTotalPeriode);
+                $totalChamp = array_sum($val);
+                $totalChampPeriode[$key][$cle] = $totalChamp;
+
+                $totalPeriode[$key] = array_sum($totalChampPeriode[$key]);
             }
         }
         
+        foreach($totalChampPeriode as $key => $value){
+            if($key){
+                foreach($value as $cle => $val){
+                   $moyenneChamp[$key][$cle] = ($totalChampPeriode[$key][$cle]/$totalPeriode[$key])*100;
+                }
+            }
+        }
+        $periodes = array_keys($moyenneChamp);
+        foreach($moyenneChamp as $key => $value){
+            foreach($value as $cle => $val){
+                if($cle){
+                    $moyenne[$cle][$key] = $val;
+                }
+            }
+        }
+
+        foreach($moyenne as $key => $value){
+            foreach($periodes as $cle => $valeur){
+                if(empty($value[$valeur])){
+                   $moyenne[$key][$valeur] = 0;
+                }    
+            }
+        }
+
+        foreach($moyenne as $key => $value){
+            ksort($value);
+            $moyenne[$key] = $value;
+        }
+        return $moyenne;    
+    }
+
+    public function getMoyenneCompetences($group){
+        $manager = $this->getDoctrine()->getManager();
+        $nombreTotalHeures = 0;
+        $nombreHeuresPeriode = 0;
+        $coursEvaluationCompetences = $manager
+        ->getRepository(Evaluation::class)
+        ->findBygroupe($group);
+
+        foreach($coursEvaluationCompetences as $key => $value){
+            if($value->getCompetence()->getTypeCompetence()->getId()){
+                $nombreTotalPeriode[$value->getPeriode()->getNomPeriode()][$value->getCompetence()->getNom()][] =  $value->getHeuresCompetence();
+            }
+        }       
+
+        foreach($nombreTotalPeriode as $key => $value){
+            foreach($value as $cle => $val){
+                $totalChamp = array_sum($val);
+                $totalChampPeriode[$key][$cle] = $totalChamp;
+
+                $totalPeriode[$key] = array_sum($totalChampPeriode[$key]);
+            }
+        }
+        
+        foreach($totalChampPeriode as $key => $value){
+            if($key){
+                foreach($value as $cle => $val){
+                   $moyenneChamp[$key][$cle] = ($totalChampPeriode[$key][$cle]/$totalPeriode[$key])*100;
+                }
+            }
+        }
+        $periodes = array_keys($moyenneChamp);
+        foreach($moyenneChamp as $key => $value){
+            foreach($value as $cle => $val){
+                if($cle){
+                    $moyenne[$cle][$key] = $val;
+                }
+            }
+        }
+
+        foreach($moyenne as $key => $value){
+            foreach($periodes as $cle => $valeur){
+                if(empty($value[$valeur])){
+                   $moyenne[$key][$valeur] = 0;
+                }    
+            }
+        }
+
+        foreach($moyenne as $key => $value){
+            ksort($value);
+            $moyenne[$key] = $value;
+        }
+        ksort($moyenne);
+        return $moyenne;
     }
 }
