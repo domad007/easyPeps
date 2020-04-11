@@ -48,13 +48,11 @@ class groupsController extends AbstractController {
         ->addScalarResult('groupes', 'groupes')
         ->addScalarResult('nombreEleves', 'nombreEleves');
 
-        $groupsSql = "select ecole.nom_ecole as ecole, groups_id, GROUP_CONCAT(nom_classe SEPARATOR '/') as groupes, count(eleve.id) as nombreEleves 
+        $groupsSql = "select ecole.nom_ecole as ecole, groups_id, GROUP_CONCAT(nom_classe SEPARATOR '/') as groupes 
         from classe
         join ecole on classe.ecole_id = ecole.id
-        join eleve on classe.id = eleve.classe_id
         where groups_id is not null and professeur_id = ?
         group by groups_id";
-
         $getGroups = $manager->createNativeQuery($groupsSql, $rsm);
         $getGroups->setParameter(1, $user->getId());
 
@@ -160,6 +158,7 @@ class groupsController extends AbstractController {
         $form->handleRequest($request);        
 
         if($form->isSubmitted() && $form->isValid()){
+            dump($groups);
             foreach($groups->getPeriodes() as $periodes){         
                 $periodes
                 ->setGroupe($group);
@@ -167,7 +166,6 @@ class groupsController extends AbstractController {
 
             }
             $manager->flush();
-
             return $this->redirectToRoute('journal_de_classe', ['group' =>  $group->getId()]);
         }
 

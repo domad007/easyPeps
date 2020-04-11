@@ -127,14 +127,14 @@ class journalController extends AbstractController {
 
 
         foreach($eleves as $key => $value){
-            foreach($getCoursGroupe as $key => $value){
-                if($value->getEleveId()->getId() == $value->getId()){
-                    $value->addCoursGroupe($value);                      
+            foreach($getCoursGroupe as $key => $val){
+                if($val->getEleveId()->getId() == $value->getId()){
+                    $value->addCoursGroupe($val);                      
                 }
             }
-            foreach($getEvaluationsGroupe as $key => $value){
-                if($value->getEleve()->getId() == $value->getId()){
-                    $value->addEvaluationGroup($value);
+            foreach($getEvaluationsGroupe as $key => $val){
+                if($val->getEleve()->getId() == $value->getId()){
+                    $value->addEvaluationGroup($val);
                 }
             }
         }

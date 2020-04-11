@@ -40,7 +40,6 @@
                 <tr>
                     <th>Nom école</th>
                     <th>Groupes</th>
-                    <th>Nombre d'élèves</th>
                 </tr> 
             {% for row in groups|batch(2) %}
                 {% for key, value in row %}
@@ -49,7 +48,7 @@
                         <td>
                             <a href="{{path("group", {group: value.groups_id})}}">{{ value.groupes|upper }}</a> 
                         </td> 
-                        <td>{{value.nombreEleves}}</td>                                    
+                                                           
                     </tr>
                 {% endfor %}
             {% endfor %}

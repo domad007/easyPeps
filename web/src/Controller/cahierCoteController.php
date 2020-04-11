@@ -107,6 +107,8 @@ class cahierCoteController extends AbstractController {
         ->getRepository(Cours::class)
         ->findBygroupe($group);
 
+        if(empty($coursPeriode)) return null;
+
         foreach($coursPeriode as $key => $value){
             $nombreTotalHeures += $value->getNombreHeures();
             if($value->getPeriode()){
@@ -135,6 +137,8 @@ class cahierCoteController extends AbstractController {
         ->getRepository(Evaluation::class)
         ->findBygroupe($group);
 
+        if(empty($coursEvaluation)) return null;
+
         foreach($coursEvaluation as $key => $value){
             $nombreTotalHeures += $value->getHeuresCompetence();
             if($value->getPeriode()){
@@ -162,6 +166,8 @@ class cahierCoteController extends AbstractController {
         $coursEvaluationCompetences = $manager
         ->getRepository(Evaluation::class)
         ->findBygroupe($group);
+
+        if(empty($coursEvaluationCompetences)) return null;
 
         foreach($coursEvaluationCompetences as $key => $value){
             if($value->getCompetence()->getTypeCompetence()->getId()){
@@ -216,6 +222,8 @@ class cahierCoteController extends AbstractController {
         $coursEvaluationCompetences = $manager
         ->getRepository(Evaluation::class)
         ->findBygroupe($group);
+
+        if(empty($coursEvaluationCompetences)) return null;
 
         foreach($coursEvaluationCompetences as $key => $value){
             if($value->getCompetence()->getTypeCompetence()->getId()){
