@@ -46,7 +46,7 @@
         <table class="table" id="tablePeriode">
             <thead>
                 <tr>
-                    <th>Periodes</th>
+                    <th>Type</th>
                     {% for key, value in moyennePeriodes.0 %}
                         <th>{{key}}</th>
                     {% endfor %}
@@ -130,7 +130,102 @@
             </div>
         </div>
     </div>
-</div>  
+</div> 
+<div class="jumbotron" style="font-size: 1.3em;">
+    <h3 class="display-7" style="text-align: center">Pourcentage des semestres pour le travail journalier et evaluation</h3>
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+    <div class="table-responsive">       
+        <table class="table" id="tablePeriode">
+            <thead>
+                <th>Type</th>
+                {% for key, value in moyennesSemestres.cours %}                
+                    <th>{{key}}</th>                 
+                {% endfor %}
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Cours</td>
+                    {% for key, value in  moyennesSemestres.cours %}
+                        <td>{{value|number_format(2)}} %</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Evaluation</td>
+                     {% for key, value in  moyennesSemestres.eval %}
+                        <td>{{value|number_format(2)}} %</td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+
+         <div class="row d-flex justify-content-center">                     
+            <button id="detailsSemCham" class="btn btn-info" onclick="$('#detailsSemComp').collapse('hide')" data-toggle="collapse" data-target="#detailsChampSem" aria-expanded="false" aria-controls="detailsChampSem" style="font-size: 0.7em;">Détails des champs </button>    
+        </div>
+        <br>
+        <div class="row d-flex justify-content-center">                     
+            <button id="detailsCompSem" class="btn btn-info" onclick="$('#detailsChampSem').collapse('hide')" data-toggle="collapse" data-target="#detailsSemComp" aria-expanded="false" aria-controls="detailsSemComp" style="font-size: 0.7em;">Détails des compétences </button>    
+        </div>
+        <br>
+        <div id="detailsChampSem" class="collapse">  
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <th>Champs</th>
+                      
+                        {% for key, value in moyennesChampSem %}
+                            {% if loop.first %}
+                                {% for cle, valeur in value %}
+                                    <th>{{cle}}</th>
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </thead>
+                    <tbody>
+                        {% for key, value in moyennesChampSem %}
+                            <tr>
+                            <td>{{key}}</td>
+                                {% for cle, valeur in value %}               
+                                    <td>{{valeur|number_format(2)}} %</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}    
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="detailsSemComp" class="collapse">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <th>Compétences</th>
+                      
+                        {% for key, value in moyennesCompetencesSem %}
+                            {% if loop.first %}
+                                {% for cle, valeur in value %}
+                                    <th>{{cle}}</th>
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </thead>
+                    <tbody>
+                        {% for key, value in moyennesCompetencesSem %}
+                            <tr>
+                            <td>{{key}}</td>
+                                {% for cle, valeur in value %}               
+                                    <td>{{valeur|number_format(2)}} %</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}    
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>      
+</div>      
 <div class="jumbotron my-4">
     <h5 class="display-7" style="text-align: center">Changez le groupe: </h3>
     <div class="row d-flex justify-content-center">
