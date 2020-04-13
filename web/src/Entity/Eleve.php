@@ -52,11 +52,17 @@ class Eleve
      */
     private $evaluationGroups;
 
+    private $moyennePeriodeCours;
+    private $moyennePeriodeEval;
+
     
     public function __construct()
     {
         $this->coursGroupes = new ArrayCollection();
         $this->evaluationGroups = new ArrayCollection();
+        $this->moyennePeriodeCours = new ArrayCollection();
+        $this->moyennePeriodeEval = new ArrayCollection();
+
     }
 
     
@@ -173,6 +179,17 @@ class Eleve
         }
 
         return $this;
+    }
+
+    public function getMoyennePeriodeCours() : Array {
+        return $this->moyennePeriodeCours;
+    }
+    public function addMoyennePeriodeCours(array $resultats){
+        $this->moyennePeriodeCours[] = $resultats;
+    }
+
+    public function addMoyennePeriodeEval(array $resultats){
+        $this->moyennePeriodeEval[] = $resultats;
     }
 
    

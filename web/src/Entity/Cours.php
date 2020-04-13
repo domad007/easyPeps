@@ -58,7 +58,6 @@ class Cours
     {
         $this->coursGroupes = new ArrayCollection();
         $this->periodes = new ArrayCollection();
-        $this->evaluations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -126,37 +125,7 @@ class Cours
         return $this;
     }
 
-    /**
-     * @return Collection|Evaluation[]
-     */
-    public function getEvaluations(): Collection
-    {
-        return $this->evaluations;
-    }
-
-    public function addEvaluation(Evaluation $evaluation): self
-    {
-        if (!$this->evaluations->contains($evaluation)) {
-            $this->evaluations[] = $evaluation;
-            $evaluation->setCours($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEvaluation(Evaluation $evaluation): self
-    {
-        if ($this->evaluations->contains($evaluation)) {
-            $this->evaluations->removeElement($evaluation);
-            // set the owning side to null (unless already changed)
-            if ($evaluation->getCours() === $this) {
-                $evaluation->setCours(null);
-            }
-        }
-
-        return $this;
-    }
-
+    
     public function getSurCombien(): ?string
     {
         return $this->surCombien;

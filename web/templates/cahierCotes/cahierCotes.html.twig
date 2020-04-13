@@ -7,7 +7,7 @@
 {% block container %}
     <div class="jumbotron" style="font-size: 1.3em;">
         <h3 class="display-7" style="text-align: center">Cahier de côtes</h3>
-        <h5 class="display-10" style="text-align: center">{{ecole.0.ecole.nomEcole}}</h3>
+        <h5 class="display-10" style="text-align: center"></h3>
 
         <div class="table-responsive">
             <table class="table">
@@ -17,7 +17,13 @@
                         <th>Nom</th>
                         <th>Prenom</th>
                         <th>Classe</th>
-                        <th>Moyenne</th>
+                        {% for cle, valeur in eleves.0.moyennePeriodeCours %}
+                            {% for k,v in valeur %}
+                                <th>
+                                    {{k}}
+                                </th>
+                            {% endfor %}
+                        {% endfor %}
                     </tr>
                 </thead>
                 <tbody>
@@ -27,7 +33,13 @@
                             <td id="nom">{{val.nom}}</td>
                             <td id="prenom">{{val.prenom}}</td>
                             <td>{{val.classe.nomClasse}}</td>  
-                            <td></td> 
+                            {% for cle, valeur in val.moyennePeriodeCours %}
+                                {% for k,v in valeur %}
+                                    <td>
+                                        {{v}}
+                                    </td> 
+                                {% endfor %}
+                            {% endfor %}
                         </tr>                                                                         
                     {% endfor %}    
                 </tbody>
@@ -47,21 +59,15 @@
             <thead>
                 <tr>
                     <th>Type</th>
-                    {% for key, value in moyennePeriodes.0 %}
+                    {% for key, value in moyennePeriodes %}
                         <th>{{key}}</th>
                     {% endfor %}
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>Cours</td>
-                    {% for key, value in moyennePeriodes.0 %}
-                        <td>{{value|number_format(2)}} %</td>
-                    {% endfor %}
-                </tr>
-                <tr>
-                    <td>Evaluations</td>
-                    {% for key, value in moyennePeriodes.1 %}
+                    <td>Travail Journalier</td>
+                    {% for key, value in moyennePeriodes %}
                         <td>{{value|number_format(2)}} %</td>
                     {% endfor %}
                 </tr>
@@ -142,20 +148,14 @@
         <table class="table" id="tablePeriode">
             <thead>
                 <th>Type</th>
-                {% for key, value in moyennesSemestres.cours %}                
+                {% for key, value in moyennesSemestres %}                
                     <th>{{key}}</th>                 
                 {% endfor %}
             </thead>
             <tbody>
                 <tr>
-                    <td>Cours</td>
-                    {% for key, value in  moyennesSemestres.cours %}
-                        <td>{{value|number_format(2)}} %</td>
-                    {% endfor %}
-                </tr>
-                <tr>
-                    <td>Evaluation</td>
-                     {% for key, value in  moyennesSemestres.eval %}
+                    <td>Travail Journalier</td>
+                    {% for key, value in  moyennesSemestres %}
                         <td>{{value|number_format(2)}} %</td>
                     {% endfor %}
                 </tr>
