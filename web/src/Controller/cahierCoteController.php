@@ -491,7 +491,7 @@ class cahierCoteController extends AbstractController {
                 $heuresPeriodeEval[$value->getPeriode()->getId()][] = $value->getHeuresCompetence();
                 $pointsTotalEval[$value->getPeriode()->getId()][] =  $value->getSurCombien();
 
-                $heuresPeriodeTotalEval[$value->getPeriode()->getId()] = array_sum($heuresPeriodeEval[$value->getPeriode()->getId()]);
+                $heuresPeriodeTotalEval[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()] = array_sum($heuresPeriodeEval[$value->getPeriode()->getId()]);
                 $pointsTotalPeriodeEval[$value->getPeriode()->getId()] = array_sum($pointsTotalEval[$value->getPeriode()->getId()]);
             }
         }
@@ -558,26 +558,37 @@ class cahierCoteController extends AbstractController {
             }
 
             foreach($heuresPeriodeTotalEval as $k => $v){
-                if($value->getId() == $k){                   
-                    $heuresSemEval[$value->getSemestres()->getIntitule()][] = $v;
-                    $heuresSemEvalTotal[$value->getSemestres()->getIntitule()] = array_sum($heuresSemEval[$value->getSemestres()->getIntitule()]);
-
+                foreach($v as $a => $b){
+                    if($value->getId() == $a){                   
+                        $heuresSemEval[$value->getSemestres()->getIntitule()][] = $b;
+                        $heuresSemEvalTotal[$value->getSemestres()->getIntitule()] = array_sum($heuresSemEval[$value->getSemestres()->getIntitule()]);
+    
+                    }
                 }
             }
         }
 
-        dump($pointsEleveSemEval);
-        dump($heuresPeriodeTotal);
+       /* dump($pointsEleveSemEval);
         dump($heuresPeriodeTotalEval);
         dump($heuresSemEvalTotal);
-        dump($heuresSemCoursTotal);
+        dump($heuresPeriodeTotal);
+        dump($heuresSemCoursTotal);*/
         $total = 0;
         foreach($pointsEleveSemEval as $key => $value){
             foreach($value as $cle => $val){
-            
+                foreach($val as $k => $v){
+                    foreach($heuresPeriodeTotalEval as $a => $b){
+                        if($a == $key){
+                            $ptsSemEval[$key][$k] = $v*$heuresPeriodeTotalEval[$key][$cle];
+                            dump($heuresPeriodeTotalEval[$key][$cle]);
+                        }
+                    }
+                    //$ptsSemEval[$key][$k] = $v*$heuresPeriodeTotalEval[$key][$cle]*10;
+                }
             }
             
         }
+        dump($ptsSemEval);
         return $eleves;
     }
 }
