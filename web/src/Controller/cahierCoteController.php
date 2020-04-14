@@ -465,6 +465,7 @@ class cahierCoteController extends AbstractController {
                 $pointsTotal[$value->getPeriode()->getId()][] =  $value->getSurCombien();
 
                 $heuresPeriodeTotal[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()] = array_sum($heuresPeriode[$value->getPeriode()->getId()]);
+                ksort($heuresPeriodeTotal[$value->getPeriode()->getSemestres()->getIntitule()]);
                 $pointsTotalPeriode[$value->getPeriode()->getId()] = array_sum($pointsTotal[$value->getPeriode()->getId()]);
             }
         }
@@ -497,10 +498,46 @@ class cahierCoteController extends AbstractController {
             }
         }
 
+        foreach($getEvaluation as $key => $value){
+            if($value->getPeriode()->getSemestres()){
+                $heuresChampSem[$value->getPeriode()->getSemestres()->getIntitule()][$value->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getHeuresCompetence();
+                $pointsChampSem[$value->getPeriode()->getSemestres()->getIntitule()][$value->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getSurCombien();
+
+                $pointsTotalChampSem[$value->getPeriode()->getSemestres()->getIntitule()][$value->getCompetence()->getTypeCompetence()->getIntitule()] = array_sum($pointsChampSem[$value->getPeriode()->getSemestres()->getIntitule()][$value->getCompetence()->getTypeCompetence()->getIntitule()]);
+                $heuresTotalChampSem[$value->getPeriode()->getSemestres()->getIntitule()][$value->getCompetence()->getTypeCompetence()->getIntitule()] = array_sum($heuresChampSem[$value->getPeriode()->getSemestres()->getIntitule()][$value->getCompetence()->getTypeCompetence()->getIntitule()]);
+                $heuresTotalChampsSem[$value->getPeriode()->getSemestres()->getIntitule()] = array_sum($heuresTotalChampSem[$value->getPeriode()->getSemestres()->getIntitule()]);
+            }
+        }
+        
+
         foreach($evaluationGroup as $key => $value){
             if($value->getEvaluation()->getPeriode()){
                 $pointsElevePeriodeEval[$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()][] = $value->getPoints(); 
                 $totalPointsPeriodeEval[$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()] = array_sum($pointsElevePeriodeEval[$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()]);
+            }
+        }
+
+        foreach($evaluationGroup as $key => $value){
+            if($value->getEvaluation()->getPeriode()->getSemestres()){
+                $pointsEleveChampSem[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getPoints();
+                $pointsTotalEleveChampSem[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()] = array_sum($pointsEleveChampSem[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()]);
+            }
+        }
+
+        foreach($pointsTotalEleveChampSem as $key => $value){       
+            foreach($value as $cle => $valeur){
+                foreach($valeur as $k => $v){
+                    $pointsEleveChamp[$key][$cle][$k] = ($v/$pointsTotalChampSem[$key][$k])*10;
+                }
+            }
+        }
+
+        foreach($pointsEleveChamp as $key => $value){
+            foreach($value as $cle => $valeur){
+                foreach($valeur as $k => $v){
+                    $moyChamp[$key][$cle][$k] = $pointsEleveChamp[$key][$cle][$k]*$heuresTotalChampSem[$key][$k];
+                    $moyenneChampsTotal[$key][$cle] = array_sum($moyChamp[$key][$cle])/$heuresTotalChampsSem[$key];
+                }
             }
         }
 
@@ -586,6 +623,8 @@ class cahierCoteController extends AbstractController {
                 }
             }
         }
+
+
         return $eleves;
     }
 }
