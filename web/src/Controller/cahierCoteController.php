@@ -492,6 +492,7 @@ class cahierCoteController extends AbstractController {
                 $pointsTotalEval[$value->getPeriode()->getId()][] =  $value->getSurCombien();
 
                 $heuresPeriodeTotalEval[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()] = array_sum($heuresPeriodeEval[$value->getPeriode()->getId()]);
+                ksort($heuresPeriodeTotalEval[$value->getPeriode()->getSemestres()->getIntitule()]);
                 $pointsTotalPeriodeEval[$value->getPeriode()->getId()] = array_sum($pointsTotalEval[$value->getPeriode()->getId()]);
             }
         }
@@ -547,8 +548,6 @@ class cahierCoteController extends AbstractController {
             }
         }
 
-        $heuresCoursSem = 0;
-        $heuresEvalSem = 0;
         foreach($periodes as $key => $value){
             foreach($heuresPeriodeTotal as $k => $v){
                 if($value->getId() == $k){
@@ -568,27 +567,18 @@ class cahierCoteController extends AbstractController {
             }
         }
 
-       /* dump($pointsEleveSemEval);
-        dump($heuresPeriodeTotalEval);
-        dump($heuresSemEvalTotal);
         dump($heuresPeriodeTotal);
-        dump($heuresSemCoursTotal);*/
-        $total = 0;
+        dump($heuresSemCoursTotal);
+        dump($pointsEleveSemCours);
         foreach($pointsEleveSemEval as $key => $value){
-            foreach($value as $cle => $val){
-                foreach($val as $k => $v){
-                    foreach($heuresPeriodeTotalEval as $a => $b){
-                        if($a == $key){
-                            $ptsSemEval[$key][$k] = $v*$heuresPeriodeTotalEval[$key][$cle];
-                            dump($heuresPeriodeTotalEval[$key][$cle]);
-                        }
-                    }
-                    //$ptsSemEval[$key][$k] = $v*$heuresPeriodeTotalEval[$key][$cle]*10;
+            foreach($value as $cle => $valeur){
+                foreach($valeur as $k => $v){
+                    $moy[$key][$k][] = ($pointsEleveSemEval[$key][$cle][$k]*$heuresPeriodeTotalEval[$key][$cle]);
+                    $moyenne[$key][$k] = array_sum($moy[$key][$k])/$heuresSemEvalTotal[$key];
                 }
             }
-            
         }
-        dump($ptsSemEval);
+        //$moyenne["moyenne"] = array_sum($moy["Semestre 1"][1])/31;
         return $eleves;
     }
 }
