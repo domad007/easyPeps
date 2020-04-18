@@ -57,7 +57,7 @@ class Eleve
     private $moyenneSemCours;
     private $moyenneSemEval;
     private $moyenneChampSem;
-
+    private $moyenneChampPer;
     
     public function __construct()
     {
@@ -68,7 +68,7 @@ class Eleve
         $this->moyenneSemCours = new ArrayCollection();
         $this->moyenneSemEval = new ArrayCollection();
         $this->moyenneChampSem = new ArrayCollection();
-
+        $this->moyenneChampPer = new ArrayCollection();
     }
 
     
@@ -215,6 +215,14 @@ class Eleve
 
     public function addMoyenneSemEval(array $resultats) {
         $this->moyenneSemEval[] = $resultats;
+    }
+
+    public function getMoyenneChampPer(): Array {
+        return $this->moyenneChampPer;
+    }
+
+    public function addMoyenneChampPer(array $resultats){
+        $this->moyenneChampPer[] = $resultats;
     }
 
     public function getMoyenneChampSem(): Array {

@@ -510,7 +510,17 @@ class cahierCoteController extends AbstractController {
                 $heuresTotalChampsSem[$value->getPeriode()->getSemestres()->getIntitule()] = array_sum($heuresTotalChampSem[$value->getPeriode()->getSemestres()->getIntitule()]);
             }
         }
-        
+
+        foreach($getEvaluation as $key => $value){
+            if($value->getPeriode()){
+                $heuresChampsPer[$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getHeuresCompetence();
+                $pointsChampPer[$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getSurCombien();
+                
+                $pointsTotalChampPer[$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()] = array_sum($pointsChampPer[$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()]);
+                $heuresTotalChampPer[$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()] = array_sum($heuresChampsPer[$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()]);
+                $heuresTotalChampsPer[$value->getPeriode()->getId()] = array_sum($heuresTotalChampPer[$value->getPeriode()->getId()]);
+            }
+        }
 
         foreach($evaluationGroup as $key => $value){
             if($value->getEvaluation()->getPeriode()){
@@ -522,6 +532,19 @@ class cahierCoteController extends AbstractController {
             if($value->getEvaluation()->getPeriode()->getSemestres()){
                 $pointsEleveChampSem[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getPoints();
                 $pointsTotalEleveChampSem[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()] = array_sum($pointsEleveChampSem[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()]);
+            }
+        }
+        foreach($evaluationGroup as $key => $value){
+            if($value->getEvaluation()->getPeriode()){
+                $pointsEleveChampPer[$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getPoints();
+                $pointsTotalEleveChampPer[$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()] = array_sum($pointsEleveChampPer[$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()]);
+            }
+        }
+        foreach($pointsTotalEleveChampPer as $key => $value){
+            foreach($value as $cle => $valeur){
+                foreach($valeur as $k => $v){
+                    $pointsEleveChampPer[$key][$cle][$k] = ($v/$pointsTotalChampPer[$key][$k])*10;
+                }
             }
         }
         foreach($pointsTotalEleveChampSem as $key => $value){       
@@ -607,12 +630,6 @@ class cahierCoteController extends AbstractController {
             }
         }
 
-        /*dump($pointsElevePeriode);
-        dump($pointsEleveEval);
-        dump($moyenneCours);
-        dump($pointsEleveChamp);
-        dump($moyenneChampsTotal);*/
-
         foreach($eleves as $key => $value){
             foreach($pointsElevePeriode as $cle => $valeur){
                 foreach($periodes as $a => $b){
@@ -654,6 +671,17 @@ class cahierCoteController extends AbstractController {
                 foreach($valeur as $k => $v){
                     if($value->getId() == $k){
                         $value->addMoyenneSemEval([$cle => $v]);
+                    }
+                }
+            }
+            foreach($pointsEleveChampPer as $cle => $valeur){
+                foreach($periodes as $a => $b){
+                    if($b->getId() == $cle){
+                        foreach($valeur as $k => $v){
+                            if($value->getId() == $k){
+                                $value->addMoyenneChampPer([$b->getNomPeriode() => $v]);
+                            }
+                        }
                     }
                 }
             }

@@ -12,7 +12,8 @@
         <div class="row d-flex justify-content-center">
             <button onclick="$('#detailsEleveEval').collapse('hide'); $('#detailsEleveChamp').collapse('hide');" id="detailsCoursEleve" class="btn btn-info mr-3" data-toggle="collapse" data-target="#detailsEleveCours">Moyennes des cours</button>
             <button onclick="$('#detailsEleveCours').collapse('hide'); $('#detailsEleveChamp').collapse('hide');" id="detailsEvalEleve" class="btn btn-info mr-3" data-toggle="collapse" data-target="#detailsEleveEval">Moyennes des évaluations</button>          
-            <button onclick="$('#detailsEleveCours').collapse('hide'); $('#detailsEleveEval').collapse('hide');" id="detailsChampEleve" class="btn btn-info" data-toggle="collapse" data-target="#detailsEleveChamp">Moyennes des champs</button>          
+            <button onclick="$('#detailsEleveCours').collapse('hide'); $('#detailsEleveEval').collapse('hide');" id="detailsChampEleve" class="btn btn-info mr-3" data-toggle="collapse" data-target="#detailsEleveChamp">Moyennes des champs</button>    
+            <button onclick="$('#detailsEleveCours').collapse('hide'); $('#detailsEleveEval').collapse('hide');" id="detailsMoyenneEleve" class="btn btn-info" data-toggle="collapse" data-target="#detailsEleveMoyenne">Moyennes des élèves</button>    
         </div>
         <br>
         <div id="detailsEleveCours" class="collapse">
@@ -129,6 +130,17 @@
             </div>   
         </div>
         <div id="detailsEleveChamp" class="collapse">
+            <div class="row">
+                <div class="col">
+                    <small><b>CP: Condition Physique</b></small>
+                </div>
+                <div class="col">
+                    <small><b>HGM: Habilité gestuelles et motrices</b></small>
+                </div>
+                <div class="col">
+                    <small><b>CSM: Coopération socio motrice</b></small>
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -137,6 +149,24 @@
                             <th>Nom</th>
                             <th>Prenom</th>
                             <th>Classe</th>
+                            {%  for key, value in eleves.0.moyenneChampPer %}
+                                {% for cle, valeur in value %}
+                                    <th colspan="3">
+                                        <div class="row d-flex justify-content-center">{{cle}}</div>
+                                        <div class="row">
+                                            <div class="col">                                                  
+                                                <small>CP</small>      
+                                            </div>
+                                                <div class="col">                                                  
+                                                <small>HGM</small>      
+                                            </div>
+                                                <div class="col">                                                  
+                                                <small>CSM</small>      
+                                            </div>
+                                        </div>
+                                    </th>
+                                {% endfor %}
+                            {% endfor %}
                             {% for key, value in eleves.0.moyenneChampSem %}
                                 {% for cle, valeur in value %}
                                     <th colspan="3">
@@ -165,6 +195,15 @@
                                 <td id="prenom">{{val.prenom}}</td>
                                 <td>{{val.classe.nomClasse}}</td>  
                                 {% for cle, valeur in val.moyenneChampSem %}
+                                    {% for k, v in valeur %}
+                                        {% for a, b in v %}
+                                        <td>
+                                            {{b|number_format(2)}}
+                                        </td> 
+                                        {% endfor %}
+                                    {% endfor %}
+                                {% endfor %}
+                                {% for cle, valeur in val.moyenneChampPer %}
                                     {% for k, v in valeur %}
                                         {% for a, b in v %}
                                         <td>
