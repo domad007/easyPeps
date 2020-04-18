@@ -555,6 +555,7 @@ class cahierCoteController extends AbstractController {
                         }
                     }
                     $pointsEleveChampPer[$key][$cle][$k] = ($v/$pointsTotalChampPer[$key][$k])*10;
+                    ksort($pointsEleveChampPer[$key][$cle]);
                 }
             }
         }
@@ -567,6 +568,7 @@ class cahierCoteController extends AbstractController {
                         }
                     }
                     $pointsEleveChamp[$key][$cle][$k] = ($v/$pointsTotalChampSem[$key][$k])*10;
+                    ksort($pointsEleveChamp[$key][$cle]);
                 }
             }
         }
