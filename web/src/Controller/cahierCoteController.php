@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Cours;
 use App\Entity\Eleve;
+use App\Entity\Types;
 use App\Entity\Classe;
 use App\Entity\Groups;
 use App\Entity\Periodes;
 use App\Entity\Evaluation;
+use App\Entity\Competences;
 use App\Entity\CoursGroupe;
 use App\Form\GroupPeriodeType;
 use App\Entity\EvaluationGroup;
@@ -460,6 +462,10 @@ class cahierCoteController extends AbstractController {
         ->getRepository(Periodes::class)
         ->findBygroupe($group);
 
+        $typeCompetences =  $manager
+        ->getRepository(Types::class)
+        ->findAll();
+
 
         foreach($getCours as $key => $value){
             if($value->getPeriode()){
@@ -543,6 +549,11 @@ class cahierCoteController extends AbstractController {
         foreach($pointsTotalEleveChampPer as $key => $value){
             foreach($value as $cle => $valeur){
                 foreach($valeur as $k => $v){
+                    foreach($typeCompetences as $a => $b){
+                        if(empty($valeur[$b->getIntitule()])){
+                            $pointsEleveChampPer[$key][$cle][$b->getIntitule()] = 0;
+                        }
+                    }
                     $pointsEleveChampPer[$key][$cle][$k] = ($v/$pointsTotalChampPer[$key][$k])*10;
                 }
             }
@@ -550,6 +561,11 @@ class cahierCoteController extends AbstractController {
         foreach($pointsTotalEleveChampSem as $key => $value){       
             foreach($value as $cle => $valeur){
                 foreach($valeur as $k => $v){
+                    foreach($typeCompetences as $a => $b){
+                        if(empty($valeur[$b->getIntitule()])){
+                            $pointsEleveChamp[$key][$cle][$b->getIntitule()] = 0;
+                        }
+                    }
                     $pointsEleveChamp[$key][$cle][$k] = ($v/$pointsTotalChampSem[$key][$k])*10;
                 }
             }
