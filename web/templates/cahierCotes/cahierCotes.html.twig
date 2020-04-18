@@ -10,10 +10,10 @@
         <h5 class="display-10" style="text-align: center">{{eleves.0.classe.ecole.nomEcole}}</h3>
         <br>
         <div class="row d-flex justify-content-center">
-            <button onclick="$('#detailsEleveEval').collapse('hide'); $('#detailsEleveChamp').collapse('hide');" id="detailsCoursEleve" class="btn btn-info mr-3" data-toggle="collapse" data-target="#detailsEleveCours">Moyennes des cours</button>
-            <button onclick="$('#detailsEleveCours').collapse('hide'); $('#detailsEleveChamp').collapse('hide');" id="detailsEvalEleve" class="btn btn-info mr-3" data-toggle="collapse" data-target="#detailsEleveEval">Moyennes des évaluations</button>          
-            <button onclick="$('#detailsEleveCours').collapse('hide'); $('#detailsEleveEval').collapse('hide');" id="detailsChampEleve" class="btn btn-info mr-3" data-toggle="collapse" data-target="#detailsEleveChamp">Moyennes des champs</button>    
-            <button onclick="$('#detailsEleveCours').collapse('hide'); $('#detailsEleveEval').collapse('hide');" id="detailsMoyenneEleve" class="btn btn-info" data-toggle="collapse" data-target="#detailsEleveMoyenne">Moyennes des élèves</button>    
+            <button onclick="$('#detailsEleveEval').collapse('hide'); $('#detailsEleveChamp').collapse('hide'); $('#detailsEleveMoyenne').collapse('hide');" id="detailsCoursEleve" class="btn btn-info mr-3" data-toggle="collapse" data-target="#detailsEleveCours">Moyennes des cours</button>
+            <button onclick="$('#detailsEleveCours').collapse('hide'); $('#detailsEleveChamp').collapse('hide'); $('#detailsEleveMoyenne').collapse('hide');" id="detailsEvalEleve" class="btn btn-info mr-3" data-toggle="collapse" data-target="#detailsEleveEval">Moyennes des évaluations</button>          
+            <button onclick="$('#detailsEleveCours').collapse('hide'); $('#detailsEleveEval').collapse('hide'); $('#detailsEleveMoyenne').collapse('hide');" id="detailsChampEleve" class="btn btn-info mr-3" data-toggle="collapse" data-target="#detailsEleveChamp">Moyennes des champs</button>    
+            <button onclick="$('#detailsEleveCours').collapse('hide'); $('#detailsEleveChamp').collapse('hide'); $('#detailsEleveEval').collapse('hide');" id="detailsMoyenneEleve" class="btn btn-info" data-toggle="collapse" data-target="#detailsEleveMoyenne">Moyennes des élèves</button>    
         </div>
         <br>
         <div id="detailsEleveCours" class="collapse">
@@ -218,7 +218,62 @@
                 </table>
             </div>   
         </div>
+        <div id="detailsEleveMoyenne" class="collapse">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nom</th>
+                            <th>Prenom</th>
+                            <th>Classe</th>
+                            {% for key, value in eleves.0.moyennePeriode %}
+                                {% for cle, valeur in value %}
+                                    <th>{{cle}}</th>
+                                {% endfor %}
+                            {% endfor %}
+                            {% for key, value in eleves.0.moyenneSem %}
+                                {% for cle, valeur in value %}
+                                    <th>{{cle}}</th>
+                                {% endfor %}
+                            {% endfor %}
+                            <th>Annee</th>
+                        </tr>    
+                    </thead>
+                    <tbody>
+                        {% for key, val in eleves|sort((a, b) => a.nom <=> b.nom) %}                                                  
+                            <tr>
+                                <td id="nombreEleve">{{loop.index}}</td>
+                                <td id="nom">{{val.nom}}</td>
+                                <td id="prenom">{{val.prenom}}</td>
+                                <td>{{val.classe.nomClasse}}</td>  
+                                {% for cle, valeur in val.moyennePeriode %}
+                                    {% for k, v in valeur %}                                      
+                                        <td>
+                                            {{v|number_format(2)}}
+                                        </td>                                    
+                                    {% endfor %}
+                                {% endfor %}
+                                {% for cle, valeur in val.moyenneSem %}
+                                    {% for k, v in valeur %}                                      
+                                        <td>
+                                            {{v|number_format(2)}}
+                                        </td>                                        
+                                    {% endfor %}
+                                {% endfor %}
+                                {% for cle, valeur in val.moyenneAnnee %}
+                                    {% for k, v in valeur %}
+                                        <td>{{v|number_format(2)}}</td>
+                                    {% endfor %}
+                                {% endfor %}
+                            </tr>                                                                         
+                        {% endfor %}    
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
+
     <div class="jumbotron" style="font-size: 1.3em;">
         <h3 class="display-7" style="text-align: center">Pourcentage des champs et des compétences</h3>
         {% for message in app.flashes('error') %}
