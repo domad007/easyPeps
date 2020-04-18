@@ -54,6 +54,9 @@ class Eleve
 
     private $moyennePeriodeCours;
     private $moyennePeriodeEval;
+    private $moyenneSemCours;
+    private $moyenneSemEval;
+    private $moyenneChampSem;
 
     
     public function __construct()
@@ -62,6 +65,9 @@ class Eleve
         $this->evaluationGroups = new ArrayCollection();
         $this->moyennePeriodeCours = new ArrayCollection();
         $this->moyennePeriodeEval = new ArrayCollection();
+        $this->moyenneSemCours = new ArrayCollection();
+        $this->moyenneSemEval = new ArrayCollection();
+        $this->moyenneChampSem = new ArrayCollection();
 
     }
 
@@ -188,8 +194,35 @@ class Eleve
         $this->moyennePeriodeCours[] = $resultats;
     }
 
+    public function getMoyennePeriodeEval(): Array {
+        return $this->moyennePeriodeEval;
+    }
     public function addMoyennePeriodeEval(array $resultats){
         $this->moyennePeriodeEval[] = $resultats;
+    }
+
+    public function getMoyenneSemCours() : Array{
+        return $this->moyenneSemCours;
+    }
+
+    public function addMoyenneSemCours(array $resultats){
+        $this->moyenneSemCours[] = $resultats;
+    }
+
+    public function getMoyenneSemEval(): Array {
+        return $this->moyenneSemEval;
+    }
+
+    public function addMoyenneSemEval(array $resultats) {
+        $this->moyenneSemEval[] = $resultats;
+    }
+
+    public function getMoyenneChampSem(): Array {
+        return $this->moyenneChampSem;
+    }
+
+    public function addMoyenneChampSem(array $resultats){
+        $this->moyenneChampSem[] = $resultats;
     }
 
    

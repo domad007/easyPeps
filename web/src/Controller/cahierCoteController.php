@@ -80,13 +80,15 @@ class cahierCoteController extends AbstractController {
             '/cahierCotes/cahierCotes.html.twig',
             [
                 'groups' => $groups,
-                'eleves' => $this->getMoyenneCoursEleve($group),
+                'eleves' => $this->getMoyennesEleve($group),
                 'moyennePeriodes' => $this->getMoyenneCours($group),
                 'moyenneChampPeriode' => $this->getMoyenneChamps($group),
                 'moyenneCompetence' => $this->getMoyenneCompetences($group),
                 'moyennesSemestres' => $this->getCoursSem($group),
                 'moyennesChampSem' => $this->getMoyenneChampsSem($group),
-                'moyennesCompetencesSem' => $this->getMoyenneCompetencesSem($group)
+                'moyennesCompetencesSem' => $this->getMoyenneCompetencesSem($group),
+                'moyenneEvaluationPeriodes' => $this->getMoyenneEvaluation($group),
+                'moyenneEvaluationSem' => $this->getEvalSem($group)
  
             ]
         );
@@ -428,7 +430,7 @@ class cahierCoteController extends AbstractController {
         return $moyenne;
     }
 
-    public function getMoyenneCoursEleve($group){
+    public function getMoyennesEleve($group){
         $manager = $this->getDoctrine()->getManager();
         $getCours = $manager
         ->getRepository(Cours::class)
@@ -516,14 +518,12 @@ class cahierCoteController extends AbstractController {
                 $totalPointsPeriodeEval[$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()] = array_sum($pointsElevePeriodeEval[$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()]);
             }
         }
-
         foreach($evaluationGroup as $key => $value){
             if($value->getEvaluation()->getPeriode()->getSemestres()){
                 $pointsEleveChampSem[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getPoints();
                 $pointsTotalEleveChampSem[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()] = array_sum($pointsEleveChampSem[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()]);
             }
         }
-
         foreach($pointsTotalEleveChampSem as $key => $value){       
             foreach($value as $cle => $valeur){
                 foreach($valeur as $k => $v){
@@ -531,7 +531,6 @@ class cahierCoteController extends AbstractController {
                 }
             }
         }
-
         foreach($pointsEleveChamp as $key => $value){
             foreach($value as $cle => $valeur){
                 foreach($valeur as $k => $v){
@@ -540,6 +539,7 @@ class cahierCoteController extends AbstractController {
                 }
             }
         }
+        
 
         foreach($totalPointsPeriodeEval as $key => $value){
             foreach($pointsTotalPeriodeEval as $cle => $valeur){
@@ -554,22 +554,6 @@ class cahierCoteController extends AbstractController {
         ksort($pointsElevePeriode);
         ksort($pointsEleveEval);
 
-        foreach($eleves as $key => $value){
-            foreach($pointsElevePeriode as $cle => $valeur){
-                foreach($valeur as $ke => $val){
-                    if($value->getId() == $ke){                      
-                        $value->addMoyennePeriodeCours([$cle => $val]);                        
-                    }                   
-                }
-            }
-            foreach($pointsEleveEval as $cle => $valeur){
-                foreach($valeur as $ke => $val){
-                    if($value->getId() == $ke){
-                        $value->addMoyennePeriodeEval([$cle => $val]);
-                    }
-                }
-            }
-        }
 
         foreach($periodes as $key => $value){
             foreach($pointsElevePeriode as $cle => $valeur){
@@ -605,7 +589,6 @@ class cahierCoteController extends AbstractController {
                 }
             }
         }
-
         foreach($pointsEleveSemCours as $key => $value){
             foreach($value as $cle => $valeur){
                 foreach($valeur as $k => $v){
@@ -624,7 +607,57 @@ class cahierCoteController extends AbstractController {
             }
         }
 
+        /*dump($pointsElevePeriode);
+        dump($pointsEleveEval);
+        dump($moyenneCours);
+        dump($pointsEleveChamp);
+        dump($moyenneChampsTotal);*/
 
+        foreach($eleves as $key => $value){
+            foreach($pointsElevePeriode as $cle => $valeur){
+                foreach($periodes as $a => $b){
+                    if($b->getId() == $cle){
+                        foreach($valeur as $k => $v){
+                            if($value->getId() == $k){
+                                $value->addMoyennePeriodeCours([$b->getNomPeriode() => $v]);
+                            }
+                        }
+                    }
+                }               
+            }
+            foreach($pointsEleveEval as $cle => $valeur){
+                foreach($periodes as $a => $b){
+                    if($b->getId() == $cle){
+                        foreach($valeur as $k => $v){
+                            if($value->getId() == $k){
+                                $value->addMoyennePeriodeEval([$b->getNomPeriode() => $v]);
+                            }
+                        }
+                    }
+                }
+            }
+            foreach($moyenneCours as $cle => $valeur){
+                foreach($valeur as $k => $v){
+                    if($value->getId() == $k){
+                        $value->addMoyenneSemCours([$cle => $v]);
+                    }
+                }
+            }
+            foreach($pointsEleveChamp as $cle => $valeur){
+                foreach($valeur as $k => $v){
+                    if($value->getId() == $k){
+                        $value->addMoyenneChampSem([$cle => $v]);
+                    }
+                }
+            }
+            foreach($moyenneChampsTotal as $cle => $valeur){
+                foreach($valeur as $k => $v){
+                    if($value->getId() == $k){
+                        $value->addMoyenneSemEval([$cle => $v]);
+                    }
+                }
+            }
+        }
         return $eleves;
     }
 }
