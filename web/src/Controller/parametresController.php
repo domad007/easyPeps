@@ -6,7 +6,9 @@ use App\Entity\Ecole;
 use App\Entity\Classe;
 use App\Entity\Groups;
 use App\Entity\Ponderation;
+use App\Entity\Appreciation;
 use App\Form\NewPonderationType;
+use App\Form\NewAppreciationEcoleType;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -58,10 +60,20 @@ class parametresController extends AbstractController {
             ]
         );
 
+        $appreciation = $manager
+        ->getRepository(Appreciation::class)
+        ->findOneBy(
+            [
+                'ecole' => $ecole,
+                'professeur' => $this->getUser()
+            ]
+        );
+
         return $this->render(
             'parametres/parametres.html.twig',
             [
                 'ponderation' => $ponderation,
+                'appreciation' => $appreciation,
                 'ecole' => $ecole
             ]
         );
@@ -100,6 +112,36 @@ class parametresController extends AbstractController {
 
         return $this->render(
             'parametres/creationPonderation.html.twig',
+            [
+                'form' => $form->createView()
+            ]
+        );
+    }
+
+    /**
+     * @Route("creationAppreciations/{ecole}", name="creation_appreciations")
+     */
+    public function creationAppreciations(Ecole $ecole, Request $request){
+        $manager = $this->getDoctrine()->getManager();
+        $appreciationEcole = new Ecole();
+        $form = $this->createForm(NewAppreciationEcoleType::class, $appreciationEcole);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            foreach($appreciationEcole as $appreciation){
+                $appreciation
+                ->getEcole($ecole)
+                ->getProfesseur($this->getUser());
+
+                //$manager->persist($appreciationEcole);
+
+            }
+            //$manager->flush();
+        }
+
+        return $this->render(
+            'parametres/creationAppreciation.html.twig',
             [
                 'form' => $form->createView()
             ]

@@ -38,11 +38,17 @@ class Ecole
      */
     private $ponderations;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Appreciation", mappedBy="ecole")
+     */
+    private $appreciations;
+
     public function __construct()
     {
         $this->classes = new ArrayCollection();
         $this->Evaluation = new ArrayCollection();
         $this->ponderations = new ArrayCollection();
+        $this->appreciations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -149,6 +155,37 @@ class Ecole
             // set the owning side to null (unless already changed)
             if ($ponderation->getEcole() === $this) {
                 $ponderation->setEcole(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Appreciation[]
+     */
+    public function getAppreciations(): Collection
+    {
+        return $this->appreciations;
+    }
+
+    public function addAppreciation(Appreciation $appreciation): self
+    {
+        if (!$this->appreciations->contains($appreciation)) {
+            $this->appreciations[] = $appreciation;
+            $appreciation->setEcole($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAppreciation(Appreciation $appreciation): self
+    {
+        if ($this->appreciations->contains($appreciation)) {
+            $this->appreciations->removeElement($appreciation);
+            // set the owning side to null (unless already changed)
+            if ($appreciation->getEcole() === $this) {
+                $appreciation->setEcole(null);
             }
         }
 

@@ -79,7 +79,13 @@
                     </tbody>
                 </table>
             </div>
-            
+        {% endif %}
+        {% if appreciation is empty %}
+            <div class="row d-flex justify-content-center">
+                <a href="{{path('creation_appreciations', {ecole: ecole.id})}}" class="btn btn-primary">Créez vos appréciations</a>
+            </div>
+        {% else %}
+
         {% endif %}
     </div>
 {% endblock %}

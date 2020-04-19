@@ -108,6 +108,11 @@ class User implements UserInterface
      */
     private $userActif;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Appreciation", mappedBy="professeur")
+     */
+    private $appreciations;
+
 
 
     public function __construct()
@@ -116,6 +121,7 @@ class User implements UserInterface
         $this->customizedPresences = new ArrayCollection();
         $this->userRoles = new ArrayCollection();
         $this->groups = new ArrayCollection();
+        $this->appreciations = new ArrayCollection();
     }
 
 
@@ -380,6 +386,37 @@ class User implements UserInterface
     public function setUserActif(bool $userActif): self
     {
         $this->userActif = $userActif;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Appreciation[]
+     */
+    public function getAppreciations(): Collection
+    {
+        return $this->appreciations;
+    }
+
+    public function addAppreciation(Appreciation $appreciation): self
+    {
+        if (!$this->appreciations->contains($appreciation)) {
+            $this->appreciations[] = $appreciation;
+            $appreciation->setProfesseur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAppreciation(Appreciation $appreciation): self
+    {
+        if ($this->appreciations->contains($appreciation)) {
+            $this->appreciations->removeElement($appreciation);
+            // set the owning side to null (unless already changed)
+            if ($appreciation->getProfesseur() === $this) {
+                $appreciation->setProfesseur(null);
+            }
+        }
 
         return $this;
     }

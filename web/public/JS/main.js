@@ -74,6 +74,18 @@ function addEvaluation(){
         deleteRowPeriodes();
     });
 }
+
+function addAppreciation(){
+    var index = 0;
+    $('#addAppreciation').click(function(){
+        index++;
+        const form = $('#new_appreciation_ecole_appreciations').data('prototype').replace(/__name__/g, index);
+        $('#new_appreciation_ecole_appreciations').append(form);
+
+        deleteRowPeriodes();
+    });
+}
+
 function presenceEleve(value){
     $.ajax({
         url: '/presences',
