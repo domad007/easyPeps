@@ -11,6 +11,7 @@ use App\Entity\Periodes;
 use App\Entity\Evaluation;
 use App\Entity\Competences;
 use App\Entity\CoursGroupe;
+use App\Entity\Ponderation;
 use App\Form\GroupPeriodeType;
 use App\Entity\EvaluationGroup;
 use Doctrine\ORM\Query\ResultSetMapping;
@@ -466,6 +467,15 @@ class cahierCoteController extends AbstractController {
         ->getRepository(Types::class)
         ->findAll();
 
+        $ponderation = $manager
+        ->getRepository(Ponderation::class)
+        ->findOneBy(
+            [
+                'ecole' => $classes[0]->getEcole()->getId(),
+                'professeur' => $this->getUser()->getId()
+            ]
+        );
+
 
         foreach($getCours as $key => $value){
             if($value->getPeriode()){
@@ -646,16 +656,31 @@ class cahierCoteController extends AbstractController {
             }
         }
 
-        foreach($pointsElevePeriode as $key => $value){
-            foreach($value as $cle => $valeur){
-                $moyenneElevePeriode[$key][$cle] = ($valeur+$pointsEleveEval[$key][$cle])/2;
+        if(empty($ponderation)){
+            foreach($pointsElevePeriode as $key => $value){
+                foreach($value as $cle => $valeur){
+                    $moyenneElevePeriode[$key][$cle] = ($valeur+$pointsEleveEval[$key][$cle])/2;
+                }
+            }
+            foreach($moyenneCours as $key => $value){
+                foreach($value as $cle => $valeur){
+                    $moyenneEleveSemestre[$key][$cle] = ($valeur+$moyenneChampsTotal[$key][$cle])/2;
+                }
             }
         }
-        foreach($moyenneCours as $key => $value){
-            foreach($value as $cle => $valeur){
-                $moyenneEleveSemestre[$key][$cle] = ($valeur+$moyenneChampsTotal[$key][$cle])/2;
+        else {
+            foreach($pointsElevePeriode as $key => $value){
+                foreach($value as $cle => $valeur){
+                    $moyenneElevePeriode[$key][$cle] = ($valeur*$ponderation->getCours()+$pointsEleveEval[$key][$cle]*$ponderation->getEvaluation())/100;
+                }
+            }
+            foreach($moyenneCours as $key => $value){
+                foreach($value as $cle => $valeur){
+                    $moyenneEleveSemestre[$key][$cle] = ($valeur*$ponderation->getCours()+$moyenneChampsTotal[$key][$cle]*$ponderation->getEvaluation())/100;
+                }
             }
         }
+
         foreach($moyenneEleveSemestre as $key => $value){
             $sumSemCoursEval[$key] = $heuresTotalChampsSem[$key] + $heuresSemCoursTotal[$key];
             $sumSem = array_sum($sumSemCoursEval);
@@ -665,9 +690,7 @@ class cahierCoteController extends AbstractController {
                 $moyenneEleveTotaleAnnee[$cle] = array_sum($moyenneTotaleAnnee[$cle])/$sumSem;
             }
         }
-        dump($moyenneElevePeriode);
-        dump($moyenneEleveSemestre);
-        dump($moyenneEleveTotaleAnnee);
+
         foreach($eleves as $key => $value){
             foreach($pointsElevePeriode as $cle => $valeur){
                 foreach($periodes as $a => $b){
@@ -747,7 +770,7 @@ class cahierCoteController extends AbstractController {
                 }
             }
         }
-        dump($eleves);
+
         return $eleves;
     }
 }

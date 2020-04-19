@@ -47,6 +47,7 @@
                                             <a class="dropdown-item" href="{{path('description_comp_socles')}}">Compétences socles</a>
                                             <a class="dropdown-item" href="{{path('description_comp_terminales')}}">Compétences terminales</a>
                                             <a class="dropdown-item" href="{{path('description_presences')}}">Prise des présences</a>
+                                            <a class="dropdown-item" href="{{path('parametres_choix')}}">Paramètres de l'école</a>
                                         </div>
                                     </div>
                                 </li>
@@ -149,7 +150,7 @@
             {% if app.user %}
                 {% if is_granted('ROLE_ACTIF') %}
                     {% set user = app.user.mail|split('@') %}
-                     {% for message in app.flashes('success') %}
+                    {% for message in app.flashes('success') %}
                         <div class="alert alert-success">
                             {{ message }}
                         </div>
