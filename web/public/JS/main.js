@@ -165,3 +165,4 @@ function coursEvaluationPeriode(property= null, idPeriode = null){
 function periodeError(){
     alert("Aucune période existe, veuillez en créer une avant de créer une évaluation ou un cours!");
 }
+

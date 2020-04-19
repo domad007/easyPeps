@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Exception;
 use App\Entity\Cours;
 use App\Entity\Eleve;
 use App\Entity\Types;
@@ -16,6 +17,7 @@ use App\Form\GroupPeriodeType;
 use App\Entity\EvaluationGroup;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -79,6 +81,13 @@ class cahierCoteController extends AbstractController {
         $getGroups->setParameter(1, $user->getId());
 
         $groups = $getGroups->getResult();
+        /*try {
+            $this->getMoyennesEleve($group);
+        }
+        catch(\Exception $e){
+            return new Response("alo");
+        }*/
+
         return $this->render(
             '/cahierCotes/cahierCotes.html.twig',
             [
@@ -105,8 +114,6 @@ class cahierCoteController extends AbstractController {
         $coursPeriode = $manager
         ->getRepository(Cours::class)
         ->findBygroupe($group);
-
-        if(empty($coursPeriode)) return 0;
 
         foreach($coursPeriode as $key => $value){
             $nombreTotalHeures += $value->getNombreHeures();
@@ -136,8 +143,6 @@ class cahierCoteController extends AbstractController {
         ->getRepository(Evaluation::class)
         ->findBygroupe($group);
 
-        if(empty($coursEvaluation)) return 0;
-
         foreach($coursEvaluation as $key => $value){
             $nombreTotalHeures += $value->getHeuresCompetence();
             if($value->getPeriode()){
@@ -165,8 +170,6 @@ class cahierCoteController extends AbstractController {
         $coursEvaluationCompetences = $manager
         ->getRepository(Evaluation::class)
         ->findBygroupe($group);
-
-        if(empty($coursEvaluationCompetences)) return 0;
 
         foreach($coursEvaluationCompetences as $key => $value){
             if($value->getCompetence()->getTypeCompetence()->getId()){
@@ -221,8 +224,6 @@ class cahierCoteController extends AbstractController {
         $coursEvaluationCompetences = $manager
         ->getRepository(Evaluation::class)
         ->findBygroupe($group);
-
-        if(empty($coursEvaluationCompetences)) return 0;
 
         foreach($coursEvaluationCompetences as $key => $value){
             if($value->getCompetence()->getTypeCompetence()->getId()){
@@ -327,7 +328,6 @@ class cahierCoteController extends AbstractController {
         ->getRepository(Evaluation::class)
         ->findBygroupe($group);
 
-        if(empty($coursEvaluationCompetences)) return 0;
 
         foreach($coursEvaluationCompetences as $key => $value){
             if($value->getCompetence()->getTypeCompetence()->getId()){
@@ -384,7 +384,6 @@ class cahierCoteController extends AbstractController {
         ->getRepository(Evaluation::class)
         ->findBygroupe($group);
 
-        if(empty($coursEvaluationCompetences)) return 0;
 
         foreach($coursEvaluationCompetences as $key => $value){
             if($value->getCompetence()->getTypeCompetence()->getId()){
@@ -476,7 +475,6 @@ class cahierCoteController extends AbstractController {
             ]
         );
 
-
         foreach($getCours as $key => $value){
             if($value->getPeriode()){
                 $heuresPeriode[$value->getPeriode()->getId()][] = $value->getNombreHeures();
@@ -494,7 +492,6 @@ class cahierCoteController extends AbstractController {
                 $totalPointsPeriode[$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()] = array_sum($pointsElevePeriode[$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]);
             }
         }
-
         foreach($totalPointsPeriode as $key => $value){
             foreach($pointsTotalPeriode as $cle => $valeur){
                 if($key == $cle){
@@ -770,7 +767,6 @@ class cahierCoteController extends AbstractController {
                 }
             }
         }
-
         return $eleves;
     }
 }
