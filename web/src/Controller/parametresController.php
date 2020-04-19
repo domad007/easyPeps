@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Ecole;
 use App\Entity\Classe;
 use App\Entity\Groups;
+use App\Entity\Parametres;
 use App\Entity\Ponderation;
 use App\Entity\Appreciation;
 use App\Form\NewPonderationType;
@@ -68,13 +69,27 @@ class parametresController extends AbstractController {
                 'professeur' => $this->getUser()
             ]
         );
-        
+
+        $parametres =  $manager
+        ->getRepository(Parametres::class)
+        ->findBy(
+            [
+                'ecole' => $ecole,
+                'professeur' => $this->getUser()
+            ]
+        );
+
+        /*if(empty($parametres)){
+            $this->createParametres($ecole);
+        }*/
+
         return $this->render(
             'parametres/parametres.html.twig',
             [
                 'ponderation' => $ponderation,
                 'appreciation' => $appreciation,
-                'ecole' => $ecole
+                'ecole' => $ecole,
+                'parametres' => $parametres
             ]
         );
     }
@@ -84,6 +99,7 @@ class parametresController extends AbstractController {
      */
     public function creationPonderation(Ecole $ecole, Request $request){
         $ponderation = new Ponderation();
+
         $manager = $this->getDoctrine()->getManager();
         $form = $this->createForm(NewPonderationType::class, $ponderation);
         $form->handleRequest($request);
@@ -94,14 +110,13 @@ class parametresController extends AbstractController {
             $ponderation->setEcole($ecole);
 
             $somme = $data->getEvaluation()+$data->getCours();
-            dump($somme);
             if($somme != 100){
                 $this->addFlash('error', "La somme de l'évaluation et du cours ne corresponds pas au total de 100%");
             }
             else {
                 $manager->persist($ponderation);
                 $manager->flush();
-
+                
                 $this->addFlash('success', "Votre pondération a bien été crée");
                 return $this->redirectToRoute('parametres_ecole', [
                     'ecole' => $ecole->getId()
@@ -124,8 +139,8 @@ class parametresController extends AbstractController {
     public function creationAppreciations(Ecole $ecole, Request $request){
         $manager = $this->getDoctrine()->getManager();
         $appreciationEcole = new Ecole();
-        $form = $this->createForm(NewAppreciationEcoleType::class, $appreciationEcole);
 
+        $form = $this->createForm(NewAppreciationEcoleType::class, $appreciationEcole);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()){
@@ -135,6 +150,7 @@ class parametresController extends AbstractController {
                 ->setProfesseur($this->getUser());
                 $manager->persist($appreciation);
             }
+
             $manager->flush();
 
             $this->addFlash('success', "Vos appréciations ont été crées avec succes");
@@ -210,5 +226,39 @@ class parametresController extends AbstractController {
         return new Response("");
     }
 
+    private function createParametres($ecole){
+        $manager = $this->getDoctrine()->getManager();
+        $parametresPeriodes = new Parametres();
+            $parametresPeriodes
+            ->setEcole($ecole)
+            ->setProfesseur($this->getUser())
+            ->setType("Periodes")
+            ->setAppreciation(false)
+            ->setSurCombien(10);
+
+            $parametresSemestres = new Parametres();
+            $parametresSemestres
+            ->setEcole($ecole)
+            ->setProfesseur($this->getUser())
+            ->setType("Semestres")
+            ->setAppreciation(false)
+            ->setSurCombien(10);
+
+            $parametresAnnee = new Parametres();
+            $parametresAnnee
+            ->setEcole($ecole)
+            ->setProfesseur($this->getUser())
+            ->setType("Annee")
+            ->setAppreciation(false)
+            ->setSurCombien(10);
+
+            $manager
+            ->persist($parametresAnnee)
+            ->persist($parametresPeriodes)
+            ->persist($parametresSemestres);
+
+            $manager->flush();
+
+    }
   
 }

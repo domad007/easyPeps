@@ -113,6 +113,11 @@ class User implements UserInterface
      */
     private $appreciations;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Parametres", mappedBy="professeur")
+     */
+    private $parametres;
+
 
 
     public function __construct()
@@ -122,6 +127,7 @@ class User implements UserInterface
         $this->userRoles = new ArrayCollection();
         $this->groups = new ArrayCollection();
         $this->appreciations = new ArrayCollection();
+        $this->parametres = new ArrayCollection();
     }
 
 
@@ -415,6 +421,37 @@ class User implements UserInterface
             // set the owning side to null (unless already changed)
             if ($appreciation->getProfesseur() === $this) {
                 $appreciation->setProfesseur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Parametres[]
+     */
+    public function getParametres(): Collection
+    {
+        return $this->parametres;
+    }
+
+    public function addParametre(Parametres $parametre): self
+    {
+        if (!$this->parametres->contains($parametre)) {
+            $this->parametres[] = $parametre;
+            $parametre->setProfesseur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParametre(Parametres $parametre): self
+    {
+        if ($this->parametres->contains($parametre)) {
+            $this->parametres->removeElement($parametre);
+            // set the owning side to null (unless already changed)
+            if ($parametre->getProfesseur() === $this) {
+                $parametre->setProfesseur(null);
             }
         }
 

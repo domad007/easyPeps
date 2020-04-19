@@ -47,7 +47,7 @@ class accountController extends AbstractController {
 
             $manager->persist($user);
             $manager->flush();
-            
+
             $this->addFlash('success', "Vous avez été inscrit veuillez passer à la connexion");
             return $this->redirectToRoute("connexion_user");
         }
