@@ -14,13 +14,20 @@ class NewAppreciationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('intitule', TextType::class)
+            ->add('intitule', TextType::class,
+            [
+                'attr' => 
+                [
+                    'placeholder' => "Nom de l'appréciation",
+                ]
+            ])
             ->add('cote', IntegerType::class,
             [
                 'attr' => 
                 [
                     'placeholder' => "A partir de quelle cote appréciation va être appliqué",
-                    'min' => 1
+                    'min' => 0,
+                    'max' => 10
                 ]
             ])
         ;

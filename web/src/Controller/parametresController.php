@@ -62,13 +62,13 @@ class parametresController extends AbstractController {
 
         $appreciation = $manager
         ->getRepository(Appreciation::class)
-        ->findOneBy(
+        ->findBy(
             [
                 'ecole' => $ecole,
                 'professeur' => $this->getUser()
             ]
         );
-
+        
         return $this->render(
             'parametres/parametres.html.twig',
             [
@@ -129,15 +129,19 @@ class parametresController extends AbstractController {
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()){
-            foreach($appreciationEcole as $appreciation){
+            foreach($appreciationEcole->getAppreciations() as $appreciation){
                 $appreciation
-                ->getEcole($ecole)
-                ->getProfesseur($this->getUser());
-
-                //$manager->persist($appreciationEcole);
-
+                ->setEcole($ecole)
+                ->setProfesseur($this->getUser());
+                $manager->persist($appreciation);
             }
-            //$manager->flush();
+            $manager->flush();
+
+            $this->addFlash('success', "Vos appréciations ont été crées avec succes");
+
+            return $this->redirectToRoute('parametres_ecole', [
+                'ecole' => $ecole->getId()
+            ]);
         }
 
         return $this->render(
@@ -178,4 +182,33 @@ class parametresController extends AbstractController {
 
         return new Response("");
     }
+
+        /**
+     * @Route("/modifAppreciation", name="modif_appreciation")
+     */
+    public function modifAppreciation(Request $request){
+        $manager = $this->getDoctrine()->getManager();
+        if($request->isMethod('post')){
+            $data = $request->request->all();
+            $getAppreciation = $manager
+            ->getRepository(Appreciation::class)
+            ->findOneById($data['pk']);
+
+            switch($data['name']){
+                case 'intitule': 
+                    $getAppreciation->setIntitule($data['value']);
+                break;
+                case 'cote': 
+                    $getAppreciation->setCote($data['value']);
+                break;
+            }
+
+            $manager->persist($getAppreciation);
+            $manager->flush();
+        }
+
+        return new Response("");
+    }
+
+  
 }

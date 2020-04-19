@@ -35,6 +35,21 @@
                     }
                 }
             });
+            $('#appreciations span').editable({
+                'emptytext' : "Le champ le peut pas être vide",
+                validate: function(value) {
+                    if($.trim(value) == '') {
+                        return 'Le champ ne peut pas être vide';
+                    }
+                },
+                error: function(response, newValue) {
+                    if(response.status != 200) {
+                        return "Veuillez respecter l'annotation de base";
+                    } else {
+                        return response.responseText;
+                    }
+                },
+            });
         });
     </script>
 {% endblock %}
@@ -42,6 +57,7 @@
 {% block header %}
 <header class="jumbotron my-4">
     <h1 class="display-3" style="text-align: center">Paramètres</h1>
+    <h3 class="display-8" style="text-align: center">{{ecole.nomEcole}}</h3>
 </header>
 {% endblock %}
 
@@ -68,24 +84,52 @@
                 </h3>
             </div>
             <div class="table-responsive">
-                <table class="table" id="ponderation">
-                    <thead style="text-align: center">
-                        <th>Cours</th>
-                        <th>Evaluation</th>
+                <table class="table table-sm" id="ponderation">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Cours</th>
+                            <th class="text-center">Evaluation</th>
+                        </tr>                        
                     </thead>
                     <tbody style="text-align: center">
-                        <td><span id="cours" data-pk="{{ponderation.id}}" data-url="{{path('modif_ponderation')}}" data-name="cours">{{ponderation.cours}}</span> %</td>
-                        <td><span id="evaluation" data-pk="{{ponderation.id}}" data-url="{{path('modif_ponderation')}}" data-name="evaluation">{{ponderation.evaluation}}</span> % </td>
+                        <tr>
+                            <td><span id="cours" data-pk="{{ponderation.id}}" data-url="{{path('modif_ponderation')}}" data-name="cours">{{ponderation.cours}}</span> %</td>
+                            <td><span id="evaluation" data-pk="{{ponderation.id}}" data-url="{{path('modif_ponderation')}}" data-name="evaluation">{{ponderation.evaluation}}</span> % </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
         {% endif %}
+        <br>
         {% if appreciation is empty %}
             <div class="row d-flex justify-content-center">
                 <a href="{{path('creation_appreciations', {ecole: ecole.id})}}" class="btn btn-primary">Créez vos appréciations</a>
             </div>
         {% else %}
-
+            <div class="row d-flex justify-content-center">
+                <h3 class="display-8">
+                    Appréciations
+                </h3>
+            </div>
+            <br>
+            <div class="table-responsive">
+                <table class="table table-sm" id="appreciations">
+                    <thead text-align="cre">
+                        <tr>
+                            <th class="text-center">Appréciation</th>
+                            <th>Cote</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key, value in appreciation|sort((a, b) => a.cote <=> b.cote) %}
+                            <tr>
+                                <td class="text-center"><span data-pk="{{value.id}}" data-url="{{path('modif_appreciation')}}" data-name="intitule">{{value.intitule}}</span></td>
+                                <td><span data-pk="{{value.id}}" data-url="{{path('modif_appreciation')}}" data-name="cote">{{value.cote}}</span>/10</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         {% endif %}
     </div>
 {% endblock %}

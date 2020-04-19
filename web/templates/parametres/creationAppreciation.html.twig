@@ -12,6 +12,7 @@
         <h1 class="display-3" style="text-align: center">Appréciations</h1>
     </header>
 {% endblock %}
+
 {% block container %}
     <div class="jumbotron">
         {% for message in app.flashes('error') %}
@@ -40,8 +41,15 @@
 
 {% block _new_appreciation_ecole_appreciations_entry_widget %}
     <div class="form-row" id="block_{{id}}">
-        <div class="form-group col-md-8">{{form_widget(form.intitule)}} </div>
-        <div class="form-group col-md-8">{{form_widget(form.cote)}} </div>
+        <div class="form-group col">
+            {{form_label(form.intitule, "Nom d'appréciation")}} 
+            {{form_widget(form.intitule)}}
+        </div>
+        <div class="form-group col">
+            {{form_label(form.cote, "A partir de quelle cote")}} 
+            {{form_widget(form.cote)}} 
+            <small>* Par défaut /10</small>
+        </div>
         <div class="form-group col-sm-1">
             <button type="button" data-action="delete" data-target="#block_{{id}}" class="btn btn-danger">X</button>
         </div>
