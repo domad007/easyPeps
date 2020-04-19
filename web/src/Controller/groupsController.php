@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use DateTime;
 use App\Entity\Cours;
+use App\Entity\Degre;
 use App\Entity\Ecole;
 use App\Entity\Eleve;
 use App\Entity\Classe;
@@ -19,6 +20,7 @@ use App\Entity\CoursGroupe;
 use App\Form\GroupPeriodeType;
 use App\Entity\EvaluationGroup;
 use App\Form\NewEvaluationType;
+use App\Entity\CustomizedPresences;
 use App\Form\AddNewEvaluationsType;
 use App\Form\NewEvaluationCoursType;
 use Doctrine\ORM\Query\ResultSetMapping;
@@ -26,6 +28,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
@@ -33,6 +37,7 @@ class groupsController extends AbstractController {
     
     /**
      * @Route("/groups", name="groups")
+     * @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
     public function groups(UserInterface $user){
         $manager = $this->getDoctrine()->getManager();
@@ -43,13 +48,11 @@ class groupsController extends AbstractController {
         ->addScalarResult('groupes', 'groupes')
         ->addScalarResult('nombreEleves', 'nombreEleves');
 
-        $groupsSql = "select ecole.nom_ecole as ecole, groups_id, GROUP_CONCAT(nom_classe SEPARATOR '/') as groupes, count(eleve.id) as nombreEleves 
+        $groupsSql = "select ecole.nom_ecole as ecole, groups_id, GROUP_CONCAT(nom_classe SEPARATOR '/') as groupes 
         from classe
         join ecole on classe.ecole_id = ecole.id
-        join eleve on classe.id = eleve.classe_id
         where groups_id is not null and professeur_id = ?
         group by groups_id";
-
         $getGroups = $manager->createNativeQuery($groupsSql, $rsm);
         $getGroups->setParameter(1, $user->getId());
 
@@ -73,29 +76,37 @@ class groupsController extends AbstractController {
     }
 
     /**
-     * @Route("/newGroup/{idEcole}", name="new_group")
+     * @Route("/newGroup/{ecole}", name="new_group")
+     * @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
-    public function newGroup(Request $request, $idEcole){
+    public function newGroup(Ecole $ecole, Request $request, UserInterface $user){
         $manager = $this->getDoctrine()->getManager();
         $group = new Groups();
 
-        $ecole = $manager->getRepository(Ecole::class)
-        ->findOneById($idEcole);
-
         $classes = $manager->getRepository(Classe::class)
-        ->findBy([
-           'ecole' =>  $ecole->getId()
-        ]);
-        
-        $form = $this->createForm(AddGroupType::class, $group, ['classes' => $classes]);
+        ->findByecole($ecole->getId());
+
+        $degre = $manager
+        ->getRepository(Degre::class)
+        ->findAll();
+
+        $form = $this->createForm(AddGroupType::class, $group, 
+            [
+                'classes' => $classes, 
+                'degre' => $degre
+            ]
+        );
+
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){           
+        if($form->isSubmitted() && $form->isValid()){          
             foreach($group->getClasses() as $classes){
+                
                 $classe = $manager->getRepository(Classe::class)
                 ->findOneById($classes->getId());
 
                 $classe->setGroups($group);
+                $group->setProfesseur($user);
 
                 $manager->persist($group);
                 $manager->flush();
@@ -114,57 +125,48 @@ class groupsController extends AbstractController {
     }
 
     /**
-     * @Route("/group/{idGroup}", name="group")
+     * @Route("/group/{group}", name="group")
+     * @Security("is_granted('ROLE_ACTIF') and user === group.getProfesseur()", statusCode=405)
      */
-
-    public function group($idGroup){
+    public function group(Groups $group){
         $manager = $this->getDoctrine()->getManager();
-        $group = $manager
+        $classes = $manager
         ->getRepository(Classe::class)
-        ->findByGroups($idGroup);
-
-        foreach($group as $key => $value){           
-            $eleves [] = $manager
-            ->getRepository(Eleve::class)
-            ->findBy(
-                [
-                    'classe' => $value->getId()
-                ]
-            );
-        }
+        ->findByGroups($group);
+        
+        $eleves = $manager
+        ->getRepository(Eleve::class)
+        ->findByclasse($classes);
 
         return $this->render(
             'groupes/group.html.twig',[
                 'group' => $eleves,
-                'ecole' => $group
+                'ecole' => $classes
             ]
         );
     }
 
     /**
-     * @Route("/newPeriode/{idGroup}", name="new_periode")
+     * @Route("/newPeriode/{group}", name="new_periode")
+     * @Security("is_granted('ROLE_ACTIF') and user === group.getProfesseur()", statusCode=405)
      */
-    public function newPeriode(Request $request, $idGroup){
+    public function newPeriode(Groups $group, Request $request){
         $manager = $this->getDoctrine()->getManager();
         $groups = new Groups();
-
-        $group = $this->getDoctrine()
-                ->getRepository(Groups::class)
-                ->findOneById($idGroup);
         
         $form = $this->createForm(GroupPeriodeType::class, $groups);
         $form->handleRequest($request);        
 
         if($form->isSubmitted() && $form->isValid()){
-            foreach($groups->getPeriodes() as $periodes){
-
-                $periodes->setGroupe($group);
+            dump($groups);
+            foreach($groups->getPeriodes() as $periodes){         
+                $periodes
+                ->setGroupe($group);
                 $manager->persist($periodes);
-                $manager->flush();
 
             }
-
-            return $this->redirectToRoute('journal_de_classe', ['idGroup' => $idGroup]);
+            $manager->flush();
+            return $this->redirectToRoute('journal_de_classe', ['group' =>  $group->getId()]);
         }
 
         return $this->render(
@@ -176,15 +178,17 @@ class groupsController extends AbstractController {
         );
     }
 
+    
     /**
-     * @Route("/newCours/{idGroup}", name="new_cours")
+     * @Route("/newCours/{group}", name="new_cours")
+     * @Security("is_granted('ROLE_ACTIF') and user === group.getProfesseur()", statusCode=405)
      */
-    public function newCours(Request $request, $idGroup){
+    public function newCours(Groups $group, Request $request){
         $cours = new Cours();
 
         $periodes = $this->getDoctrine()
         ->getRepository(Periodes::class)
-        ->findBygroupe($idGroup);
+        ->findBygroupe($group->getId());
 
         $manager = $this->getDoctrine()->getManager();
         $form = $this->createForm(NewCoursType::class, $cours, ['periodes' => $periodes]);
@@ -200,64 +204,80 @@ class groupsController extends AbstractController {
         where groups_id = ?";
         
         $getGroup = $manager->createNativeQuery($groupSql, $rsm);
-        $getGroup->setParameter(1, $idGroup);
-        $group = $getGroup->getResult();
+        $getGroup->setParameter(1, $group->getId());
+        $groupe = $getGroup->getResult();
 
+        $presencesCustomized = $manager
+        ->getRepository(CustomizedPresences::class)
+        ->findOneBy(
+            [
+                'user' => $group->getProfesseur()->getId(),
+                'typePresence' => 1
+            ]
+        );
+        
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()){
-            $idGroupe = $manager
-            ->getRepository(Groups::class)
-            ->find($idGroup);
 
             $getPresence = $this->getDoctrine()
             ->getRepository(Presences::class)
             ->findOneById(1);
-
+            if($cours->getPeriode() == null){
+                foreach($periodes as $key => $value){
+                    if(new \DateTime() >= $value->getDateDebut() && new \DateTime() <= $value->getDateFin()){
+                        $cours->setPeriode($value);
+                    }
+                }    
+            }
             $cours
             ->setDateCours(new \DateTime())
-            ->setGroupe($idGroupe);
+            ->setGroupe($group);
 
             $manager->persist($cours);
             $manager->flush();
 
-            $group = $manager
+            $classes = $manager
             ->getRepository(Classe::class)
-            ->findByGroups($idGroup);
+            ->findByGroups($group->getId());
 
             $cours = $manager
             ->getRepository(Cours::class)
             ->findOneById($cours->getId());
             
-            foreach($group as $key => $value){           
-                $eleve [] = $manager
-                ->getRepository(Eleve::class)
-                ->findOneBy(
-                    [
-                        'classe' => $value->getId()
-                    ]
-                );
-            }
+            $eleve = $manager
+            ->getRepository(Eleve::class)
+            ->findByclasse($classes);
 
-            foreach($eleve as $key => $value){
-                $coursGroupe = new CoursGroupe();
-                $coursGroupe
-                ->setCoursId($cours)
-                ->setEleveId($value)
-                ->setPresences($getPresence);
+            if(!empty($presencesCustomized)){
+                foreach($eleve as $key => $value){
+                    $coursGroupe = new CoursGroupe();
+                    $coursGroupe
+                    ->setCoursId($cours)
+                    ->setEleveId($value)
+                    ->setPresences($getPresence)
+                    ->setCustomizedPresences($presencesCustomized);
 
-                $manager->persist($coursGroupe);
+                    $manager->persist($coursGroupe);
+                }
             }
-           
+            else {
+                foreach($eleve as $key => $value){
+                    $coursGroupe = new CoursGroupe();
+                    $coursGroupe
+                    ->setCoursId($cours)
+                    ->setEleveId($value)
+                    ->setPresences($getPresence);
+
+                    $manager->persist($coursGroupe);
+                }
+                
+            }
             $manager->flush();
-
-            $this->forward('App\Controller\calculController::getMoyenneCours', [
-                'idGroup' => $idGroup
-            ]);
             
             return $this->redirectToRoute('journal_de_classe', 
                 [
-                    'idGroup' => $idGroup
+                    'group' => $group->getId()
                 ]
             );
         }
@@ -266,15 +286,16 @@ class groupsController extends AbstractController {
             'groupes/newCours.html.twig', 
             [
                 'form' => $form->createView(),
-                'group' => $group
+                'group' => $groupe
             ]
         );
     }
 
     /**
-     * @Route("/newEvaluation/{idGroup}", name="new_evaluation")
+     * @Route("/newEvaluation/{group}", name="new_evaluation")
+     * @Security("is_granted('ROLE_ACTIF') and user === group.getProfesseur()", statusCode=405)
      */
-    public function newEvaluation(Request $request, $idGroup){
+    public function newEvaluation(Groups $group, Request $request){
         $manager = $this->getDoctrine()->getManager();
         $evaluation = new Evaluation();
 
@@ -289,20 +310,18 @@ class groupsController extends AbstractController {
         where groups_id = ?";
 
         $getGroup = $manager->createNativeQuery($groupSql, $rsm);
-        $getGroup->setParameter(1, $idGroup);
-        $group = $getGroup->getResult();
+        $getGroup->setParameter(1, $group->getId());
+        $groupe = $getGroup->getResult();
 
-        $idDegre = $manager
-        ->getRepository(Groups::class)
-        ->findOneById($idGroup);
 
         $getPeriodes = $manager
         ->getRepository(Periodes::class)
-        ->findBygroupe($idGroup);
-
+        ->findBygroupe($group->getId());
+        
+        
         $getCompetences = $manager
         ->getRepository(Competences::class)
-        ->findBydegre($idDegre->getDegre()->getId());
+        ->findBydegre($group->getDegre()->getId());
 
         $form = $this->createForm(AddNewEvaluationsType::class, $evaluation,
             [
@@ -311,29 +330,36 @@ class groupsController extends AbstractController {
             ]
         );
 
+
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
             $classes = $manager
             ->getRepository(Classe::class)
-            ->findByGroups($idGroup);
+            ->findByGroups($group->getId());
+
+            $eleve = $manager
+            ->getRepository(Eleve::class)
+            ->findByclasse($classes);
 
             $data = $form->getData();
-
-            foreach($classes as $key => $value){           
-                $eleve [] = $manager
-                ->getRepository(Eleve::class)
-                ->findOneBy(
-                    [
-                        'classe' => $value->getId()
-                    ]
-                );
-            }
             
             foreach($evaluation->getEvaluations() as $evaluations){
+                if($data->getPeriode() == null){
+                    foreach($getPeriodes as $key => $value){
+                        if($data->getDateEvaluation() >= $value->getDateDebut() && $data->getDateEvaluation() <= $value->getDateFin()){
+                            $evaluations
+                            ->setPeriode($value);
+                        }
+                    }
+                }
+                else {
+                    $evaluations
+                    ->setPeriode($data->getPeriode());
+                }
+
                 $evaluations
-                ->setDateEvaluation($data->getDateEvaluation())
-                ->setGroupe($idDegre)
-                ->setPeriode($data->getPeriode());
+                    ->setDateEvaluation($data->getDateEvaluation())
+                    ->setGroupe($group);
 
                 foreach($eleve as $key => $value){
                     $evaluationGroup = new EvaluationGroup();
@@ -346,24 +372,14 @@ class groupsController extends AbstractController {
             }
 
             $manager->flush();
-
-            $this->forward('App\Controller\calculController::getMoyenneEvaluation', 
-            [
-                'idGroup' => $idGroup
-            ]);
-
-            $this->forward('App\Controller\calculController::getMoyenneCompetence', 
-            [
-                'idGroup' => $idGroup
-            ]);
             
-            return $this->redirectToRoute('journal_de_classe', ['idGroup' => $idGroup ]);
+            return $this->redirectToRoute('journal_de_classe', ['group' => $group->getId() ]);
         }
 
         return $this->render(
             'groupes/newEvaluation.html.twig',
             [
-                'group' => $group,
+                'group' => $groupe,
                 'form' => $form->createView()
             ]
         );

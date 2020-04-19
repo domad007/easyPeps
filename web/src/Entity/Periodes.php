@@ -39,14 +39,19 @@ class Periodes
     private $evaluations;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="date")
      */
-    private $pourcentageCours;
+    private $dateDebut;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="date")
      */
-    private $pourcentageEval;
+    private $dateFin;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Semestres", inversedBy="periode")
+     */
+    private $semestres;
 
 
     public function __construct()
@@ -147,26 +152,38 @@ class Periodes
         return $this;
     }
 
-    public function getPourcentageCours(): ?string
+    public function getDateDebut(): ?\DateTimeInterface
     {
-        return $this->pourcentageCours;
+        return $this->dateDebut;
     }
 
-    public function setPourcentageCours(string $pourcentageCours): self
+    public function setDateDebut(\DateTimeInterface $dateDebut): self
     {
-        $this->pourcentageCours = $pourcentageCours;
+        $this->dateDebut = $dateDebut;
 
         return $this;
     }
 
-    public function getPourcentageEval(): ?string
+    public function getDateFin(): ?\DateTimeInterface
     {
-        return $this->pourcentageEval;
+        return $this->dateFin;
     }
 
-    public function setPourcentageEval(string $pourcentageEval): self
+    public function setDateFin(\DateTimeInterface $dateFin): self
     {
-        $this->pourcentageEval = $pourcentageEval;
+        $this->dateFin = $dateFin;
+
+        return $this;
+    }
+
+    public function getSemestres(): ?Semestres
+    {
+        return $this->semestres;
+    }
+
+    public function setSemestres(?Semestres $semestres): self
+    {
+        $this->semestres = $semestres;
 
         return $this;
     }

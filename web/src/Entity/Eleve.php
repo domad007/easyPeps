@@ -52,11 +52,31 @@ class Eleve
      */
     private $evaluationGroups;
 
+    private $moyennePeriodeCours;
+    private $moyennePeriodeEval;
+    private $moyenneSemCours;
+    private $moyenneSemEval;
+    private $moyenneChampSem;
+    private $moyenneChampPer;
+    private $moyennePeriode;
+    private $moyenneSem;
+    private $moyenneAnnee;
     
     public function __construct()
     {
         $this->coursGroupes = new ArrayCollection();
         $this->evaluationGroups = new ArrayCollection();
+        $this->moyennePeriodeCours = new ArrayCollection();
+        $this->moyennePeriodeEval = new ArrayCollection();
+        $this->moyenneSemCours = new ArrayCollection();
+        $this->moyenneSemEval = new ArrayCollection();
+        $this->moyenneChampSem = new ArrayCollection();
+        $this->moyenneChampPer = new ArrayCollection();
+        $this->moyennePeriode = new ArrayCollection();
+        $this->moyenneSem = new ArrayCollection();
+        $this->moyenneAnnee = new ArrayCollection();
+
+    
     }
 
     
@@ -173,6 +193,76 @@ class Eleve
         }
 
         return $this;
+    }
+
+    public function getMoyennePeriodeCours() : Array {
+        return $this->moyennePeriodeCours;
+    }
+    public function addMoyennePeriodeCours(array $resultats){
+        $this->moyennePeriodeCours[] = $resultats;
+    }
+
+    public function getMoyennePeriodeEval(): Array {
+        return $this->moyennePeriodeEval;
+    }
+    public function addMoyennePeriodeEval(array $resultats){
+        $this->moyennePeriodeEval[] = $resultats;
+    }
+
+    public function getMoyenneSemCours() : Array{
+        return $this->moyenneSemCours;
+    }
+
+    public function addMoyenneSemCours(array $resultats){
+        $this->moyenneSemCours[] = $resultats;
+    }
+
+    public function getMoyenneSemEval(): Array {
+        return $this->moyenneSemEval;
+    }
+
+    public function addMoyenneSemEval(array $resultats) {
+        $this->moyenneSemEval[] = $resultats;
+    }
+
+    public function getMoyenneChampPer(): Array {
+        return $this->moyenneChampPer;
+    }
+
+    public function addMoyenneChampPer(array $resultats){
+        $this->moyenneChampPer[] = $resultats;
+    }
+
+    public function getMoyenneChampSem(): Array {
+        return $this->moyenneChampSem;
+    }
+
+    public function addMoyenneChampSem(array $resultats){
+        $this->moyenneChampSem[] = $resultats;
+    }
+
+    public function getMoyennePeriode(): Array {
+        return $this->moyennePeriode;
+    }
+
+    public function addMoyennePeriode(array $resultats){
+        $this->moyennePeriode[] = $resultats;
+    }
+
+    public function getMoyenneSem(): Array {
+        return $this->moyenneSem;
+    }
+
+    public function addMoyenneSem(array $resultats){
+        $this->moyenneSem[] = $resultats;
+    }
+
+    public function getMoyenneAnnee() :Array {
+        return $this->moyenneAnnee;
+    }
+
+    public function addMoyenneAnnee(array $resultats){
+        $this->moyenneAnnee[] = $resultats;
     }
 
    

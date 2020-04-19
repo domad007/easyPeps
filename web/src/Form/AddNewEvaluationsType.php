@@ -38,9 +38,10 @@ class AddNewEvaluationsType extends AbstractType
                 [
                     $options['periodes']
                 ],
+                'group_by' => 'semestres.intitule',
                 'choice_label' => 'nomPeriode',
                 'choice_value' => 'id',
-                'expanded' => true
+                'required' => false
             ])
             ->add('save', SubmitType::class, [
                 "label" => "Créez vos évaluations !"

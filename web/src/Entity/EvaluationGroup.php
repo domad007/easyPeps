@@ -30,6 +30,7 @@ class EvaluationGroup
      * @ORM\Column(type="string", length=255)
      */
     private $points;
+    
 
     public function getId(): ?int
     {

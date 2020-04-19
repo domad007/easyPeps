@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `competences` (
 -- Déchargement des données de la table `competences`
 --
 
-INSERT INTO `competences` (`id`, `nom`, `description`, `type_competence_id`, `degre`) VALUES
+INSERT INTO `competences` (`id`, `nom`, `description`, `type_competence_id`, `degre_id`) VALUES
 (1, 'cp1', 'Endurance : fournir des efforts de longue durée à une intensité moyenne', 1, 2),
 (2, 'cp2', 'Souplesse : étirer les muscles des grandes articulations', 1, 2),
 (3, 'cp3', 'Vélocité : exécuter des mouvements et des déplacements simples à grande vitesse', 1, 2),

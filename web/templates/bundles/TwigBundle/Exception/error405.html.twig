@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} -Compte désacitvé {% endblock %}
+
+{% block header %}
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">Compte désactivé</h1>
+    </header>
+{% endblock %}
+
+{% block container %}
+    <div class="jumbotron my-4" style="font-size: 1.3em;">
+        <h3 class="display-5">Votre compte semble desactivé, vous ne pouvez pas acceder aux pages dediés aux personnes connectés. Veuillez activer votre compte en cliquant sur le boutton ci dessous</h1>
+        <div class="row d-flex justify-content-center">
+            <a href="{{path('mon_profil')}}" class="btn btn-primary">Accéder à mon compte</a>
+        </div>
+    </div>
+{% endblock %}

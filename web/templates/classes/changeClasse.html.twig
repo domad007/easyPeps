@@ -13,7 +13,7 @@
 <div class="row row d-flex justify-content-center">
     <div class="col-md-8">
         <div class="jumbotron text-center" style="font-size: 1.3em;">
-            <form action="{{path('change_class', {idEleve: eleve.id})}}" method="post">
+            <form action="{{path('change_class', {eleve: eleve.id})}}" method="post">
                 <div class="form-group">
                     <label for="classe">Sélectionnez la classe</label>
                     <select name="classe" id="classe" class="custom-select col-md-2">

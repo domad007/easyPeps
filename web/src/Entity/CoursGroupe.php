@@ -38,6 +38,11 @@ class CoursGroupe
      */
     private $presences;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\CustomizedPresences", inversedBy="cours")
+     */
+    private $customizedPresences;
+
     public function __construct()
     {
         $this->presences = new ArrayCollection();
@@ -93,6 +98,18 @@ class CoursGroupe
     public function setPresences(?Presences $presences): self
     {
         $this->presences = $presences;
+
+        return $this;
+    }
+
+    public function getCustomizedPresences(): ?CustomizedPresences
+    {
+        return $this->customizedPresences;
+    }
+
+    public function setCustomizedPresences(?CustomizedPresences $customizedPresences): self
+    {
+        $this->customizedPresences = $customizedPresences;
 
         return $this;
     }

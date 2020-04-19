@@ -6,23 +6,27 @@ use DateTime;
 use App\Entity\Cours;
 use App\Entity\Eleve;
 use App\Entity\Classe;
+use App\Entity\Groups;
 use App\Entity\Periodes;
 use App\Entity\Presences;
 use App\Entity\Evaluation;
 use App\Entity\Competences;
 use App\Entity\CoursGroupe;
 use App\Entity\EvaluationGroup;
+use App\Entity\CustomizedPresences;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class journalController extends AbstractController {
 
     /**
      * @Route("/journalDeClasse", name="journal")
+     *  @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
     public function journal(UserInterface $user){
 
@@ -53,24 +57,22 @@ class journalController extends AbstractController {
     }
     
     /**
-     * @Route("/journalDeClasse/{idGroup}", name="journal_de_classe")
+     * @Route("/journalDeClasse/{group}", name="journal_de_classe")
+     * @Security("is_granted('ROLE_ACTIF') and user === group.getProfesseur()", statusCode=405)
      */
-    public function journalDeCalsse(UserInterface $user, $idGroup){
+    public function journalDeCalsse(Groups $group){
         $manager = $this->getDoctrine()->getManager();
         $getCours = $manager
         ->getRepository(Cours::class)
-        ->findBygroupe($idGroup, 
-        [
-            'dateCours' => 'ASC'
-        ]);
+        ->findBygroupe($group->getId());
 
         $getPeriodes = $this->getDoctrine()
         ->getRepository(Periodes::class)
-        ->findBygroupe($idGroup);
+        ->findBygroupe($group->getId());
 
-        $group = $manager
+        $classes = $manager
         ->getRepository(Classe::class)
-        ->findByGroups($idGroup);
+        ->findByGroups($group->getId());
 
         $getCoursGroupe = $manager
         ->getRepository(CoursGroupe::class)
@@ -89,7 +91,7 @@ class journalController extends AbstractController {
         group by groups_id";
 
         $getGroups = $manager->createNativeQuery($groupsSql, $rsm);
-        $getGroups->setParameter(1, $user->getId());
+        $getGroups->setParameter(1, $group->getProfesseur());
 
         $groups = $getGroups->getResult();
 
@@ -100,58 +102,53 @@ class journalController extends AbstractController {
 
         $getCompetences = $this->getDoctrine()
         ->getRepository(Competences::class)
-        ->findBydegre($group[0]->getGroups()->getDegre()->getId());
-
-        $getCompetencesPeriode = $this->forward('App\Controller\calculController::getMoyenneCompetence', 
-        [
-            'idGroup' => $idGroup
-        ]);
+        ->findBydegre($classes[0]->getGroups()->getDegre()->getId());
         
         $getEvaluations = $this->getDoctrine()
         ->getRepository(Evaluation::class)
-        ->findBygroupe($idGroup);
+        ->findBygroupe($group->getId());
         
         $getEvaluationsGroupe = $this->getDoctrine()
         ->getRepository(EvaluationGroup::class)
         ->findById($getEvaluations);
 
-        foreach($group as $key => $value){           
-            $eleves [] = $manager
-            ->getRepository(Eleve::class)
-            ->findBy(
-                [
-                    'classe' => $value->getId()
-                ]
-            );
-        }
+        $getPresencesCustomized = $manager
+        ->getRepository(CustomizedPresences::class)
+        ->findBy(
+            [
+                'user' => $group->getProfesseur()->getId()
+            ]
+        );
+
+        $eleves = $manager
+        ->getRepository(Eleve::class)
+        ->findByclasse($classes);
+
+
 
         foreach($eleves as $key => $value){
-            foreach($value as $key => $val){
-                foreach($getCoursGroupe as $key => $value){
-                    if($value->getEleveId()->getId() == $val->getId()){
-                        $val->addCoursGroupe($value);                      
-                    }
+            foreach($getCoursGroupe as $key => $val){
+                if($val->getEleveId()->getId() == $value->getId()){
+                    $value->addCoursGroupe($val);                      
                 }
-                foreach($getEvaluationsGroupe as $key => $value){
-                    if($value->getEleve()->getId() == $val->getId()){
-                        $val->addEvaluationGroup($value);
-                    }
+            }
+            foreach($getEvaluationsGroupe as $key => $val){
+                if($val->getEleve()->getId() == $value->getId()){
+                    $value->addEvaluationGroup($val);
                 }
             }
         }
-
-        
-        
+    
         return $this->render(
             'journalDeClasse/journal.html.twig', 
             [
                 'groups' => $groups,
-                'ecole' => $group,
+                'ecole' => $classes,
                 'eleves' => $eleves,   
                 'periodes' => $getPeriodes,
                 'presences' => $getPresences,
+                'presencesCustomized' => $getPresencesCustomized,
                 'competences' => $getCompetences,
-                'competencesPeriode' => $getCompetencesPeriode
             ]
         );
     }
@@ -214,17 +211,55 @@ class journalController extends AbstractController {
     }
 
     /**
+     * @Route("/presencesCustomized", name="presences_customized")
+     */
+    public function presencesCustomized(Request $request){
+        $manager = $this->getDoctrine()->getManager();
+
+        if($request->isMethod('post')){
+            $presence = $request->request->all();
+            $values = explode(",", $presence['presence']);
+            
+            $typePresence = $this->getDoctrine()
+            ->getRepository(CustomizedPresences::class)
+            ->findOneById($values[2]);
+
+            $presenceEleve = $this->getDoctrine()
+            ->getRepository(CoursGroupe::class)
+            ->findOneBy(
+                [
+                    'coursId' => $values[0],
+                    'eleveId' => $values[1]
+                ]
+            );
+
+            $presenceEleve
+            ->setCustomizedPresences($typePresence)
+            ->setPresences($typePresence->getTypePresence());
+            $manager->persist($presenceEleve);
+            $manager->flush();
+        }
+
+        return new Response();
+    }
+
+    /**
      * @Route("/modifDateCours", name="modif_date_cours")
      */
     public function modifDate(Request $request){
         $manager = $this->getDoctrine()->getManager();
         if($request->isMethod('post')){
+           
             $date =  $request->request->all();
             $newDate = new \DateTime($date['value']);
 
             $cours = 
             $manager->getRepository(Cours::class)
             ->findOneById($date['pk']);
+
+            $periodes = $manager
+            ->getRepository(Periodes::class)
+            ->findBygroupe($cours->getGroupe());
 
             $cours->setDateCours($newDate);
             $manager->persist($cours);
@@ -275,10 +310,6 @@ class journalController extends AbstractController {
             $manager->persist($cours);
             $manager->flush();
 
-            $this->forward('App\Controller\calculController::getMoyenneCours', 
-            [
-                'idGroup' => $cours->getGroupe()->getId()
-            ]);
 
         }
 
@@ -323,15 +354,6 @@ class journalController extends AbstractController {
             $manager->persist($evaluation);
             $manager->flush();
 
-            $this->forward('App\Controller\calculController::getMoyenneEvaluation', 
-            [
-                'idGroup' => $evaluation->getGroupe()->getId()
-            ]);
-
-            $this->forward('App\Controller\calculController::getMoyenneCompetence', 
-            [
-                'idGroup' => $evaluation->getGroupe()->getId()
-            ]);
         }
 
         return new Response("");
@@ -398,26 +420,6 @@ class journalController extends AbstractController {
             );
             $evalGroup->setPoints($points['value']);
             $manager->persist($evalGroup);
-            $manager->flush();
-        }
-
-        return new Response("");
-    }
-
-    /**
-     * @Route("/modifPeriode", name="modif_periode")
-     */
-    public function modifPeriode(Request $request){
-        $manager = $this->getDoctrine()->getManager();
-
-        if($request->isMethod('post')){
-            $periodeData = $request->request->all(); 
-            $getPeriode = $this->getDoctrine()
-            ->getRepository(Periodes::class)
-            ->findOneById($periodeData['pk']);
-
-            $getPeriode->setPourcentage($periodeData['value']);
-            $manager->persist($getPeriode);
             $manager->flush();
         }
 

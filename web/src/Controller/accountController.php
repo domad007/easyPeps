@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller;
+use App\Entity\Role;
 use App\Entity\User;
 use App\Form\MdpType;
 use App\Entity\ModifMdp;
@@ -14,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -34,9 +36,14 @@ class accountController extends AbstractController {
 
         if($formInscription->isSubmitted() && $formInscription->isValid()){
             $manager = $this->getDoctrine()->getManager();
-
+            $role = $manager
+            ->getRepository(Role::class)
+            ->findOneBytitle("ROLE_ACTIF");
             $mdp = $encoder->encodePassword($user, $user->getMdp());
             $user->setMdp($mdp);
+            $user->setUserActif(0);
+            $user->addUserRole($role);
+            
 
             $manager->persist($user);
             $manager->flush();
@@ -77,6 +84,7 @@ class accountController extends AbstractController {
      * Ne modifie pas le mot de passe
      *
      * @Route("/compte/profil", name="mon_profil")
+     * @Security("is_granted('ROLE_USER')")
      */
     public function modifProfil(Request $request){
         $user = $this->getUser();
@@ -85,9 +93,42 @@ class accountController extends AbstractController {
 
         if($profilForm->isSubmitted() && $profilForm->isValid()){
             $manager = $this->getDoctrine()->getManager();
+            if($user->getUserActif() === true){
+                $roleInactif = $manager
+                ->getRepository(Role::class)
+                ->findOneBytitle("ROLE_INACTIF");
 
-            $manager->persist($user);
-            $manager->flush();
+                $roleActif = $manager
+                ->getRepository(Role::class)
+                ->findOneBytitle("ROLE_ACTIF");
+
+
+                $user->addUserRole($roleInactif);
+                $user->removeUserRole($roleActif);
+                $manager->persist($user);
+                $manager->flush();
+
+                $this->addFlash('success', "Votre compte a bien été désactivé");
+                return $this->redirectToRoute('homepage');
+            }
+            else {
+                $roleInactif = $manager
+                ->getRepository(Role::class)
+                ->findOneBytitle("ROLE_INACTIF");
+                $roleActif =  $manager
+                ->getRepository(Role::class)
+                ->findOneBytitle("ROLE_ACTIF");
+
+                $user->addUserRole($roleActif);
+                $user->removeUserRole($roleInactif);
+                
+                $manager->persist($user);
+                $manager->flush();
+
+                $this->addFlash('success', "Votre profil a bien été modifié");
+                return $this->redirectToRoute('homepage');
+
+            }
 
             $this->addFlash(
                 'success',
@@ -104,6 +145,7 @@ class accountController extends AbstractController {
     /**
      * Modification du mot de passe
      * @Route("/compte/mdpOublie", name="mon_mdp")
+     * @Security("is_granted('ROLE_USER')")
      */
     public function modifMdp(Request $request, UserPasswordEncoderInterface $encoder){
         $mdp = new ModifMdp();

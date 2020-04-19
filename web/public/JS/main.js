@@ -16,6 +16,7 @@ function deleteEleve(idEleve, button){
 }
 
 function addEleve(){
+    
     $('#addEleve').click(function(){
         const index = $('#add_eleve_eleves div.form-group').length;
         const form = $('#add_eleve_eleves').data('prototype').replace(/__name__/g, index);
@@ -45,8 +46,10 @@ function addGroup(){
 }
 
 function addPeriodes(){
+    var index = 0;
     $('#addPeriodes').click(function(){
-        const index = $('#group_periode_periodes div.form-group').length;
+        index++;
+        //const index = $('#group_periode_periodes div.form-group').length;
         const form = $('#group_periode_periodes').data('prototype').replace(/__name__/g, index);
         $('#group_periode_periodes').append(form);
 
@@ -79,6 +82,17 @@ function presenceEleve(value){
     });
 
 }
+
+function presenceEleveCustomized(value){
+    $.ajax({
+        url: '/presencesCustomized',
+        method: 'POST',
+        data: $(value)
+    });
+
+}
+
+
 
 function modifCompetence(value){
     $.ajax({
@@ -147,3 +161,8 @@ function coursEvaluationPeriode(property= null, idPeriode = null){
     }
 
 }
+
+function periodeError(){
+    alert("Aucune période existe, veuillez en créer une avant de créer une évaluation ou un cours!");
+}
+

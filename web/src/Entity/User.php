@@ -88,10 +88,34 @@ class User implements UserInterface
      */
     private $classes;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\CustomizedPresences", mappedBy="user")
+     */
+    private $customizedPresences;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Role", mappedBy="users")
+     */
+    private $userRoles;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Groups", mappedBy="professeur")
+     */
+    private $groups;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $userActif;
+
+
 
     public function __construct()
     {
         $this->classes = new ArrayCollection();
+        $this->customizedPresences = new ArrayCollection();
+        $this->userRoles = new ArrayCollection();
+        $this->groups = new ArrayCollection();
     }
 
 
@@ -202,7 +226,13 @@ class User implements UserInterface
     }
 
     public function getRoles(){
-        return ['ROLE_USER'];
+
+        $roles = $this->userRoles->map(function($role){
+            return $role->getTitle();
+        })->toArray();
+
+        $roles[] = 'ROLE_USER';
+        return $roles;
     }
     
     public function getPassword(){
@@ -248,6 +278,108 @@ class User implements UserInterface
                 $class->setProfesseur(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CustomizedPresences[]
+     */
+    public function getCustomizedPresences(): Collection
+    {
+        return $this->customizedPresences;
+    }
+
+    public function addCustomizedPresence(CustomizedPresences $customizedPresence): self
+    {
+        if (!$this->customizedPresences->contains($customizedPresence)) {
+            $this->customizedPresences[] = $customizedPresence;
+            $customizedPresence->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCustomizedPresence(CustomizedPresences $customizedPresence): self
+    {
+        if ($this->customizedPresences->contains($customizedPresence)) {
+            $this->customizedPresences->removeElement($customizedPresence);
+            // set the owning side to null (unless already changed)
+            if ($customizedPresence->getUser() === $this) {
+                $customizedPresence->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Role[]
+     */
+    public function getUserRoles(): Collection
+    {
+        return $this->userRoles;
+    }
+
+    public function addUserRole(Role $userRole): self
+    {
+        if (!$this->userRoles->contains($userRole)) {
+            $this->userRoles[] = $userRole;
+            $userRole->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserRole(Role $userRole): self
+    {
+        if ($this->userRoles->contains($userRole)) {
+            $this->userRoles->removeElement($userRole);
+            $userRole->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Groups[]
+     */
+    public function getGroups(): Collection
+    {
+        return $this->groups;
+    }
+
+    public function addGroup(Groups $group): self
+    {
+        if (!$this->groups->contains($group)) {
+            $this->groups[] = $group;
+            $group->setProfesseur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGroup(Groups $group): self
+    {
+        if ($this->groups->contains($group)) {
+            $this->groups->removeElement($group);
+            // set the owning side to null (unless already changed)
+            if ($group->getProfesseur() === $this) {
+                $group->setProfesseur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getUserActif(): ?bool
+    {
+        return $this->userActif;
+    }
+
+    public function setUserActif(bool $userActif): self
+    {
+        $this->userActif = $userActif;
 
         return $this;
     }

@@ -4,8 +4,13 @@ namespace App\Controller;
 
 use App\Entity\Presences;
 use App\Entity\Competences;
+use App\Entity\CustomizedPresences;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
@@ -204,18 +209,80 @@ class homeController extends AbstractController {
 
     /**
      * @Route("/descriptionPresences", name="description_presences")
+     * @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
-    public function descriptionPresecnes(){
+    public function descriptionPresecnes(UserInterface $user){
         $getPresences = $this->getDoctrine()
         ->getRepository(Presences::class)
         ->findAll();
 
+       $getPresencesCustomized =  $this->getDoctrine()
+       ->getRepository(CustomizedPresences::class)
+       ->findBy(
+           [
+               'user' => $user->getId()
+           ]
+       );
+
         return $this->render(
             'contenu/descriptionPresences.html.twig',
             [
-                'presences' => $getPresences
+                'presences' => $getPresences,
+                'presencesCustomized' =>  $getPresencesCustomized
             ]
         );
+    }
+
+    /**
+     * @Route("/presencesCustomizedd", name="presences_customizedd")
+     */
+    public function presencesCustomized(Request $request, UserInterface $user){
+        $manager = $this->getDoctrine()->getManager();
+        if($request->isMethod('post')){
+            $presence = $request->request->all();
+
+
+            $getPresenceCustomized = $manager
+            ->getRepository(CustomizedPresences::class)
+            ->findOneById($presence['pk']);
+
+            if(!empty($getPresenceCustomized)){
+                $getPresenceCustomized->setAbreviationCustomized($presence['value']);
+                $manager->persist($getPresenceCustomized);
+                $manager->flush();
+            }
+            else {
+                $getTypePresence = $manager
+                ->getRepository(Presences::class)
+                ->findAll();                
+
+                foreach($getTypePresence as $key => $value){
+                    $newPresenceCustomized = new CustomizedPresences();
+                    $newPresenceCustomized
+                    ->setTypePresence($value)
+                    ->setUser($user)
+                    ->setAbreviationCustomized($value->getAbreviation());
+                    $manager->persist($newPresenceCustomized);
+                }
+                $manager->flush();
+
+                $setCustomPresence = $manager
+                ->getRepository(CustomizedPresences::class)
+                ->findOneBy(
+                    [
+                        'typePresence' => $presence['pk'],
+                        'user' => $user->getId()
+                    ]
+                );
+                $setCustomPresence
+                ->setAbreviationCustomized($presence['value']);
+                $manager->persist($setCustomPresence);
+                $manager->flush();
+
+            }
+
+        }
+        return new Response("");
     }
 
 }

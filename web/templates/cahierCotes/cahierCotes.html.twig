@@ -1,0 +1,438 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} -Cahier de cotes {% endblock %}
+
+{% block scripts %}
+    <script src="/JS/main.js"></script>
+{% endblock %}
+{% block header %} {% endblock %}
+
+{% block container %}
+    <div class="jumbotron" style="font-size: 1.3em;">
+        <h3 class="display-7" style="text-align: center">Cahier de côtes</h3>
+        <h5 class="display-10" style="text-align: center">{{eleves.0.classe.ecole.nomEcole}}</h3>
+        <br>
+        <div class="row d-flex justify-content-center">
+            <div class="col">            
+                <button onclick="$('#detailsEleveEval').collapse('hide'); $('#detailsEleveChamp').collapse('hide'); $('#detailsEleveMoyenne').collapse('hide');" id="detailsCoursEleve" class="btn btn-info" data-toggle="collapse" data-target="#detailsEleveCours">Moyennes des cours</button>
+            </div>
+            <div class="col">            
+                <button onclick="$('#detailsEleveCours').collapse('hide'); $('#detailsEleveChamp').collapse('hide'); $('#detailsEleveMoyenne').collapse('hide');" id="detailsEvalEleve" class="btn btn-info" data-toggle="collapse" data-target="#detailsEleveEval">Moyennes des évaluations</button>          
+            </div>
+            <div class="col">            
+                <button onclick="$('#detailsEleveCours').collapse('hide'); $('#detailsEleveEval').collapse('hide'); $('#detailsEleveMoyenne').collapse('hide');" id="detailsChampEleve" class="btn btn-info" data-toggle="collapse" data-target="#detailsEleveChamp">Moyennes des champs</button>    
+            </div>
+            <div class="col">            
+                <button onclick="$('#detailsEleveCours').collapse('hide'); $('#detailsEleveChamp').collapse('hide'); $('#detailsEleveEval').collapse('hide');" id="detailsMoyenneEleve" class="btn btn-info" data-toggle="collapse" data-target="#detailsEleveMoyenne">Moyennes des élèves</button>    
+            </div>
+        </div>
+        <br>
+        <div id="detailsEleveCours" class="collapse">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nom</th>
+                            <th>Prenom</th>
+                            <th>Classe</th>                           
+                            {% for key, value in moyennePeriodes %}
+                                <th id="{{key}}">
+                                    {{key}}
+                                    <p>
+                                        <small>
+                                            {{value|number_format(2)}} %
+                                        </small>
+                                    </p>
+                                </th>
+                            {% endfor %}
+    
+                            {% for key, value in moyennesSemestres %}                
+                                <th id="{{key}}">
+                                    {{key}}
+                                    <p>
+                                        <small>
+                                            {{value|number_format(2)}} %
+                                        </small>
+                                    </p>
+                                </th>                 
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key, val in eleves|sort((a, b) => a.nom <=> b.nom) %}                                                  
+                            <tr>
+                                <td id="nombreEleve">{{loop.index}}</td>
+                                <td id="nom">{{val.nom}}</td>
+                                <td id="prenom">{{val.prenom}}</td>
+                                <td>{{val.classe.nomClasse}}</td>  
+                                {% for cle, valeur in val.moyennePeriodeCours %}
+                                    {% for k,v in valeur %}
+                                        <td id="{{k}}">
+                                            {{v|number_format(2)}}
+                                        </td> 
+                                    {% endfor %}
+                                {% endfor %}
+                                {% for cle, valeur in val.moyenneSemCours %}
+                                    {% for k,v in valeur %}
+                                        <td id="{{k}}">
+                                            {{v|number_format(2)}}
+                                        </td> 
+                                    {% endfor %}
+                                {% endfor %}
+                            </tr>                                                                         
+                        {% endfor %}    
+                    </tbody>
+                </table>
+            </div>       
+        </div>
+        <div id="detailsEleveEval" class="collapse">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nom</th>
+                            <th>Prenom</th>
+                            <th>Classe</th>
+                            {% for cle, valeur in moyenneEvaluationPeriodes %}                              
+                                <th id="">
+                                    {{cle}}
+                                    <p>
+                                        <small>{{valeur|number_format(2)}} %</small>
+                                    </p>
+                                </th>
+                            {% endfor %}
+                            {% for cle, valeur in moyenneEvaluationSem %}
+                               <th>
+                                    {{cle}}
+                                    <p>
+                                        <small>{{valeur|number_format(2)}} %</small>
+                                    </p>
+                                </th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key, val in eleves|sort((a, b) => a.nom <=> b.nom) %}                                                  
+                            <tr>
+                                <td id="nombreEleve">{{loop.index}}</td>
+                                <td id="nom">{{val.nom}}</td>
+                                <td id="prenom">{{val.prenom}}</td>
+                                <td>{{val.classe.nomClasse}}</td>  
+                                {% for cle, valeur in val.moyennePeriodeEval %}
+                                    {% for k,v in valeur %}
+                                        <td>
+                                            {{v|number_format(2)}}
+                                        </td> 
+                                    {% endfor %}
+                                {% endfor %}
+                                {% for cle, valeur in val.moyenneSemEval %}
+                                    {% for k,v in valeur %}
+                                        <td>
+                                            {{v|number_format(2)}}
+                                        </td> 
+                                    {% endfor %}
+                                {% endfor %}
+                            </tr>                                                                         
+                        {% endfor %}    
+                    </tbody>
+                </table>
+            </div>   
+        </div>
+        <div id="detailsEleveChamp" class="collapse">
+            <div class="row">
+                <div class="col">
+                    <small><b>CP: Condition Physique</b></small>
+                </div>
+                <div class="col">
+                    <small><b>HGM: Habilité gestuelles et motrices</b></small>
+                </div>
+                <div class="col">
+                    <small><b>CSM: Coopération socio motrice</b></small>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nom</th>
+                            <th>Prenom</th>
+                            <th>Classe</th>
+                            {%  for key, value in eleves.0.moyenneChampPer %}
+                                {% for cle, valeur in value %}
+                                    <th colspan="3">
+                                        <div class="row d-flex justify-content-center">{{cle}}</div>
+                                        <div class="row">
+                                            <div class="col">                                                  
+                                                <small>CP</small>      
+                                            </div>
+                                                <div class="col">                                                  
+                                                <small>HGM</small>      
+                                            </div>
+                                                <div class="col">                                                  
+                                                <small>CSM</small>      
+                                            </div>
+                                        </div>
+                                    </th>
+                                {% endfor %}
+                            {% endfor %}
+                            {% for key, value in eleves.0.moyenneChampSem %}
+                                {% for cle, valeur in value %}
+                                    <th colspan="3">
+                                        <div class="row d-flex justify-content-center">{{cle}}</div>
+                                        <div class="row">
+                                            <div class="col">                                                  
+                                                <small>CP</small>      
+                                            </div>
+                                                <div class="col">                                                  
+                                                <small>HGM</small>      
+                                            </div>
+                                                <div class="col">                                                  
+                                                <small>CSM</small>      
+                                            </div>
+                                        </div>
+                                    </th>
+                                {% endfor %}
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key, val in eleves|sort((a, b) => a.nom <=> b.nom) %}                                                  
+                            <tr>
+                                <td id="nombreEleve">{{loop.index}}</td>
+                                <td id="nom">{{val.nom}}</td>
+                                <td id="prenom">{{val.prenom}}</td>
+                                <td>{{val.classe.nomClasse}}</td>  
+                                {% for cle, valeur in val.moyenneChampPer %}
+                                    {% for k, v in valeur %}
+                                        {% for a, b in v %}
+                                        <td>
+                                            {{b|number_format(2)}}
+                                        </td> 
+                                        {% endfor %}
+                                    {% endfor %}
+                                {% endfor %}
+                                {% for cle, valeur in val.moyenneChampSem %}
+                                    {% for k, v in valeur %}
+                                        {% for a, b in v %}
+                                        <td>
+                                            {{b|number_format(2)}}
+                                        </td> 
+                                        {% endfor %}
+                                    {% endfor %}
+                                {% endfor %}
+                            </tr>                                                                         
+                        {% endfor %}    
+                    </tbody>
+                </table>
+            </div>   
+        </div>
+        <div id="detailsEleveMoyenne" class="collapse">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nom</th>
+                            <th>Prenom</th>
+                            <th>Classe</th>
+                            {% for key, value in eleves.0.moyennePeriode %}
+                                {% for cle, valeur in value %}
+                                    <th>{{cle}}</th>
+                                {% endfor %}
+                            {% endfor %}
+                            {% for key, value in eleves.0.moyenneSem %}
+                                {% for cle, valeur in value %}
+                                    <th>{{cle}}</th>
+                                {% endfor %}
+                            {% endfor %}
+                            <th>Annee</th>
+                        </tr>    
+                    </thead>
+                    <tbody>
+                        {% for key, val in eleves|sort((a, b) => a.nom <=> b.nom) %}                                                  
+                            <tr>
+                                <td id="nombreEleve">{{loop.index}}</td>
+                                <td id="nom">{{val.nom}}</td>
+                                <td id="prenom">{{val.prenom}}</td>
+                                <td>{{val.classe.nomClasse}}</td>  
+                                {% for cle, valeur in val.moyennePeriode %}
+                                    {% for k, v in valeur %}                                      
+                                        <td>
+                                            {{v|number_format(2)}}
+                                        </td>                                    
+                                    {% endfor %}
+                                {% endfor %}
+                                {% for cle, valeur in val.moyenneSem %}
+                                    {% for k, v in valeur %}                                      
+                                        <td>
+                                            {{v|number_format(2)}}
+                                        </td>                                        
+                                    {% endfor %}
+                                {% endfor %}
+                                {% for cle, valeur in val.moyenneAnnee %}
+                                    {% for k, v in valeur %}
+                                        <td>{{v|number_format(2)}}</td>
+                                    {% endfor %}
+                                {% endfor %}
+                            </tr>                                                                         
+                        {% endfor %}    
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="jumbotron" style="font-size: 1.3em;">
+        <h3 class="display-7" style="text-align: center">Pourcentage des champs et des compétences</h3>
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+        <br>
+        <div class="table-responsive">       
+            <div class="row d-flex justify-content-center">
+                <h4 class="display-8 mr-3">
+                    Par période: 
+                </h4>
+                <button id="detailsChampPeriode" onclick="$('#detailsPeriodeComp').collapse('hide'); $('#detailsSemChamp').collapse('hide'); $('#detailsSemComp').collapse('hide');" class="btn btn-info mr-3" data-toggle="collapse" data-target="#detailsPeriodeChamp">Détails des champs</button>
+                <button id="detailsCompPeriode" onclick="$('#detailsPeriodeChamp').collapse('hide'); $('#detailsSemChamp').collapse('hide'); $('#detailsSemComp').collapse('hide');" class="btn btn-info mr-3" data-toggle="collapse" data-target="#detailsPeriodeComp">Détails des compétences</button>
+            </div>
+            <br>
+            <div class="row d-flex justify-content-center">
+                <h4 class="display-8 mr-3">
+                    Par semestre: 
+                </h4>
+                <button id="detailsChampSem" onclick="$('#detailsPeriodeComp').collapse('hide'); $('#detailsPeriodeChamp').collapse('hide'); $('#detailsSemComp').collapse('hide');" class="btn btn-info mr-3" data-toggle="collapse" data-target="#detailsSemChamp">Détails des champs</button>
+                <button id="detailsCompSem" onclick="$('#detailsPeriodeComp').collapse('hide'); $('#detailsPeriodeChamp').collapse('hide'); $('#detailsSemChamp').collapse('hide');"  class="btn btn-info mr-3" data-toggle="collapse" data-target="#detailsSemComp">Détails des compétences</button>
+            </div>
+            <br>
+            <div id="detailsPeriodeChamp" class="collapse">  
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <th>Champs</th>
+                        
+                            {% for key, value in moyenneChampPeriode %}
+                                {% if loop.first %}
+                                    {% for cle, valeur in value %}
+                                        <th>{{cle}}</th>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        </thead>
+                        <tbody>
+                            {% for key, value in moyenneChampPeriode %}
+                                <tr>
+                                <td>{{key}}</td>
+                                    {% for cle, valeur in value %}               
+                                        <td>{{valeur|number_format(2)}} %</td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}    
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="detailsPeriodeComp" class="collapse">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <th>Compétences</th>
+                        
+                            {% for key, value in moyenneCompetence %}
+                                {% if loop.first %}
+                                    {% for cle, valeur in value %}
+                                        <th>{{cle}}</th>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        </thead>
+                        <tbody>
+                            {% for key, value in moyenneCompetence %}
+                                <tr>
+                                <td>{{key}}</td>
+                                    {% for cle, valeur in value %}               
+                                        <td>{{valeur|number_format(2)}} %</td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}    
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">       
+            <div id="detailsSemChamp" class="collapse">  
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <th>Champs</th>
+                        
+                            {% for key, value in moyennesChampSem %}
+                                {% if loop.first %}
+                                    {% for cle, valeur in value %}
+                                        <th>{{cle}}</th>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        </thead>
+                        <tbody>
+                            {% for key, value in moyennesChampSem %}
+                                <tr>
+                                <td>{{key}}</td>
+                                    {% for cle, valeur in value %}               
+                                        <td>{{valeur|number_format(2)}} %</td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}    
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="detailsSemComp" class="collapse">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <th>Compétences</th>
+                        
+                            {% for key, value in moyennesCompetencesSem %}
+                                {% if loop.first %}
+                                    {% for cle, valeur in value %}
+                                        <th>{{cle}}</th>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        </thead>
+                        <tbody>
+                            {% for key, value in moyennesCompetencesSem %}
+                                <tr>
+                                <td>{{key}}</td>
+                                    {% for cle, valeur in value %}               
+                                        <td>{{valeur|number_format(2)}} %</td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}    
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div> 
+    </div>           
+    <div class="jumbotron my-4">
+        <h5 class="display-7" style="text-align: center">Changez le groupe: </h3>
+        <div class="row d-flex justify-content-center">
+            <select name="groups" id="groups" class="custom-select col-md-6" onchange="window.location.href=this.value">
+                <option value="#"></option>
+                {% for key, value in groups %}
+                    <optgroup label="{{value.ecole}}">
+                        <option value="{{path('cahier_cotes', {group: value.groups_id})}}">{{value.groupes}}</option>
+                    </optgroup>
+                {% endfor %}
+            </select>
+        </div>
+    </div> 
+{% endblock %}

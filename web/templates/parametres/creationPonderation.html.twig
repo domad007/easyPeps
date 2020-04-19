@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} -Creation de la pondération {% endblock %}
+
+{% block header %}
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">Pondération cours-evaluation</h1>
+    </header>
+{% endblock %}
+{% block container %}
+    <div class="jumbotron">
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+        {{ form_start(form) }}
+            <div class="row">
+                <div class="col">
+                    {{form_label(form.evaluation, "Pondération des évaluations en %")}}
+                    {{form_widget(form.evaluation)}}
+                </div>
+                <div class="col">
+                    {{form_label(form.evaluation, "Pondération des cours en %")}}
+                    {{form_widget(form.cours)}}
+                </div>
+            </div>
+            <br>
+            <div class="row d-flex justify-content-center">  
+                {{form_widget(form.save)}}
+            </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

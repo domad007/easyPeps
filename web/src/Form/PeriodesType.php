@@ -3,12 +3,14 @@
 namespace App\Form;
 
 use App\Entity\Periodes;
+use App\Entity\Semestres;
+use App\Form\ContactType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
 class PeriodesType extends AbstractType
 {
@@ -17,15 +19,20 @@ class PeriodesType extends AbstractType
         $contact = new ContactType();
         $builder
             ->add('nomPeriode', TextType::class, $contact->getConfig("Intitulé de la période", "Intitulé"))
-            ->add('pourcentage', IntegerType::class, 
+            ->add('dateDebut', DateType::class,[
+                'label' => "Date d'évaluation",
+                'data' => new \DateTime(),
+                'format' => 'dd-MM-yyyy',
+            ])
+            ->add('dateFin', DateType::class, [
+                'label' => "Date d'évaluation",
+                'data' => new \DateTime(),
+                'format' => 'dd-MM-yyyy',
+            ])
+            ->add('semestres', EntityType::class, 
             [
-                'label' => "Pourcentage de la période",
-                'attr' => 
-                [
-                    'placeholder' => "Le poids de la période en %",
-                    'min' => 0,
-                    'max' => 100
-                ]
+                'class' => Semestres::class,
+                'choice_label' => 'intitule',
             ])
         ;
     }

@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+{% block title %} -Paramètres {% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/CSS/scripts/editable.css">
+{% endblock %}
+{% block scripts %}
+    <script src="/JS/scripts/editable.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#ponderation span').editable({
+                'emptytext' : "Le champ le peut pas être vide",
+                validate: function(value) {
+                    if($.trim(value) == '') {
+                        return 'Le champ ne peut pas être vide';
+                    }
+                    if($.trim(value) > 100 || $.trim(value) < 0){
+                        return "Veuillez spécifier le pourcentage"
+                    }
+                },
+                error: function(response, newValue) {
+                    if(response.status != 200) {
+                        return "Veuillez respecter l'annotation de base";
+                    } else {
+                        return response.responseText;
+                    }
+                },
+                success: function(response, newValue){
+                    switch(this.id){
+                        case 'evaluation': 
+                            $('#cours').html(100-newValue);
+                        break;
+                        case 'cours': 
+                            $('#evaluation').html(100-newValue);
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block header %}
+<header class="jumbotron my-4">
+    <h1 class="display-3" style="text-align: center">Paramètres</h1>
+</header>
+{% endblock %}
+
+{% block container %}
+    <div class="jumbotron" style="font-size: 1.3em;">
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+        {% if ponderation is empty %}
+            <div class="row">
+                <h4 class="display-8">
+                    Vous n'avez pas crée de pondération désormais la pondération entre les cours et les évaluations est de 50-50, si vous desirez modifier cette pondération cliquez ici ! 
+                </h4>
+            </div>
+            <div class="row d-flex justify-content-center">
+                <a href="{{path('creation_ponderation', {ecole: ecole.id})}}" class="btn btn-primary">Créez la pondération</a>
+            </div>
+        {% else %}
+            <div class="row d-flex justify-content-center">
+                <h3 class="display-8">
+                    Pondération cours-evaluation
+                </h3>
+            </div>
+            <div class="table-responsive">
+                <table class="table" id="ponderation">
+                    <thead style="text-align: center">
+                        <th>Cours</th>
+                        <th>Evaluation</th>
+                    </thead>
+                    <tbody style="text-align: center">
+                        <td><span id="cours" data-pk="{{ponderation.id}}" data-url="{{path('modif_ponderation')}}" data-name="cours">{{ponderation.cours}}</span> %</td>
+                        <td><span id="evaluation" data-pk="{{ponderation.id}}" data-url="{{path('modif_ponderation')}}" data-name="evaluation">{{ponderation.evaluation}}</span> % </td>
+                    </tbody>
+                </table>
+            </div>
+            
+        {% endif %}
+    </div>
+{% endblock %}

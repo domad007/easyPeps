@@ -24,8 +24,12 @@
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
                             {% if app.user %}
+                                {% if is_granted('ROLE_ACTIF') %}
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{path('journal')}}">Journal de classe</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{path('choix_cahier')}}">Cahier de cotes</a>
                                 </li>
                                 <li class="nav-item">
                                     <div class="dropdown">
@@ -38,11 +42,12 @@
                                 </li>
                                 <li class="nav-item">
                                     <div class="dropdown">
-                                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">Descriptions</a>
+                                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">Paramètres</a>
                                         <div class="dropdown-menu">
                                             <a class="dropdown-item" href="{{path('description_comp_socles')}}">Compétences socles</a>
                                             <a class="dropdown-item" href="{{path('description_comp_terminales')}}">Compétences terminales</a>
                                             <a class="dropdown-item" href="{{path('description_presences')}}">Prise des présences</a>
+                                            <a class="dropdown-item" href="{{path('parametres_choix')}}">Paramètres de l'école</a>
                                         </div>
                                     </div>
                                 </li>
@@ -55,6 +60,7 @@
                                         </div>
                                     </div>                                                             
                                 </li>
+                                {% endif %}
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{path('deconnexion_user')}}">Deconnexion</a>
                                 </li>
@@ -120,9 +126,11 @@
         <div class="container">
             {% block header %}
             {% if app.user %}
-                <header class="jumbotron my-4">
-                    <h1 class="display-3" style="text-align: center">Agenda</h1>
-                </header>
+                {% if is_granted('ROLE_ACTIF') %}
+                    <header class="jumbotron my-4">
+                        <h1 class="display-3" style="text-align: center">Agenda</h1>
+                    </header>
+                {% endif %}
             {% else %}
             <!-- Jumbotron Header -->
             <header class="jumbotron my-4">
@@ -140,12 +148,30 @@
         <div class="container">
         {% block container %}
             {% if app.user %}
-                {% set user = app.user.mail|split('@') %}
-                <div class="agenda">                 
+                {% if is_granted('ROLE_ACTIF') %}
+                    {% set user = app.user.mail|split('@') %}
+                    {% for message in app.flashes('success') %}
+                        <div class="alert alert-success">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    <div class="agenda">                 
+                        <div class="jumbotron" style="font-size: 1.3em;">
+                            <iframe src="https://calendar.google.com/calendar/embed?src={{user[0]}}%40gmail.com" style="border: 0" width="100%" height="800" frameborder="0" scrolling="no"></iframe>
+                        </div>
+                    </div>
+                {% else %}
+                <div>                 
                     <div class="jumbotron" style="font-size: 1.3em;">
-                        <iframe src="https://calendar.google.com/calendar/embed?src={{user[0]}}%40gmail.com" style="border: 0" width="100%" height="800" frameborder="0" scrolling="no"></iframe>
+                        <div class="row d-flex justify-content-center">
+                            <h3 class="display-8">Votre compte semble inactif veuillez passer à votre compte pour le réactiver</h3>
+                        </div>
+                        <div class="row d-flex justify-content-center">
+                            <a href="{{path('mon_profil')}}" class="btn btn-primary">Accéder à mon compte</a>
+                        </div>
                     </div>
                 </div>
+                {% endif %}
             {% else %}
             <div class="bienvenue">
                 <h3 class="display-3">Bienvenue</h3>

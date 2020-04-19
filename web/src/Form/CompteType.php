@@ -10,6 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class CompteType extends AbstractType
 {
@@ -21,6 +22,11 @@ class CompteType extends AbstractType
             ->add('prenom', TextType::class, $contact->getConfig("Modifiez votre prenom", ""))
             ->add('nomUser', TextType::class, $contact->getConfig("Modifiez votre nom d'utilisateur", ""))
             ->add('mail', EmailType::class, $contact->getConfig("Modifiez votre Email", ""))
+            ->add('userActif', CheckboxType::class, [
+                "label" => "Desactiver mon compte",
+                'required' => false
+                
+            ])
             ->add('save', SubmitType::class, $contact->getConfig("Enregistrez vos modifications", ""))
         ;
     }

@@ -34,11 +34,6 @@ class Groups
     private $periodes;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $calculAutomatique;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Degre", inversedBy="groups")
      */
     private $degre;
@@ -47,6 +42,11 @@ class Groups
      * @ORM\OneToMany(targetEntity="App\Entity\Evaluation", mappedBy="groupe")
      */
     private $evaluations;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="groups")
+     */
+    private $professeur;
 
     public function __construct()
     {
@@ -154,18 +154,6 @@ class Groups
         return $this;
     }
 
-    public function getCalculAutomatique(): ?int
-    {
-        return $this->calculAutomatique;
-    }
-
-    public function setCalculAutomatique(?int $calculAutomatique): self
-    {
-        $this->calculAutomatique = $calculAutomatique;
-
-        return $this;
-    }
-
     public function getDegre(): ?Degre
     {
         return $this->degre;
@@ -205,6 +193,18 @@ class Groups
                 $evaluation->setGroupe(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getProfesseur(): ?User
+    {
+        return $this->professeur;
+    }
+
+    public function setProfesseur(?User $professeur): self
+    {
+        $this->professeur = $professeur;
 
         return $this;
     }

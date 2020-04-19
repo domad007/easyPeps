@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} -Paramètres {% endblock %}
+
+{% block header %}
+    <!-- Jumbotron Header -->
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">Paramètres</h1>
+        <h3 class="display-7" style="text-align: center">Choisissez l'école</h3>
+        <div class="row d-flex justify-content-center">
+            <select name="groups" id="groups" class="custom-select col-sm-6" onchange="window.location.href=this.value">
+                <option value="#"></option>
+                {% for key, value in ecoles %}
+                        <option value="{{path('parametres_ecole', {ecole: value.id})}}">{{value.nomEcole}}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </header>
+{% endblock %}
+
+{% block container %}
+
+{% endblock %}

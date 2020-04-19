@@ -3,19 +3,27 @@
 namespace App\Controller;
 use DateTime;
 use App\Entity\User;
+use App\Entity\Cours;
 use App\Entity\Ecole;
 use App\Entity\Eleve;
 use App\Entity\Classe;
 use App\Form\EleveType;
+use App\Entity\Presences;
+use App\Entity\Evaluation;
 use App\Form\AddEleveType;
 use App\Form\NewClassType;
+use App\Entity\CoursGroupe;
 use App\Entity\EleveSupprime;
 use App\Form\ChangeClassType;
+use App\Entity\EvaluationGroup;
+use App\Entity\CustomizedPresences;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
@@ -24,6 +32,7 @@ class classesController extends AbstractController {
     /**
      * Affichage des classes selon l'utilisateur
      * @Route("/classes", name="classes")
+     * @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
     public function classes(UserInterface $user){
          $classes = $this->getDoctrine()
@@ -44,6 +53,7 @@ class classesController extends AbstractController {
     /**
      * Formulaire permettant d'ajouter une nouvelle classe
      * @Route("/classes/newClass", name="newClass")
+     * @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
     public function newClass(Request $request){
         $class = new Classe();
@@ -72,6 +82,7 @@ class classesController extends AbstractController {
 
      /**
      * @Route("/modifEleve", name="modif_eleve")
+     * 
      */
     public function modifEleve(Request $request){
         if($request->isMethod('post')){
@@ -122,42 +133,94 @@ class classesController extends AbstractController {
     }
 
     /**
-     * @Route("/classes/{idEcole}/{idClasse}", name="class")
+     * @Route("/classes/{classe}", name="class")
+     * @Security("is_granted('ROLE_ACTIF') and user === classe.getProfesseur()", statusCode=405)
      */
-    public function class(Request $request, $idEcole, $idClasse){
+    public function class(Classe $classe, Request $request, UserInterface $user){
         $manager = $this->getDoctrine()->getManager();
-
-        $nomEcole = $manager->getRepository(Ecole::class)
-        ->findOneById($idEcole);
-
-        $nomClasse = $manager->getRepository(Classe::class)
-        ->findOneById($idClasse);
-
+        $class = new Classe();
         $eleves = $manager->getRepository(Eleve::class)
-        ->findByClasse($idClasse);
+        ->findByClasse($classe->getId());
 
-        $classe = new Classe();
+        $cours = $manager
+        ->getRepository(Cours::class)
+        ->findBygroupe($classe->getGroups());
+
+        $presencesCustom = $manager
+        ->getRepository(CustomizedPresences::class)
+        ->findOneBy(
+            [
+                'typePresence' => 1,
+                'user' => $user
+            ]
+        );
+
+        $presences = $manager
+        ->getRepository(Presences::class)
+        ->findOneById(1);
+
+        $evaluations = $manager
+        ->getRepository(Evaluation::class)
+        ->findBygroupe($classe->getGroups());
+
         $eleve = new Eleve();
 
-        $formAddStudent= $this->createForm(AddEleveType::class, $classe);
+        $formAddStudent= $this->createForm(AddEleveType::class, $class);
         $formAddStudent->handleRequest($request);
 
         if($formAddStudent->isSubmitted() && $formAddStudent->isValid()){
             
-            foreach($classe->getEleves() as $eleves){
-                $eleves->setClasse($nomClasse);             
+            foreach($class->getEleves() as $eleves){   
+                $eleves->setClasse($classe);
                 $manager->persist($eleves);
+                if(!empty($evaluations)){
+                    foreach($evaluations as $key => $value){
+                        $evaluationGroupe = new EvaluationGroup();
+                        $evaluationGroupe
+                        ->setEvaluation($value)
+                        ->setEleve($eleves)
+                        ->setPoints("0");
+
+                        $manager->persist($evaluationGroupe);
+                    }
+                }
+                if(!empty($cours)){
+                    foreach($cours as $key => $value){
+                        if(!empty($presencesCustom)){
+                            $coursGroupe = new CoursGroupe();
+                            $coursGroupe
+                            ->setCoursId($value)
+                            ->setEleveId($eleves)
+                            ->setPoints("0")
+                            ->setPresences($presences)
+                            ->setCustomizedPresences($presencesCustom);
+    
+                            $manager->persist($coursGroupe);
+                        }
+                        else {
+                            $coursGroupe = new CoursGroupe();
+                            $coursGroupe
+                            ->setCoursId($value)
+                            ->setEleveId($eleves)
+                            ->setPoints("0")
+                            ->setPresences($presences)
+                            ->setCustomizedPresences(null);
+    
+                            $manager->persist($coursGroupe);
+                        }
+                        
+                    }
+                }
                 $manager->flush();
             }
 
             $this->addFlash('success', "L'élève ou les élèves ont été rajouté avec succès");
-            return $this->redirectToRoute('class', ['idEcole' => $idEcole, 'idClasse' => $idClasse]);
+            return $this->redirectToRoute('class', ['classe' => $classe->getId()]);
         }
 
         return $this->render(
             'classes/class.html.twig', [
-                'nomEcole' => $nomEcole,
-                'nomClasse' => $nomClasse,
+                'classe' => $classe,
                 'eleves' => $eleves,
                 'form' => $formAddStudent->createView()
             ]
@@ -166,15 +229,12 @@ class classesController extends AbstractController {
     }
 
     /**
-     * @Route("/changeClasse/{idEleve}", name="change_class")
+     * @Route("/changeClasse/{eleve}", name="change_class")
+     * @Security("is_granted('ROLE_ACTIF') and user === eleve.getClasse().getProfesseur()", statusCode=405)
      */
-    public function changeClasse(Request $request, $idEleve){
+    public function changeClasse(Eleve $eleve, Request $request, UserInterface $user){
 
         $manager = $this->getDoctrine()->getManager();
-
-        $eleve = $manager
-        ->getRepository(Eleve::class)
-        ->findOneById($idEleve);
 
         $classes = $manager
         ->getRepository(Classe::class)
@@ -189,6 +249,65 @@ class classesController extends AbstractController {
             ->getRepository(Classe::class)
             ->findOneById($data['classe']);
 
+            $cours = $manager
+            ->getRepository(Cours::class)
+            ->findBygroupe($classe->getGroups());
+
+            $presencesCustom = $manager
+            ->getRepository(CustomizedPresences::class)
+            ->findOneBy(
+                [
+                    'typePresence' => 1,
+                    'user' => $user
+                ]
+            );
+            $presences = $manager
+            ->getRepository(Presences::class)
+            ->findOneById(1);
+
+            $evaluations = $manager
+            ->getRepository(Evaluation::class)
+            ->findBygroupe($classe->getGroups());
+
+            if(!empty($evaluations)){
+                foreach($evaluations as $key => $value){
+                    $evaluationGroup = new EvaluationGroup();
+                    $evaluationGroup
+                    ->setEvaluation($value)
+                    ->setEleve($eleve)
+                    ->setPoints("0");
+
+                    $manager->persist($evaluationGroup);
+                }
+            }
+
+            if(!empty($cours)){
+                foreach($cours as $key => $value){
+                    if(!empty($presencesCustom)){
+                        $coursGroupe = new CoursGroupe();
+                        $coursGroupe
+                        ->setCoursId($value)
+                        ->setEleveId($eleve)
+                        ->setPoints("0")
+                        ->setPresences($presencesCustom->getTypePresence())
+                        ->setCustomizedPresences($presencesCustom);
+
+                        $manager->persist($coursGroupe);
+                    }
+                    else {
+                        $coursGroupe = new CoursGroupe();
+                        $coursGroupe
+                        ->setCoursId($value)
+                        ->setEleveId($eleve)
+                        ->setPoints("0")
+                        ->setPresences($presences->getId());
+
+                        $manager->persist($coursGroupe);
+                    }
+
+                }
+            }
+
             $eleve->setClasse($classe);
 
             $manager->persist($eleve);
@@ -196,11 +315,9 @@ class classesController extends AbstractController {
 
             $this->addFlash('success', "L'élève a bien été changé");
             return $this->redirectToRoute('class', [
-                'idEcole' => $eleve->getClasse()->getEcole()->getId(),
-                'idClasse' => $eleve->getClasse()->getId()
+                'classe' => $eleve->getClasse()->getId()
             ]);
         }
-        //dump($eleve);
 
         return $this->render(
             '/classes/changeClasse.html.twig', [
