@@ -20,7 +20,7 @@ class NewPonderationType extends AbstractType
             [
                 'attr' => 
                 [
-                    'placeholder' => "Evaluation en %",
+                    'placeholder' => "%",
                     'min' => 1,
                     'max' => 100,
                 ]
@@ -29,7 +29,7 @@ class NewPonderationType extends AbstractType
             [
                 'attr' => 
                 [
-                    'placeholder' => "Cours en %",
+                    'placeholder' => "%",
                     'min' => 1,
                     'max' => 100,
                 ]

@@ -4,7 +4,7 @@
 
 {% block header %}
     <header class="jumbotron my-4">
-        <h1 class="display-3" style="text-align: center">Pondération cours-evaluation</h1>
+        <h1 class="display-5" style="text-align: center">Pondération des évaluations cértificatives et travail journalier</h1>
     </header>
 {% endblock %}
 {% block container %}
@@ -17,11 +17,11 @@
         {{ form_start(form) }}
             <div class="row">
                 <div class="col">
-                    {{form_label(form.evaluation, "Pondération des évaluations en %")}}
+                    {{form_label(form.evaluation, "Evaluation certificative")}}
                     {{form_widget(form.evaluation)}}
                 </div>
                 <div class="col">
-                    {{form_label(form.evaluation, "Pondération des cours en %")}}
+                    {{form_label(form.evaluation, "Travail journalier")}}
                     {{form_widget(form.cours)}}
                 </div>
             </div>

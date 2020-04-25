@@ -42,15 +42,17 @@
 {% block _new_appreciation_ecole_appreciations_entry_widget %}
     <div class="form-row" id="block_{{id}}">
         <div class="form-group col">
-            {{form_label(form.intitule, "Nom d'appréciation")}} 
+            {{form_label(form.intitule, "Appréciation")}} 
             {{form_widget(form.intitule)}}
         </div>
         <div class="form-group col">
-            {{form_label(form.cote, "A partir de quelle cote")}} 
-            {{form_widget(form.cote)}} 
-            <small>* Par défaut /10</small>
+            {{form_label(form.cote, "A partir de")}} 
+            {{form_widget(form.cote)}}
         </div>
-        <div class="form-group col-sm-1">
+        <div class="form-group col-sm-1 mt-5">
+            /10
+        </div>    
+        <div class="form-group col-sm-1  mt-4">
             <button type="button" data-action="delete" data-target="#block_{{id}}" class="btn btn-danger">X</button>
         </div>
     </div>

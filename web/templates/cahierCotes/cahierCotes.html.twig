@@ -229,7 +229,7 @@
                 </table>
             </div>   
         </div>
-        <div id="detailsEleveMoyenne" class="collapse">
+        <div id="detailsEleveMoyenne" class="collapse show">
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -245,7 +245,13 @@
                             {% endfor %}
                             {% for key, value in eleves.0.moyenneSem %}
                                 {% for cle, valeur in value %}
-                                    <th>{{cle}}</th>
+                                    <th>
+                                        {{cle}}
+                                        <div class="row d-flex justify-content-center">
+                                            <small>Bilan</small>
+                                        </div>
+                                    </th>
+                                    
                                 {% endfor %}
                             {% endfor %}
                             <th>Annee</th>
@@ -267,7 +273,7 @@
                                 {% endfor %}
                                 {% for cle, valeur in val.moyenneSem %}
                                     {% for k, v in valeur %}                                      
-                                        <td>
+                                        <td class="text-center">
                                             {{v|number_format(2)}}
                                         </td>                                        
                                     {% endfor %}

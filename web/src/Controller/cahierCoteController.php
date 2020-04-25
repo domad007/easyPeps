@@ -677,13 +677,11 @@ class cahierCoteController extends AbstractController {
                 }
             }
         }
-
         foreach($moyenneEleveSemestre as $key => $value){
-            $sumSemCoursEval[$key] = $heuresTotalChampsSem[$key] + $heuresSemCoursTotal[$key];
-            $sumSem = array_sum($sumSemCoursEval);
+            $sumSem = array_sum($heuresSemCoursTotal);
             foreach($value as $cle => $valeur){
                 $moyenneEleveAnnee[$cle][$key] = $valeur;
-                $moyenneTotaleAnnee[$cle][$key] = ($moyenneEleveAnnee[$cle][$key]*$sumSemCoursEval[$key]);
+                $moyenneTotaleAnnee[$cle][$key] = ($moyenneEleveAnnee[$cle][$key]*$heuresSemCoursTotal[$key]);
                 $moyenneEleveTotaleAnnee[$cle] = array_sum($moyenneTotaleAnnee[$cle])/$sumSem;
             }
         }
