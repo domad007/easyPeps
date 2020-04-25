@@ -505,18 +505,27 @@ class cahierCoteController extends AbstractController {
                 $pointsTotalPeriode[$value->getPeriode()->getId()] = array_sum($pointsTotal[$value->getPeriode()->getId()]);
             }
         }
-
         foreach($coursGroupe as $key => $value){
             if($value->getCoursId()->getPeriode()){
                 $pointsElevePeriode[$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()][] = $value->getPoints(); 
                 $totalPointsPeriode[$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()] = array_sum($pointsElevePeriode[$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]);
+            }
+        }   
+        foreach($coursGroupe as $key => $value){
+            if($value->getCustomizedPresences() == null){
+                $presences[$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()][$value->getPresences()->getId()][]=   $value->getPresences()->getId();
+                $countPresences[$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()][$value->getPresences()->getId()] = array_count_values($presences[$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()][$value->getPresences()->getId()]);
+            }
+            else {
+                $presences[$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()][$value->getCustomizedPresences()->getTypePresence()->getId()][]=  $value->getCustomizedPresences()->getTypePresence()->getId();
+                $countPresences[$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()][$value->getCustomizedPresences()->getTypePresence()->getId()][] = array_count_values($presences[$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()][$value->getCustomizedPresences()->getTypePresence()->getId()]);
             }
         }
         foreach($totalPointsPeriode as $key => $value){
             foreach($pointsTotalPeriode as $cle => $valeur){
                 if($key == $cle){
                     foreach($value as $ke => $val){
-                        $pointsElevePeriode[$cle][$ke] = ($val/$valeur)*10;
+                        $pointsElevePeriode[$cle][$ke] = ($val/$valeur)*10;                     
                     }
                 }
             }
@@ -558,11 +567,14 @@ class cahierCoteController extends AbstractController {
             if($value->getEvaluation()->getPeriode()){
                 $pointsElevePeriodeEval[$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()][] = $value->getPoints(); 
                 $totalPointsPeriodeEval[$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()] = array_sum($pointsElevePeriodeEval[$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()]);
+                
             }
         }
+        dump($pointsElevePeriodeEval);
         foreach($evaluationGroup as $key => $value){
             if($value->getEvaluation()->getPeriode()->getSemestres()){
                 $pointsEleveChampSem[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getPoints();
+
                 $pointsTotalEleveChampSem[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()] = array_sum($pointsEleveChampSem[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()]);
             }
         }
@@ -705,6 +717,7 @@ class cahierCoteController extends AbstractController {
                 $moyenneEleveTotaleAnnee[$cle] = array_sum($moyenneTotaleAnnee[$cle])/$sumSem;
             }
         }
+
         /*dump($pointsElevePeriode, $pointsEleveEval, $pointsEleveChampPer, $moyenneElevePeriode,
             $moyenneCours,$pointsEleveChamp, $moyenneChampsTotal, $moyenneEleveSemestre, 
             $moyenneEleveTotaleAnnee
@@ -813,11 +826,14 @@ class cahierCoteController extends AbstractController {
                 else {
                     switch($value->getType()){
                         case 'Periodes': 
-                            foreach($appreciations as $key => $value){
-                                if(4 >= $value->getCote() && 4 <= $value->getCote()){
-                                    dump($value->getIntitule());
+                            /*foreach($appreciations as $key => $value){
+                                if(4 >= $value->getCote() && 4 < $appreciations[$key+1]->getCote()){
+                                    dump($value->getIntitule());  
                                 }
-                            }
+                                /*if(4 >= $value->getCote()){
+                                    dump($value->getIntitule());                                    
+                                }*/
+                            //}
                             /*foreach($pointsElevePeriode as $cle => $valeur){
                                 foreach($valeur as $k => $v){
                                     foreach($appreciations as $key => $value){

@@ -196,7 +196,7 @@ function modifAppreciation(property, idType){
             method: 'POST',
             data: {
                 id: idType,
-                appreciation: false
+                appreciation: 0
             }
         });
     }
