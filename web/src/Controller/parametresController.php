@@ -246,6 +246,26 @@ class parametresController extends AbstractController {
         return new Response("");
     }
 
+    /**
+     * @Route("/modifAppreciationCahier", name="modif_appreciation_cahier")
+     */
+    public function modifAppreciationCahier(Request $request){
+        $manager = $this->getDoctrine()->getManager();
+        if($request->isMethod('post')){
+            $data = $request->request->all();
+            $parametre = $manager
+            ->getRepository(Parametres::class)
+            ->findOneById($data['id']);
+
+            $parametre->setAppreciation($data['appreciation']);
+
+            $manager->persist($parametre);
+            $manager->flush();
+        }
+        
+        return new Response("");
+    }
+
     private function createParametres($ecole){
         $manager = $this->getDoctrine()->getManager();
 

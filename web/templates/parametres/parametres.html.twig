@@ -6,6 +6,7 @@
 {% endblock %}
 {% block scripts %}
     <script src="/JS/scripts/editable.js"></script>
+    <script src="/JS/main.js"></script>
     <script>
         $(document).ready(function(){
             $('#ponderation span').editable({
@@ -181,11 +182,11 @@
                                     <td>{{value.type}}</td>
                                     {% if appreciation != null and value.appreciation == 1 %}
                                         <td class="text-center">
-                                            <input type="checkbox" name="appreciation" id="appreciation" checked>
+                                            <input type="checkbox" name="appreciation" id="appreciation" checked onchange="modifAppreciation(this, {{value.id}})">
                                         </td>
                                     {% elseif appreciation != null and value.appreciation == 0 %}   
                                         <td class="text-center">
-                                            <input type="checkbox" class="form-check-input" name="appreciation" id="appreciation">
+                                            <input type="checkbox" class="form-check-input" name="appreciation" id="appreciation" onchange="modifAppreciation(this, {{value.id}})">
                                         </td> 
                                     {% else %} 
                                         <td class="text-center">

@@ -179,3 +179,26 @@ function periodeError(){
     alert("Aucune période existe, veuillez en créer une avant de créer une évaluation ou un cours!");
 }
 
+function modifAppreciation(property, idType){
+    if(property.checked){
+        $.ajax({
+            url: '/modifAppreciationCahier',
+            method: 'POST',
+            data: {
+                id: idType,
+                appreciation: true
+            }
+        });
+    }
+    else {
+        $.ajax({
+            url: '/modifAppreciationCahier',
+            method: 'POST',
+            data: {
+                id: idType,
+                appreciation: false
+            }
+        });
+    }
+}
+
