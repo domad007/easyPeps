@@ -50,6 +50,22 @@
                     }
                 },
             });
+
+            $('#parametres span').editable({
+                'emptytext' : "Le champ le peut pas être vide",
+                validate: function(value) {
+                    if($.trim(value) == '') {
+                        return 'Le champ ne peut pas être vide';
+                    }
+                },
+                error: function(response, newValue) {
+                    if(response.status != 200) {
+                        return "Veuillez respecter l'annotation de base";
+                    } else {
+                        return response.responseText;
+                    }
+                },
+            });
         });
     </script>
 {% endblock %}
@@ -69,10 +85,8 @@
             </div>
         {% endfor %}
         {% if ponderation is empty %}
-            <div class="row">
-                <h4 class="display-8">
-                    Vous n'avez pas crée de pondération désormais la pondération entre les cours et les évaluations est de 50-50, si vous desirez modifier cette pondération cliquez ici ! 
-                </h4>
+            <div class="row">               
+                <p>Vous n'avez pas crée de pondération désormais la pondération entre les cours et les évaluations est de 50-50, si vous desirez modifier cette pondération cliquez ici ! </p>
             </div>
             <div class="row d-flex justify-content-center">
                 <a href="{{path('creation_ponderation', {ecole: ecole.id})}}" class="btn btn-primary">Créez la pondération</a>
@@ -106,9 +120,13 @@
         {% endif %}
         <br>
         {% if appreciation is empty %}
+            <div class="row">
+                <p>Vous n'avez pas créé d'appréciations, désormais vous ne pouvez pas appliquer les appréciations dans le cahier de cotes !</p>                
+            </div>
             <div class="row d-flex justify-content-center">
                 <a href="{{path('creation_appreciations', {ecole: ecole.id})}}" class="btn btn-primary">Créez vos appréciations</a>
             </div>
+            <br>
         {% else %}
             <br>
             <div class="row d-flex justify-content-center">
@@ -141,7 +159,7 @@
             </div>
         {% endif %}
         <div class="row d-flex justify-content-center">
-            <div class="col">
+            <div class="col-md-7">
                 <div class="row d-flex justify-content-center">
                     <h3 class="display-8">
                         Paramètrage d'affichage du cahier de cotes
@@ -149,18 +167,40 @@
                 </div>
                 <br>
                 <div class="table-responsive">
-                    <table class="table table-sm">
+                    <table class="table table-sm" id="parametres">
                         <thead>
                             <tr>
                                 <th>Type</th>
-                                <th>Appliquer appréciation</th>
+                                <th>Appréciation</th>
                                 <th>Sur combien</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                            
-                            </tr>
+                            {% for key, value in parametres %}
+                                <tr>
+                                    <td>{{value.type}}</td>
+                                    {% if appreciation != null and value.appreciation == 1 %}
+                                        <td class="text-center">
+                                            <input type="checkbox" name="appreciation" id="appreciation" checked>
+                                        </td>
+                                    {% elseif appreciation != null and value.appreciation == 0 %}   
+                                        <td class="text-center">
+                                            <input type="checkbox" class="form-check-input" name="appreciation" id="appreciation">
+                                        </td> 
+                                    {% else %} 
+                                        <td class="text-center">
+                                            <input type="checkbox" class="form-check-input" name="appreciation" id="appreciation" disabled>
+                                        </td> 
+                                    {% endif %}
+                                    {% if value.appreciation == 1 %}
+                                        <td class="text-center">{{value.surCombien}}</td>
+                                    {% else %}    
+                                        <td class="text-center">
+                                            <span data-pk="{{value.id}}" data-url="{{path('modif_surCombien')}}" data-name="modifSurCombien">{{value.surCombien}}</span>
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>

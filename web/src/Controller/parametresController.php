@@ -79,9 +79,9 @@ class parametresController extends AbstractController {
             ]
         );
 
-        /*if(empty($parametres)){
+        if(empty($parametres)){
             $this->createParametres($ecole);
-        }*/
+        }
 
         return $this->render(
             'parametres/parametres.html.twig',
@@ -226,8 +226,29 @@ class parametresController extends AbstractController {
         return new Response("");
     }
 
+    /**
+     * @Route("/modifSurCombien", name="modif_surCombien")
+     */
+    public function modifSurCombien(Request $request){
+        $manager = $this->getDoctrine()->getManager();
+        if($request->isMethod('post')){
+            $data = $request->request->all();
+            $parametre = $manager
+            ->getRepository(Parametres::class)
+            ->findOneById($data['pk']);
+
+            $parametre->setSurCombien($data['value']);
+
+            $manager->persist($parametre);
+            $manager->flush();
+        }
+
+        return new Response("");
+    }
+
     private function createParametres($ecole){
         $manager = $this->getDoctrine()->getManager();
+
         $parametresPeriodes = new Parametres();
             $parametresPeriodes
             ->setEcole($ecole)
@@ -236,13 +257,27 @@ class parametresController extends AbstractController {
             ->setAppreciation(false)
             ->setSurCombien(10);
 
-            $parametresSemestres = new Parametres();
-            $parametresSemestres
+            $manager->persist($parametresPeriodes);
+
+            $parametresSemestre1 = new Parametres();
+            $parametresSemestre1
             ->setEcole($ecole)
             ->setProfesseur($this->getUser())
-            ->setType("Semestres")
+            ->setType("Semestre 1")
             ->setAppreciation(false)
             ->setSurCombien(10);
+
+            $manager->persist($parametresSemestre1);
+
+            $parametresSemestre2 = new Parametres();
+            $parametresSemestre2
+            ->setEcole($ecole)
+            ->setProfesseur($this->getUser())
+            ->setType("Semestre 2")
+            ->setAppreciation(false)
+            ->setSurCombien(10);
+
+            $manager->persist($parametresSemestre2);
 
             $parametresAnnee = new Parametres();
             $parametresAnnee
@@ -252,13 +287,10 @@ class parametresController extends AbstractController {
             ->setAppreciation(false)
             ->setSurCombien(10);
 
-            $manager
-            ->persist($parametresAnnee)
-            ->persist($parametresPeriodes)
-            ->persist($parametresSemestres);
+            $manager->persist($parametresAnnee);
+        
 
             $manager->flush();
-
     }
   
 }
