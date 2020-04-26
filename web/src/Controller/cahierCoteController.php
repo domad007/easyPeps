@@ -539,10 +539,10 @@ class cahierCoteController extends AbstractController {
         ->findAll();
 
         foreach($getEvaluation as $key => $value){
-            $heures[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()][] = $value->getHeuresCompetence();
+            $heures[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getHeuresCompetence();
             $points[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getSurCombien();
         
-            $heuresTotal[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()] = array_sum( $heures[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()]);
+            $heuresTotal[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()] = array_sum( $heures[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()]);
             $pointsTotal[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()] = array_sum($points[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()]);
         }
 
@@ -587,7 +587,7 @@ class cahierCoteController extends AbstractController {
                     }
                     foreach($v as $a => $b){
                         foreach($b as $c => $d){
-                            $moyenne[$key][$cle][$k][$c] = ($pointsEleveTotal[$key][$cle][$k]["points"][$c]/$pointsEleveTotal[$key][$cle][$k]["total"][$c])*10;
+                            $moyenne[$key][$cle][$k][$c] = ($pointsEleveTotal[$key][$cle][$k]["points"][$c]/$pointsEleveTotal[$key][$cle][$k]["total"][$c])*10;                 
                         }
                     }
                 }
@@ -618,12 +618,13 @@ class cahierCoteController extends AbstractController {
             foreach($value as $cle => $valeur){
                 foreach($valeur as $k => $v){
                     foreach($v as $a => $b){
-                        $moyenneSemestre[$key][$k][$a][] = $moyennePeriode[$key][$cle][$k][$a]*$heuresPeriode[$key][$cle];
-                        $moyenneSemstreTotal[$key][$k][$a] = array_sum($moyenneSemestre[$key][$k][$a])/$heuresSemestreTotal[$key];
+                        $moyenneSemestre[$key][$k][$a][] = $moyennePeriode[$key][$cle][$k][$a]*$heuresPeriode[$key][$cle][$a];
+                        //$moyenneSemstreTotal[$key][$k][$a] = array_sum($moyenneSemestre[$key][$k][$a])/$heuresSemestreTotal[$key];
                     }
                 }
             }
         }
+       
     }
 
     public function getMoyennesEleve($group){
@@ -1042,7 +1043,6 @@ class cahierCoteController extends AbstractController {
                 }
             }
         }
-        dump($pointsEleveChamp);
         foreach($eleves as $key => $value){
             foreach($pointsElevePeriode as $cle => $valeur){
                 foreach($periodes as $a => $b){
