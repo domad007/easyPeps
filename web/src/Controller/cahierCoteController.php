@@ -88,7 +88,7 @@ class cahierCoteController extends AbstractController {
         catch(\Exception $e){
             return new Response("alo");
         }*/
-        $this->getMoyenneChampsSemestreEleve($group);
+        $this->getMoyenneEvaluationSemestreEleve($group);
         return $this->render(
             '/cahierCotes/cahierCotes.html.twig',
             [
@@ -600,31 +600,81 @@ class cahierCoteController extends AbstractController {
         );
     }
 
+    private function getMoyenneEvaluationPeriodeEleve($group){
+        $evaluationChamp = $this->getMoyenneChampsPeriodeEleve($group);
+        $heuresChamp = $evaluationChamp['heuresTotal'];
+        $moyennesChamp = $evaluationChamp['moyenneEleves'];
+
+        foreach($heuresChamp as $key => $value){
+            foreach($value as $cle => $valeur){
+                $heuresChampTotal[$key][$cle] = array_sum($heuresChamp[$key][$cle]);
+            }
+        }
+
+        foreach($moyennesChamp as $key => $value){
+            foreach($value as $cle => $valeur){
+                foreach($valeur as $k => $v){
+                    foreach($v as $a => $b){
+                        $totalChamps[$key][$cle][$k][] = $moyennesChamp[$key][$cle][$k][$a]*$heuresChamp[$key][$cle][$a];
+                        $moyenne[$key][$cle][$k] = array_sum($totalChamps[$key][$cle][$k])/$heuresChampTotal[$key][$cle];
+                    }
+                }
+            }
+        }
+
+        return $moyenne;
+    }
+
     private function getMoyenneChampsSemestreEleve($group){
         $evaluationPeriode =  $this->getMoyenneChampsPeriodeEleve($group);
         $moyennePeriode = $evaluationPeriode['moyenneEleves'];
         $heuresPeriode = $evaluationPeriode['heuresTotal'];
 
-        dump($moyennePeriode);
-        dump($heuresPeriode);
-
         foreach($heuresPeriode as $key => $value){
             foreach($value as $cle => $valeur){
-                $heuresSemstre[$key][] = $heuresPeriode[$key][$cle];
-                $heuresSemestreTotal[$key]= array_sum($heuresSemstre[$key]);
+                foreach($valeur as $k => $v){
+                    $heuresSemestre[$key][$k][] = $heuresPeriode[$key][$cle][$k];
+                    $heuresSemestreTotal[$key][$k] = array_sum($heuresSemestre[$key][$k]);
+                }
             }
         }
+
         foreach($moyennePeriode as $key => $value){
             foreach($value as $cle => $valeur){
                 foreach($valeur as $k => $v){
                     foreach($v as $a => $b){
                         $moyenneSemestre[$key][$k][$a][] = $moyennePeriode[$key][$cle][$k][$a]*$heuresPeriode[$key][$cle][$a];
-                        //$moyenneSemstreTotal[$key][$k][$a] = array_sum($moyenneSemestre[$key][$k][$a])/$heuresSemestreTotal[$key];
+                        $moyenne[$key][$k][$a] = array_sum($moyenneSemestre[$key][$k][$a])/$heuresSemestreTotal[$key][$a];
                     }
                 }
             }
         }
-       
+        return array(
+            'moyenne' => $moyenne,
+            'heures' => $heuresSemestreTotal
+        );
+    }
+
+    private function getMoyenneEvaluationSemestreEleve($group){
+        $champsSemestre = $this->getMoyenneChampsSemestreEleve($group);
+
+        $moyennesChamp = $champsSemestre['moyenne'];
+        $heuresChamp= $champsSemestre['heures'];
+
+        foreach($heuresChamp as $key => $value){
+            $heuresSemestreTotal[$key] = array_sum($heuresChamp[$key]);
+        }
+
+        foreach($moyennesChamp as $key => $value){
+            foreach($value as $cle => $valeur){
+                foreach($valeur as $k => $v){
+                    $totalChamps[$key][$cle][] = $moyennesChamp[$key][$cle][$k]*$heuresChamp[$key][$k];
+                    $moyenne[$key][$cle] = array_sum($totalChamps[$key][$cle])/$heuresSemestreTotal[$key];
+                }
+            }
+        }
+        
+        return $moyenne;
     }
 
     public function getMoyennesEleve($group){
