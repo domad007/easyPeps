@@ -27,7 +27,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class cahierCoteController extends AbstractController {
 
-
     /**
      * @Route("/choixCahier", name="choix_cahier")
      * @Security("is_granted('ROLE_ACTIF')", statusCode=405)
@@ -89,7 +88,7 @@ class cahierCoteController extends AbstractController {
         catch(\Exception $e){
             return new Response("alo");
         }*/
-
+        $this->getMoyenneEvaluationPeriodeEleve($group);
         return $this->render(
             '/cahierCotes/cahierCotes.html.twig',
             [
@@ -434,6 +433,144 @@ class cahierCoteController extends AbstractController {
         return $moyenne;
     }
 
+    private function getMoyenneCoursPeriodeEleve($group){
+        $manager = $this->getDoctrine()->getManager();
+        $getCours = $manager
+        ->getRepository(Cours::class)
+        ->findBygroupe($group);
+
+        $coursGroupe = $manager
+        ->getRepository(CoursGroupe::class)
+        ->findBycoursId($getCours);
+
+       
+        foreach($getCours as $key => $value){
+            $heures[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()][] = $value->getNombreHeures();
+            $heuresTotal[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()] = array_sum($heures[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()]);
+
+            $points[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()][] = $value->getSurCombien();
+            $pointsTotal[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()] =  array_sum($points[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()]);
+        }
+
+        foreach($coursGroupe as $key => $value){
+            $pointsEleve[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()][] = $value->getPoints();
+            $pointsEleveTotal[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["points"] = array_sum($pointsEleve[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]);
+            $pointsEleveTotal[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["total"] =  $pointsTotal[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()];
+
+            if($value->getCustomizedPresences() == null){
+                if($value->getPresences()->getId() != 1 && $value->getPresences()->getId() != 4 &&$value->getPresences()->getId() != 12 ){
+                    $pointsEleveAbs[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["points"][] = $value->getPoints();
+                    $pointsEleveAbs[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["total"][] = $value->getCoursId()->getSurCombien();
+
+                    $pointsEleveAbsTotal[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["points"] = array_sum($pointsEleveAbs[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["points"]);
+                    $pointsEleveAbsTotal[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["total"] = array_sum($pointsEleveAbs[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["total"]);
+                }
+            }
+            else {
+                if($value->getCustomizedPresences()->getTypePresence()->getId() != 1 &&$value->getCustomizedPresences()->getTypePresence()->getId() != 4 &&$value->getCustomizedPresences()->getTypePresence()->getId() != 12 ){
+                    $pointsEleveAbs[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["points"][] = $value->getPoints();
+                    $pointsEleveAbs[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["total"][] = $value->getCoursId()->getSurCombien();
+
+                    $pointsEleveAbsTotal[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["points"] = array_sum( $pointsEleveAbs[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["points"]);
+                    $pointsEleveAbsTotal[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["total"] = array_sum( $pointsEleveAbs[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["total"]);
+                }
+            }
+        }
+        if(!empty($pointsEleveAbsTotal)){
+            foreach($pointsEleveAbsTotal as $key => $value){
+                foreach($value as $k => $v){
+                    foreach($v as $a => $b){
+                        $pointsEleveTotal[$key][$k][$a]["points"] = $pointsEleveTotal[$key][$k][$a]["points"] - $pointsEleveAbsTotal[$key][$k][$a]["points"];
+                        $pointsEleveTotal[$key][$k][$a]["total"] = $pointsEleveTotal[$key][$k][$a]["total"] - $pointsEleveAbsTotal[$key][$k][$a]["total"];
+                    }
+                }
+            }
+        }
+
+        foreach($pointsEleveTotal as $key => $value){
+            foreach($value as $k => $v){
+                foreach($v as $a => $b){
+                    $moyenne[$key][$k][$a] = ($pointsEleveTotal[$key][$k][$a]["points"]/$pointsEleveTotal[$key][$k][$a]["total"])*10;
+                }
+            }
+        }
+        
+        return array(
+            'heuresPeriode' => $heuresTotal, 
+            'moyennesEleves' => $moyenne
+        );
+    }
+
+    private function getMoyenneCoursSemestreEleve($group){
+        $coursPeriode = $this->getMoyenneCoursPeriodeEleve($group);
+        $heuresPeriode = $coursPeriode['heuresPeriode'];
+        $moyennePeriode = $coursPeriode['moyennesEleves'];
+
+        foreach($heuresPeriode as $key => $value){
+            foreach($value as $k => $v){
+                $heuresSemestre[$key][] = $heuresPeriode[$key][$k];
+                $heuresSemestreTotal[$key] = array_sum($heuresSemestre[$key]);
+            }
+        }
+
+        foreach($moyennePeriode as $key => $value){
+            foreach($value as $k => $v){
+                foreach($v as $a => $b){
+                    $moyenneSemestre[$key][$a][] = $moyennePeriode[$key][$k][$a]*$heuresPeriode[$key][$k];
+                    $moyenne[$key][$a] = array_sum($moyenneSemestre[$key][$a])/$heuresSemestreTotal[$key];
+                }
+            }
+        }
+        return $moyenne;
+    }
+
+    private function getMoyenneEvaluationPeriodeEleve($group){
+        $manager = $this->getDoctrine()->getManager();
+        $getEvaluation = $manager
+        ->getRepository(Evaluation::class)
+        ->findBygroupe($group);
+
+        $evaluationGroup = $manager
+        ->getRepository(EvaluationGroup::class)
+        ->findByevaluation($getEvaluation);
+
+        $typeCompetences =  $manager
+        ->getRepository(Types::class)
+        ->findAll();
+
+        foreach($getEvaluation as $key => $value){
+            $heures[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()][] = $value->getHeuresCompetence();
+            $points[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getSurCombien();
+        
+            $heuresTotal[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()] = array_sum( $heures[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()]);
+            $pointsTotal[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()] = array_sum($points[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()]);
+        }
+
+        foreach($evaluationGroup as $key => $value){
+            $pointsEleve[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getPoints();
+            $pointsEleveTotal[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()] = array_sum($pointsEleve[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()]);
+        }
+        
+        
+        foreach($pointsEleveTotal as $key => $value){
+            foreach($value as $cle => $valeur){
+                foreach($valeur as $k => $v){
+                    foreach($typeCompetences as $a => $b){
+                        if(empty($v[$b->getIntitule()])){
+                            $pointsEleveTotal[$key][$cle][$k][$b->getIntitule()] = 0;
+                        }
+                    }
+                    foreach($v as $a => $b){
+                        $pointsEleveTotal[$key][$cle][$k][$a] = ($b/$pointsTotal[$key][$cle][$a])*10;
+                    }
+                }
+            }
+        }
+
+        dump($pointsEleveTotal);
+        dump($pointsTotal);
+    }
+
     public function getMoyennesEleve($group){
         $manager = $this->getDoctrine()->getManager();
         $getCours = $manager
@@ -505,12 +642,16 @@ class cahierCoteController extends AbstractController {
                 $pointsTotalPeriode[$value->getPeriode()->getId()] = array_sum($pointsTotal[$value->getPeriode()->getId()]);
             }
         }
+        /*dump($heuresPeriodeTotal);
+        dump($pointsTotalPeriode);*/
+        
         foreach($coursGroupe as $key => $value){
             if($value->getCoursId()->getPeriode()){
                 $pointsElevePeriode[$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()][] = $value->getPoints(); 
-                $totalPointsPeriode[$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()] = array_sum($pointsElevePeriode[$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]);
+                $totalPointsPeriode[$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()] = array_sum($pointsElevePeriode[$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]);             
             }
-        }   
+        }
+
         foreach($coursGroupe as $key => $value){
             if($value->getCustomizedPresences() == null){
                 $presences[$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()][$value->getPresences()->getId()][]=   $value->getPresences()->getId();
@@ -570,7 +711,6 @@ class cahierCoteController extends AbstractController {
                 
             }
         }
-        dump($pointsElevePeriodeEval);
         foreach($evaluationGroup as $key => $value){
             if($value->getEvaluation()->getPeriode()->getSemestres()){
                 $pointsEleveChampSem[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getPoints();
