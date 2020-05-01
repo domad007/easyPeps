@@ -501,6 +501,7 @@ class cahierCoteController extends AbstractController {
                     $moyenne[$key][$k][$a] = ($pointsEleveTotal[$key][$k][$a]["points"]/$pointsEleveTotal[$key][$k][$a]["total"])*10;
                 }
             }
+            ksort($moyenne[$key]);
         }
         
         return array(
@@ -581,21 +582,28 @@ class cahierCoteController extends AbstractController {
             }
         }
 
-        
+        foreach($heuresTotal as $key => $value){
+            foreach($value as $cle => $valeur){
+                foreach($typeCompetences as $a => $b){
+                    if(empty($heuresTotal[$key][$cle][$b->getIntitule()])){
+                        $heuresTotal[$key][$cle][$b->getIntitule()] = 0;
+                    }
+                }
+            }
+        }
         foreach($pointsEleveTotal as $key => $value){
             foreach($value as $cle => $valeur){
                 foreach($valeur as $k => $v){
-                    foreach($typeCompetences as $a => $b){
-                        if(empty($v["points"][$b->getIntitule()])){
-                            $pointsEleveTotal[$key][$cle][$k]["points"][$b->getIntitule()] = 0;
-                        }
-                        if(empty($v["total"][$b->getIntitule()])){
-                            $pointsEleveTotal[$key][$cle][$k]["total"][$b->getIntitule()] = 0;
-                        }
-                    }
                     foreach($v as $a => $b){
                         foreach($b as $c => $d){
                             $moyenne[$key][$cle][$k][$c] = ($pointsEleveTotal[$key][$cle][$k]["points"][$c]/$pointsEleveTotal[$key][$cle][$k]["total"][$c])*10;                 
+                            foreach($typeCompetences as $a => $b){
+                                if(empty($moyenne[$key][$cle][$k][$b->getIntitule()])){
+                                    $moyenne[$key][$cle][$k][$b->getIntitule()] = 0;
+                                }
+                            }
+                            ksort($moyenne[$key][$cle][$k]);
+                            ksort($moyenne[$key]);
                         }
                     }
                 }
@@ -625,6 +633,8 @@ class cahierCoteController extends AbstractController {
                     foreach($v as $a => $b){
                         $totalChamps[$key][$cle][$k][] = $moyennesChamp[$key][$cle][$k][$a]*$heuresChamp[$key][$cle][$a];
                         $moyenne[$key][$cle][$k] = array_sum($totalChamps[$key][$cle][$k])/$heuresChampTotal[$key][$cle];
+                        
+                        ksort($moyenne[$key]);
                     }
                 }
             }
@@ -653,6 +663,7 @@ class cahierCoteController extends AbstractController {
                     foreach($v as $a => $b){
                         $moyenneSemestre[$key][$k][$a][] = $moyennePeriode[$key][$cle][$k][$a]*$heuresPeriode[$key][$cle][$a];
                         $moyenne[$key][$k][$a] = array_sum($moyenneSemestre[$key][$k][$a])/$heuresSemestreTotal[$key][$a];
+                        ksort($moyenne[$key][$k]);
                     }
                 }
             }
@@ -708,6 +719,8 @@ class cahierCoteController extends AbstractController {
                 foreach($value as $cle => $valeur){
                     foreach($valeur as $k => $v){
                         $moyenne[$key][$cle][$k] = ($v*$ponderation->getCours() + $moyenneEvalPeriode[$key][$cle][$k]*$ponderation->getEvaluation())/100;
+                        
+                        ksort($moyenne[$key]);
                     }
                 }
             }
@@ -988,11 +1001,13 @@ class cahierCoteController extends AbstractController {
                     foreach($periodes as $a => $b){
                         if($b->getId() == $k){
                             foreach($v as $c => $d){
-                                $value->addMoyenneChampPer([$b->getNomPeriode() => $d]);
+                                if($value->getId() == $c){
+                                    $value->addMoyenneChampPer([$b->getNomPeriode() => $d]);
+                                }
                             }
                         }
                     }
-                }
+                }  
             }
             foreach($moyenne['moyenneChampsSemestre'] as $cle => $valeur){
                 foreach($valeur as $k => $v){

@@ -35,7 +35,7 @@
                             <th>#</th>
                             <th>Nom</th>
                             <th>Prenom</th>
-                            <th>Classe</th>                           
+                            <th>Classe</th>                  
                             {% for key, value in moyennePeriodes %}
                                 <th id="{{key}}">
                                     {{key}}
@@ -68,7 +68,7 @@
                                 <td>{{val.classe.nomClasse}}</td>  
                                 {% for cle, valeur in val.moyennePeriodeCours %}
                                     {% for k,v in valeur %}
-                                        <td id="{{k}}">
+                                        <td>
                                             {{v|number_format(2)}}
                                         </td> 
                                     {% endfor %}
@@ -146,10 +146,10 @@
                     <small><b>CP: Condition Physique</b></small>
                 </div>
                 <div class="col">
-                    <small><b>HGM: Habilité gestuelles et motrices</b></small>
+                    <small><b>CSM: Coopération socio motrice</b></small>
                 </div>
                 <div class="col">
-                    <small><b>CSM: Coopération socio motrice</b></small>
+                    <small><b>HGM: Habilité gestuelles et motrices</b></small>
                 </div>
             </div>
             <div class="table-responsive">
@@ -168,11 +168,11 @@
                                             <div class="col">                                                  
                                                 <small>CP</small>      
                                             </div>
-                                                <div class="col">                                                  
-                                                <small>HGM</small>      
-                                            </div>
-                                                <div class="col">                                                  
+                                            <div class="col">                                                  
                                                 <small>CSM</small>      
+                                            </div>
+                                            <div class="col">                                                  
+                                                <small>HGM</small>      
                                             </div>
                                         </div>
                                     </th>
@@ -186,12 +186,12 @@
                                             <div class="col">                                                  
                                                 <small>CP</small>      
                                             </div>
-                                                <div class="col">                                                  
-                                                <small>HGM</small>      
-                                            </div>
-                                                <div class="col">                                                  
+                                            <div class="col">                                                  
                                                 <small>CSM</small>      
                                             </div>
+                                            <div class="col">                                                  
+                                                <small>HGM</small>      
+                                            </div>                    
                                         </div>
                                     </th>
                                 {% endfor %}
