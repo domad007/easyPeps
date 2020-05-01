@@ -88,7 +88,7 @@ class cahierCoteController extends AbstractController {
         catch(\Exception $e){
             return new Response("alo");
         }*/
-        $this->getMoyenneEvaluationSemestreEleve($group);
+        $this->getMoyenneCoursEvalAnneeEleve($group);
         return $this->render(
             '/cahierCotes/cahierCotes.html.twig',
             [
@@ -674,6 +674,99 @@ class cahierCoteController extends AbstractController {
             }
         }
         
+        return $moyenne;
+    }
+
+    private function getMoyenneCoursEvalPeriodeEleve($group){
+        $manager= $this->getDoctrine()->getManager();
+        $coursPeriode = $this->getMoyenneCoursPeriodeEleve($group);
+        $moyenneEvalPeriode =  $this->getMoyenneEvaluationPeriodeEleve($group);
+        $moyenneCoursPeriode = $coursPeriode['moyennesEleves'];
+
+        $classes = $manager
+        ->getRepository(Classe::class)
+        ->findByGroups($group);
+        $ponderation = $manager
+        ->getRepository(Ponderation::class)
+        ->findOneBy(
+            [
+                'ecole' => $classes[0]->getEcole()->getId(),
+                'professeur' => $this->getUser()->getId()
+            ]
+        );
+
+        if(!empty($ponderation)){
+            foreach($moyenneCoursPeriode as $key => $value){
+                foreach($value as $cle => $valeur){
+                    foreach($valeur as $k => $v){
+                        $moyenne[$key][$cle][$k] = ($v*$ponderation->getCours() + $moyenneEvalPeriode[$key][$cle][$k]*$ponderation->getEvaluation())/100;
+                    }
+                }
+            }
+        }
+        else {
+            foreach($moyenneCoursPeriode as $key => $value){
+                foreach($value as $cle => $valeur){
+                    foreach($valeur as $k => $v){
+                        $moyenne[$key][$k] = ($v +$moyenneEvalPeriode[$key][$cle])/2;
+                    }
+                }
+            }
+        }
+        return $moyenne;
+    }
+    private function getMoyenneCoursEvalSemEleve($group){
+        $manager= $this->getDoctrine()->getManager();
+        $moyenneEvalSem = $this->getMoyenneEvaluationSemestreEleve($group);
+        $moyenneCoursSem = $this->getMoyenneCoursSemestreEleve($group);
+        $classes = $manager
+        ->getRepository(Classe::class)
+        ->findByGroups($group);
+        $ponderation = $manager
+        ->getRepository(Ponderation::class)
+        ->findOneBy(
+            [
+                'ecole' => $classes[0]->getEcole()->getId(),
+                'professeur' => $this->getUser()->getId()
+            ]
+        );
+
+        if(!empty($ponderation)){
+            foreach($moyenneEvalSem as $key => $value){
+                foreach($value as $k => $v){
+                    $moyenne[$key][$k] = ($v*$ponderation->getEvaluation() + $moyenneCoursSem[$key][$k]*$ponderation->getCours())/100;
+                }
+            }
+        }
+        else {
+            foreach($moyenneEvalSem as $key => $value){
+                foreach($value as $k => $v){
+                    $moyenne[$key][$k] = ($v + $moyenneCoursSem[$key][$k])/2;
+                }
+            }
+        }
+
+        return $moyenne;
+    }
+
+    private function getMoyenneCoursEvalAnneeEleve($group){
+        $manager = $this->getDoctrine()->getManager();
+        $moyenneSemestre = $this->getMoyenneCoursEvalSemEleve($group);
+        $periodeCours= $this->getMoyenneCoursPeriodeEleve($group);
+        $heuresPeriodeCours = $periodeCours['heuresPeriode'];
+        foreach($heuresPeriodeCours as $key => $value){
+           $heuresTotalCoursSem[$key] = array_sum($value);      
+        }
+
+        $heuresTotalAnnee = array_sum($heuresTotalCoursSem);
+        
+        foreach($moyenneSemestre as $key => $value){
+            foreach($value as $k => $v){
+                $moyenneSem[$k][] = $v*$heuresTotalCoursSem[$key];
+                $moyenne[$k] = array_sum($moyenneSem[$k])/$heuresTotalAnnee;
+            }
+        }
+
         return $moyenne;
     }
 
