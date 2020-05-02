@@ -451,6 +451,7 @@ class cahierCoteController extends AbstractController {
         if(empty($coursGroupe)){
             return null;
         }
+        $i=0;
         foreach($getCours as $key => $value){
             $heures[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()][] = $value->getNombreHeures();
             $heuresTotal[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()] = array_sum($heures[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()]);
@@ -482,6 +483,18 @@ class cahierCoteController extends AbstractController {
                     $pointsEleveAbsTotal[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["total"] = array_sum( $pointsEleveAbs[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["total"]);
                 }
             }
+
+            if($value->getCustomizedPresences() == null){
+                if($value->getPresences()->getId() == 4){
+                    $oubliTshirt[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()][] = $value->getCoursId()->getId();
+                    $countOubli[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()] = count($oubliTshirt[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]);
+                }
+            }
+            else {
+                if($value->getCustomizedPresences()->getTypePresence()->getId() == 4 ){
+                    $oubliTshirt[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()][] = $value->getCoursId()->getId();
+                }
+            }
         }
         if(!empty($pointsEleveAbsTotal)){
             foreach($pointsEleveAbsTotal as $key => $value){
@@ -501,6 +514,16 @@ class cahierCoteController extends AbstractController {
                 }
             }
             ksort($moyenne[$key]);
+        }
+        if(!empty($countOubli)){
+            foreach($countOubli as $key => $value){
+                foreach($value as $cle => $valeur){
+                    foreach($valeur as $k => $v){
+                        $enleverPoints = $v/2;
+                        $moyenne[$key][$cle][$k] = $moyenne[$key][$cle][$k] - $enleverPoints;
+                    }
+                }
+            }
         }
         return array(
             'heuresPeriode' => $heuresTotal, 
