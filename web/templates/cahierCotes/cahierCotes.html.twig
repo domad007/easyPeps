@@ -80,7 +80,7 @@
                                 {% for cle, valeur in val.moyennePeriodeCours %}
                                     {% for k,v in valeur %}
                                         <td>
-                                            {% if v is iterable %}
+                                            {% if v|isInteger %}
                                                 {{v|number_format(2)}}
                                             {% else  %}
                                                 {{v}}
@@ -91,7 +91,7 @@
                                 {% for cle, valeur in val.moyenneSemCours %}
                                     {% for k,v in valeur %}
                                         <td id="{{k}}">
-                                            {% if v is iterable %}
+                                            {% if v|isInteger %}
                                                 {{v|number_format(2)}}
                                             {% else  %}
                                                 {{v}}
@@ -153,7 +153,7 @@
                                 {% for cle, valeur in val.moyennePeriodeEval %}
                                     {% for k,v in valeur %}
                                         <td>
-                                            {% if v is iterable %}
+                                            {% if v|isInteger %}
                                                 {{v|number_format(2)}}
                                             {% else  %}
                                                 {{v}}
@@ -164,7 +164,7 @@
                                 {% for cle, valeur in val.moyenneSemEval %}
                                     {% for k,v in valeur %}
                                         <td>
-                                            {% if v is iterable %}
+                                            {% if v|isInteger %}
                                                 {{v|number_format(2)}}
                                             {% else  %}
                                                 {{v}}
@@ -250,10 +250,10 @@
                                     {% for k, v in valeur %}
                                         {% for a, b in v %}
                                         <td>
-                                            {% if v is iterable %}
-                                                {{b|number_format(2)}}
-                                            {% else  %}
-                                                {{b}}
+                                            {% if b|isInteger %}
+                                                {{b|number_format(2)}}                                             
+                                            {% else %}
+                                                NE
                                             {% endif %}
                                         </td> 
                                         {% endfor %}
@@ -263,7 +263,11 @@
                                     {% for k, v in valeur %}
                                         {% for a, b in v %}
                                         <td>
-                                            {{b|number_format(2)}}
+                                           {% if b|isInteger %}
+                                                {{b|number_format(2)}}         
+                                            {% else %}
+                                                NE
+                                            {% endif %}
                                         </td> 
                                         {% endfor %}
                                     {% endfor %}
@@ -315,7 +319,7 @@
                                 {% for cle, valeur in val.moyennePeriode %}
                                     {% for k, v in valeur %}                                      
                                         <td>
-                                            {% if v is iterable %}
+                                            {% if v|isInteger %}
                                                 {{v|number_format(2)}}
                                             {% else %}
                                                 {{v}}
@@ -326,7 +330,7 @@
                                 {% for cle, valeur in val.moyenneSem %}
                                     {% for k, v in valeur %}                                      
                                         <td class="text-center">
-                                            {% if v is iterable %}
+                                            {% if v|isInteger %}
                                                 {{v|number_format(2)}}
                                             {% else  %}
                                                 {{v}}
@@ -337,7 +341,7 @@
                                 {% for cle, valeur in val.moyenneAnnee %}
                                     {% for k, v in valeur %}
                                         <td>
-                                            {% if v is iterable %}
+                                            {% if v|isInteger %}
                                                 {{v|number_format(2)}}
                                             {% else  %}
                                                 {{v}}

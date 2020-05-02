@@ -28,4 +28,4 @@ services:
     twig.extension.date:
         class: Guzzlefry\Twig\AgeExtension
         tags:
-            - { name: twig.extension }
+            - { name: twig.extension }  
