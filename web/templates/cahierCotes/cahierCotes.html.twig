@@ -28,6 +28,9 @@
         </div>
         <br>
         <div id="detailsEleveCours" class="collapse">
+            <div class="row">
+                <small><b>NE: Non évalué</b></small>
+            </div>
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -35,28 +38,36 @@
                             <th>#</th>
                             <th>Nom</th>
                             <th>Prenom</th>
-                            <th>Classe</th>                  
-                            {% for key, value in moyennePeriodes %}
-                                <th id="{{key}}">
-                                    {{key}}
-                                    <p>
-                                        <small>
-                                            {{value|number_format(2)}} %
-                                        </small>
-                                    </p>
-                                </th>
-                            {% endfor %}
-    
-                            {% for key, value in moyennesSemestres %}                
-                                <th id="{{key}}">
-                                    {{key}}
-                                    <p>
-                                        <small>
-                                            {{value|number_format(2)}} %
-                                        </small>
-                                    </p>
-                                </th>                 
-                            {% endfor %}
+                            <th>Classe</th>  
+                            {% if moyennePeriodes == 0 %}
+                                <th>Périodes</th>
+                            {% else %}                
+                                {% for key, value in moyennePeriodes %}
+                                    <th id="{{key}}">
+                                        {{key}}
+                                        <p>
+                                            <small>
+                                                {{value|number_format(2)}} %
+                                            </small>
+                                        </p>
+                                    </th>
+                                {% endfor %}
+                            {% endif %}    
+
+                            {% if moyennesSemestres == 0 %}
+                                <th>Semestres</th>
+                            {% else %}
+                                {% for key, value in moyennesSemestres %}                
+                                    <th id="{{key}}">
+                                        {{key}}
+                                        <p>
+                                            <small>
+                                                {{value|number_format(2)}} %
+                                            </small>
+                                        </p>
+                                    </th>                 
+                                {% endfor %}
+                            {% endif %}
                         </tr>
                     </thead>
                     <tbody>
@@ -69,14 +80,22 @@
                                 {% for cle, valeur in val.moyennePeriodeCours %}
                                     {% for k,v in valeur %}
                                         <td>
-                                            {{v|number_format(2)}}
+                                            {% if v is iterable %}
+                                                {{v|number_format(2)}}
+                                            {% else  %}
+                                                {{v}}
+                                            {% endif %}
                                         </td> 
                                     {% endfor %}
                                 {% endfor %}
                                 {% for cle, valeur in val.moyenneSemCours %}
                                     {% for k,v in valeur %}
                                         <td id="{{k}}">
-                                            {{v|number_format(2)}}
+                                            {% if v is iterable %}
+                                                {{v|number_format(2)}}
+                                            {% else  %}
+                                                {{v}}
+                                            {% endif %}
                                         </td> 
                                     {% endfor %}
                                 {% endfor %}
@@ -87,6 +106,9 @@
             </div>       
         </div>
         <div id="detailsEleveEval" class="collapse">
+            <div class="row">
+                <small><b>NE: Non évalué</b></small>
+            </div>
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -95,22 +117,30 @@
                             <th>Nom</th>
                             <th>Prenom</th>
                             <th>Classe</th>
-                            {% for cle, valeur in moyenneEvaluationPeriodes %}                              
-                                <th id="">
-                                    {{cle}}
-                                    <p>
-                                        <small>{{valeur|number_format(2)}} %</small>
-                                    </p>
-                                </th>
-                            {% endfor %}
-                            {% for cle, valeur in moyenneEvaluationSem %}
-                               <th>
-                                    {{cle}}
-                                    <p>
-                                        <small>{{valeur|number_format(2)}} %</small>
-                                    </p>
-                                </th>
-                            {% endfor %}
+                            {% if moyenneEvaluationPeriodes == 0 %}
+                                <th>Periodes</th>
+                            {% else %}
+                                {% for cle, valeur in moyenneEvaluationPeriodes %}                              
+                                    <th id="">
+                                        {{cle}}
+                                        <p>
+                                            <small>{{valeur|number_format(2)}} %</small>
+                                        </p>
+                                    </th>
+                                {% endfor %}
+                            {% endif %}
+                            {% if moyenneEvaluationSem == 0 %}
+                                <th>Semestres</th>
+                            {% else %}
+                                {% for cle, valeur in moyenneEvaluationSem %}
+                                <th>
+                                        {{cle}}
+                                        <p>
+                                            <small>{{valeur|number_format(2)}} %</small>
+                                        </p>
+                                    </th>
+                                {% endfor %}
+                            {% endif %}
                         </tr>
                     </thead>
                     <tbody>
@@ -123,14 +153,22 @@
                                 {% for cle, valeur in val.moyennePeriodeEval %}
                                     {% for k,v in valeur %}
                                         <td>
-                                            {{v|number_format(2)}}
+                                            {% if v is iterable %}
+                                                {{v|number_format(2)}}
+                                            {% else  %}
+                                                {{v}}
+                                            {% endif %}
                                         </td> 
                                     {% endfor %}
                                 {% endfor %}
                                 {% for cle, valeur in val.moyenneSemEval %}
                                     {% for k,v in valeur %}
                                         <td>
-                                            {{v|number_format(2)}}
+                                            {% if v is iterable %}
+                                                {{v|number_format(2)}}
+                                            {% else  %}
+                                                {{v}}
+                                            {% endif %}
                                         </td> 
                                     {% endfor %}
                                 {% endfor %}
@@ -142,6 +180,9 @@
         </div>
         <div id="detailsEleveChamp" class="collapse">
             <div class="row">
+                <div class="col">                 
+                    <small><b>NE: Non évalué</b></small>
+                </div>
                 <div class="col">
                     <small><b>CP: Condition Physique</b></small>
                 </div>
@@ -209,7 +250,11 @@
                                     {% for k, v in valeur %}
                                         {% for a, b in v %}
                                         <td>
-                                            {{b|number_format(2)}}
+                                            {% if v is iterable %}
+                                                {{b|number_format(2)}}
+                                            {% else  %}
+                                                {{b}}
+                                            {% endif %}
                                         </td> 
                                         {% endfor %}
                                     {% endfor %}
@@ -230,6 +275,9 @@
             </div>   
         </div>
         <div id="detailsEleveMoyenne" class="collapse show">
+            <div class="row">
+                <small><b>NE: Non évalué</b></small>
+            </div>
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -267,20 +315,34 @@
                                 {% for cle, valeur in val.moyennePeriode %}
                                     {% for k, v in valeur %}                                      
                                         <td>
-                                            {{v|number_format(2)}}
+                                            {% if v is iterable %}
+                                                {{v|number_format(2)}}
+                                            {% else %}
+                                                {{v}}
+                                            {% endif %}
                                         </td>                                    
                                     {% endfor %}
                                 {% endfor %}
                                 {% for cle, valeur in val.moyenneSem %}
                                     {% for k, v in valeur %}                                      
                                         <td class="text-center">
-                                            {{v|number_format(2)}}
+                                            {% if v is iterable %}
+                                                {{v|number_format(2)}}
+                                            {% else  %}
+                                                {{v}}
+                                            {% endif %}
                                         </td>                                        
                                     {% endfor %}
                                 {% endfor %}
                                 {% for cle, valeur in val.moyenneAnnee %}
                                     {% for k, v in valeur %}
-                                        <td>{{v|number_format(2)}}</td>
+                                        <td>
+                                            {% if v is iterable %}
+                                                {{v|number_format(2)}}
+                                            {% else  %}
+                                                {{v}}
+                                            {% endif %}
+                                        </td>
                                     {% endfor %}
                                 {% endfor %}
                             </tr>                                                                         
