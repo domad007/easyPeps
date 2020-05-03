@@ -518,9 +518,11 @@ class cahierCoteController extends AbstractController {
         if(!empty($countOubli)){
             foreach($countOubli as $key => $value){
                 foreach($value as $cle => $valeur){
-                    foreach($valeur as $k => $v){
-                        $enleverPoints = $v/2;
-                        $moyenne[$key][$cle][$k] = $moyenne[$key][$cle][$k] - $enleverPoints;
+                    foreach($valeur as $k => $v){                     
+                        if($v %  2 == 0){
+                            $enleverPoints = $v/2;
+                            $moyenne[$key][$cle][$k] = $moyenne[$key][$cle][$k] - $enleverPoints;
+                        }
                     }
                 }
             }
@@ -868,17 +870,14 @@ class cahierCoteController extends AbstractController {
                 'professeur' => $this->getUser()->getId()
             ]
         );
-        /*if(empty($moyenneCoursPeriode)) return;
-        if(empty($moyenneCoursSemestre)) return;
-        if(empty($moyenneChampsPeriode)) return;
-        if(empty($moyenneChampsSemestre)) return;
-        if(empty($moyenneEvalSemestre)) return;
-        if(empty($moyenneEvalPeriode)) return;
-        if(empty($moyenneEvalPeriode)) return;
-        if(empty($moyenneEvalSemestre)) return;
-        if(empty($moyenneCoursEvalPeriode)) return;
-        if(empty($moyenneCoursEvalSemestre)) return;
-        if(empty($moyenneAnnee)) return;*/
+        $appreciation = $manager
+        ->getRepository(Appreciation::class)
+        ->findBy(
+            [
+                'ecole' => $classes[0]->getEcole()->getId(),
+                'professeur' => $this->getUser()->getId()
+            ]
+        );
         if(!empty($parametres)){
             foreach($parametres as $key => $value){
                 if(!$value->getAppreciation()){
@@ -1001,6 +1000,223 @@ class cahierCoteController extends AbstractController {
                             try {
                                 foreach($moyenneAnnee as $cle => $valeur){
                                     $moyenneAnnee[$cle] = ($valeur/10)*$value->getSurCombien();
+                                }
+                            }
+                            catch(\Exception $e){
+
+                            }
+                        break;
+                    }
+                }
+                else {
+                    switch($value->getType()){
+                        case 'Periodes': 
+                            try {
+                                foreach($moyenneCoursPeriode as $cle => $valeur){
+                                    foreach($valeur as $k => $v){
+                                        foreach($v as $a => $b){
+                                            $getAppreciation = array();
+                                            foreach($appreciation as $c => $d){
+                                                if($d->getCote() <= $b && $d->getCote() <= $b){
+                                                    $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                                    ksort($getAppreciation);
+                                                }
+                                            }
+                                            $moyenneCoursPeriode[$cle][$k][$a] = end($getAppreciation);
+                                        }
+                                    }
+                                }
+                                foreach($moyenneChampsPeriode as $cle => $valeur){
+                                    foreach($valeur as $k => $v){
+                                        foreach($v as $a => $b){
+                                            foreach($b as $c => $d){
+                                                $getAppreciation = array();
+                                                foreach($appreciation as $e => $f){
+                                                    if($f->getCote() <= $d && $f->getCote() <= $d){
+                                                        $getAppreciation[$f->getCote()] = $f->getIntitule();
+                                                        ksort($getAppreciation);
+                                                    }
+                                                }
+                                                $moyenneChampsPeriode[$cle][$k][$a][$c] = end($getAppreciation);
+                                            }
+                                        }
+                                    }
+                                }
+                                foreach($moyenneEvalPeriode as $cle => $valeur){
+                                    foreach($valeur as $k => $v){
+                                        foreach($v as $a => $b){
+                                            $getAppreciation = array();
+                                            foreach($appreciation as $c => $d){
+                                                if($d->getCote() <= $b && $d->getCote() <= $b){
+                                                    $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                                    ksort($getAppreciation);
+                                                }
+                                            }
+                                            $moyenneEvalPeriode[$cle][$k][$a] = end($getAppreciation);
+                                        }
+                                    }
+                                }
+                                foreach($moyenneCoursEvalPeriode as $cle => $valeur){
+                                    foreach($valeur as $k => $v){
+                                        foreach($v as $a => $b){
+                                            $getAppreciation = array();
+                                            foreach($appreciation as $c => $d){
+                                                if($d->getCote() <= $b && $d->getCote() <= $b){
+                                                    $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                                    ksort($getAppreciation);
+                                                }
+                                            }
+                                            $moyenneCoursEvalPeriode[$cle][$k][$a] = end($getAppreciation);
+                                        }
+                                    }
+                                }
+                            } 
+                            catch(\Exception $e){
+
+                            }
+                        break;
+                        case 'Semestre 1': 
+                            try {
+                                foreach($moyenneCoursSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 1"){
+                                        foreach($valeur as $k => $v){
+                                            $getAppreciation = array();
+                                            foreach($appreciation as $c => $d){
+                                                if($d->getCote() <= $v && $d->getCote() <= $v){
+                                                    $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                                    ksort($getAppreciation);
+                                                }
+                                            }
+                                            $moyenneCoursSemestre[$cle][$k] = end($getAppreciation);
+                                        }
+                                    }
+                                }
+                                foreach($moyenneChampsSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 1"){
+                                        foreach($valeur as $k => $v){
+                                            foreach($v as $a => $b){
+                                                $getAppreciation = array();
+                                                foreach($appreciation as $c => $d){
+                                                    if($d->getCote() <= $b && $d->getCote() <= $b){
+                                                        $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                                        ksort($getAppreciation);
+                                                    }
+                                                }
+                                                $moyenneChampsSemestre[$cle][$k][$a] = end($getAppreciation);
+                                            }
+                                        }
+                                    }
+                                }
+                                foreach($moyenneEvalSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 1"){
+                                        foreach($valeur as $k => $v){
+                                            $getAppreciation = array();
+                                            foreach($appreciation as $c => $d){
+                                                if($d->getCote() <= $v && $d->getCote() <= $v){
+                                                    $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                                    ksort($getAppreciation);
+                                                }
+                                            }
+                                            $moyenneEvalSemestre[$cle][$k] = end($getAppreciation);
+                                        }
+                                    }
+                                }
+                                foreach($moyenneCoursEvalSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 1"){
+                                        foreach($valeur as $k => $v){
+                                            $getAppreciation = array();
+                                            foreach($appreciation as $c => $d){
+                                                if($d->getCote() <= $v && $d->getCote() <= $v){
+                                                    $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                                    ksort($getAppreciation);
+                                                }
+                                            }
+                                            $moyenneCoursEvalSemestre[$cle][$k] = end($getAppreciation);
+                                        }
+                                    }
+                                }
+                            }
+                            catch(\Exception $e){
+
+                            }
+                        break;
+                        case 'Semestre 2': 
+                            try {
+                                foreach($moyenneCoursSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 2"){
+                                        foreach($valeur as $k => $v){
+                                            $getAppreciation = array();
+                                            foreach($appreciation as $c => $d){
+                                                if($d->getCote() <= $v && $d->getCote() <= $v){
+                                                    $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                                    ksort($getAppreciation);
+                                                }
+                                            }
+                                            $moyenneCoursSemestre[$cle][$k] = end($getAppreciation);
+                                        }
+                                    }
+                                }
+                                foreach($moyenneChampsSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 2"){
+                                        foreach($valeur as $k => $v){
+                                            foreach($v as $a => $b){
+                                                $getAppreciation = array();
+                                                foreach($appreciation as $c => $d){
+                                                    if($d->getCote() <= $b && $d->getCote() <= $b){
+                                                        $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                                        ksort($getAppreciation);
+                                                    }
+                                                }
+                                                $moyenneChampsSemestre[$cle][$k][$a] = end($getAppreciation);
+                                            }
+                                        }
+                                    }
+                                }
+                                foreach($moyenneEvalSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 2"){
+                                        foreach($valeur as $k => $v){
+                                            $getAppreciation = array();
+                                            foreach($appreciation as $c => $d){
+                                                if($d->getCote() <= $v && $d->getCote() <= $v){
+                                                    $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                                    ksort($getAppreciation);
+                                                }
+                                            }
+                                            $moyenneEvalSemestre[$cle][$k] = end($getAppreciation);
+                                        }
+                                    }
+                                }
+                                foreach($moyenneCoursEvalSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 2"){
+                                        foreach($valeur as $k => $v){
+                                            $getAppreciation = array();
+                                            foreach($appreciation as $c => $d){
+                                                if($d->getCote() <= $v && $d->getCote() <= $v){
+                                                    $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                                    ksort($getAppreciation);
+                                                }
+                                            }
+                                            $moyenneCoursEvalSemestre[$cle][$k] = end($getAppreciation);
+                                        }
+                                    }
+                                }
+                            }
+                            catch(\Exception $e){
+
+                            }
+                        break;
+
+                        case 'Annee': 
+                            try {
+                                foreach($moyenneAnnee as $cle => $valeur){
+                                    $getAppreciation = array();
+                                    foreach($appreciation as $c => $d){
+                                        if($d->getCote() <= $valeur && $d->getCote() <= $valeur){
+                                            $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                            ksort($getAppreciation);
+                                        }
+                                    }
+                                    $moyenneAnnee[$cle] = end($getAppreciation);
                                 }
                             }
                             catch(\Exception $e){
