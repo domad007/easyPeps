@@ -518,9 +518,12 @@ class cahierCoteController extends AbstractController {
         if(!empty($countOubli)){
             foreach($countOubli as $key => $value){
                 foreach($value as $cle => $valeur){
-                    foreach($valeur as $k => $v){                     
+                    foreach($valeur as $k => $v){             
                         if($v %  2 == 0){
-                            $enleverPoints = $v/2;
+                            $moyenne[$key][$cle][$k] = $moyenne[$key][$cle][$k] - $v/2;
+                        }
+                        if($v % 2 == 1){
+                            $enleverPoints = ($v-1)/2;
                             $moyenne[$key][$cle][$k] = $moyenne[$key][$cle][$k] - $enleverPoints;
                         }
                     }
