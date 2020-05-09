@@ -52,6 +52,7 @@ class usersController extends AbstractController {
         );
         $graphSexe->getOptions()->setPieSliceText('label');
         $graphSexe->getOptions()->setTitle('Hommes et femmes inscrits sur le site');
+        $graphSexe->getOptions()->setBackgroundColor('transparent');
         $graphSexe->getOptions()->setPieStartAngle(100);
         $graphSexe->getOptions()->setHeight(300);
         $graphSexe->getOptions()->setWidth(500);
@@ -63,6 +64,8 @@ class usersController extends AbstractController {
     private function statistiqueEcole(){
         $manager = $this->getDoctrine()->getManager();
         $totalUser = 0;
+        $data = [['Ecole','Nombre prof']];
+
         $rsm = new ResultSetMapping();
         $rsm
         ->addScalarResult('nombreProf', 'nombreProf')
@@ -72,19 +75,22 @@ class usersController extends AbstractController {
             join ecole on classe.ecole_id = ecole.id
             group by ecole_id
         ";
-        $getUserEcole = $manager->createNativeQuery($userEcole, $rsm);
 
+        $getUserEcole = $manager->createNativeQuery($userEcole, $rsm);
         $resultUserEcole = $getUserEcole->getResult();
+
+        foreach($resultUserEcole as $value){
+            $data[]= array(
+                $value['ecole'], 
+                (int)$value['nombreProf'],
+            );
+        }
         
         $graphEcole = new PieChart();
-        $graphEcole->getData()->setArrayToDataTable(
-            [
-                ['Sexe', "Professeurs par rapport à l'école"],
-                //$resultUserEcole
-            ]
-        );
+        $graphEcole->getData()->setArrayToDataTable($data);
         $graphEcole->getOptions()->setPieSliceText('label');
         $graphEcole->getOptions()->setTitle("Professeurs par rapport à l'école");
+        $graphEcole->getOptions()->setBackgroundColor('transparent');
         $graphEcole->getOptions()->setPieStartAngle(100);
         $graphEcole->getOptions()->setHeight(300);
         $graphEcole->getOptions()->setWidth(500);
@@ -133,13 +139,14 @@ class usersController extends AbstractController {
                 ['Entre 20 et 30 ans', $age['max30']],
                 ['Entre 31 et 40 ans', $age['max40']],
                 ['Entre 41 et 50 ans', $age['max50']],
-                ['Entre 51 et 60 ans', $age['max65']]
+                ['Entre 51 et 65 ans', $age['max65']]
                
             ]
         );
         $graphAge->getOptions()->setPieSliceText('label');
         $graphAge->getOptions()->setTitle("Tranches d'âges inscris sur le site");
         $graphAge->getOptions()->setPieStartAngle(100);
+        $graphAge->getOptions()->setBackgroundColor('transparent');
         $graphAge->getOptions()->setHeight(300);
         $graphAge->getOptions()->setWidth(500);
         $graphAge->getOptions()->getLegend()->setPosition('center');

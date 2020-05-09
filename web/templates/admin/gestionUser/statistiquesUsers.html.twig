@@ -9,18 +9,20 @@
 {% endblock %}
 
 {% block container %}
-    <div class="row d-flex justify-content-center">
-        <div class="col-md-5">
-            <div id="statsSexe"></div>
-        </div>
-        <div class="col">
-            <div  id="statsEcole"></div>
-        </div>
-        <div class="col">
-            <div id="statsAge"></div>
+    <div class="jumbotron my-4">
+        <div class="row d-flex justify-content-center">
+            <div class="col">
+                <div id="statsSexe" class="text-center"></div>
+            </div>
+            <div class="col">
+                <div  id="statsEcole"></div>
+            </div>
+            <div class="col">
+                <div id="statsAge"></div>
+            </div>
         </div>
     </div>
-        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
         {{ gc_draw([statistiquesSexe, statistiquesEcole, statistiquesAge], ['statsSexe', 'statsEcole', 'statsAge']) }}
     </script>
