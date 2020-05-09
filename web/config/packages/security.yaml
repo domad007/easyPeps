@@ -14,6 +14,20 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        admin: 
+            pattern: ^/admin
+            anonymous: true
+            
+            provider: in_database
+
+            form_login: 
+                login_path: admin_login
+                check_path: admin_login
+                default_target_path: admin_dashboard
+
+            logout: 
+                path: deconnexion_user
+                target: homepage
         main:
             anonymous: lazy
 

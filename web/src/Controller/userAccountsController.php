@@ -13,7 +13,7 @@ class userAccountsController extends AbstractController {
     public function accounts(UserRepository $users){
         return 
             $this->render(
-                '/admin/userAccount/userAccount.html.twig',
+                'admin/userAccount/userAccount.html.twig',
                 [
                     'users' => $users->findAll()
                 ]
