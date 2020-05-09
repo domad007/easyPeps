@@ -1,0 +1,17 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %} -Statistiques des utilisateurs {% endblock %}
+
+{% block header %}
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">Statistiques des utilisateurs</h1>
+    </header>    
+{% endblock %}
+
+{% block container %}
+    <div class="card mb-3 text-center" id="bla"></div>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        {{ gc_draw([piechart], ['bla']) }}
+    </script>
+{% endblock %}

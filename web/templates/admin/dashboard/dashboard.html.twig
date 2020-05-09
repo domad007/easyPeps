@@ -2,8 +2,7 @@
 {% block title %} -Tableau de bord {% endblock %}
 {% block header %} 
     <header class="jumbotron my-4">
-        <h1 class="display-3" style="text-align: center">Bienvenue au dashboard</h1>
-       
+        <h1 class="display-3" style="text-align: center">Bienvenue au dashboard</h1>      
     </header>    
 {% endblock %}
 {% block container %}
@@ -13,10 +12,12 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-4">
-                            <i class="fas fa-users fa-3x"></i>      
+                            <i class="fas fa-chart-line fa-3x"></i>     
                         </div>
                         <div class="col-8">
-                            Statistiques des utilisateurs
+                            <h4 class="card-title">
+                                 <a href="{{path('users_statistiques')}}" class="stretched-link text-white">Statistiques des utilisateurs</a>
+                            </h4>    
                         </div>
                     </div>
                 </div>
@@ -30,21 +31,9 @@
                             <i class="fas fa-users fa-3x"></i>      
                         </div>
                         <div class="col-8">
-                            Gestion des utilisateurs
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card bg-dark text-white mb-3 text-center">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-4">
-                            <i class="fas fa-users fa-3x"></i>      
-                        </div>
-                        <div class="col-8">
-                            Blabla
+                            <h4 class="card-title">
+                               <a href="{{path('admin_accounts')}}" class="stretched-link text-white">{{totalUsers}} utilisateurs inscrits</a>
+                            </h4>
                         </div>
                     </div>
                 </div>

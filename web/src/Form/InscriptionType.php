@@ -32,8 +32,8 @@ class InscriptionType extends AbstractType
         ->add('sexe', ChoiceType::class, [
             'label' => "Quel est votre sexe ?",
             'choices' => [
-                'Homme' => "Homme",
-                'Femme' => "Femme"
+                'H' => "Homme",
+                'F' => "Femme"
             ]
         ])
         ->add('mdp', PasswordType::class, $contact->getConfig("Mot de passe", "Choisissez votre mot de passe"))
