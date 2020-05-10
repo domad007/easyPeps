@@ -202,3 +202,26 @@ function modifAppreciation(property, idType){
     }
 }
 
+function addRole(property, idUser){
+    if(property.checked){
+        $.ajax({
+            url: '/addRoleAdmin',
+            method: 'POST',
+            data: {
+                userId: idUser,
+                admin: true
+            }
+        });
+    }
+    else {
+        $.ajax({
+            url: '/addRoleAdmin',
+            method: 'POST',
+            data: {
+                userId: idUser,
+                admin: false
+            }
+        });
+    }
+}
+

@@ -2,9 +2,12 @@
 
 namespace App\Controller;
 use DateTime;
+use App\Entity\Role;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Query\ResultSetMapping;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use CMEN\GoogleChartsBundle\GoogleCharts\Charts\PieChart;
 use CMEN\GoogleChartsBundle\GoogleCharts\Charts\Histogram;
@@ -22,6 +25,38 @@ class usersController extends AbstractController {
                 'users' => $users->findAll()
             ]
         );
+    }
+
+    /**
+     * @Route("/addRoleAdmin", name="add_role_admin")
+     */
+    public function addRoleAdmin(Request $request){
+        $manager = $this->getDoctrine()->getManager();
+        if($request->isMethod('post')){
+            $data = $request->request->all();
+            $user = $manager
+            ->getRepository(User::class)
+            ->findOneById($data['userId']);
+            $roleAdmin = $manager
+            ->getRepository(Role::class)
+            ->findOneBytitle("ROLE_ADMIN");
+
+
+            switch($data['admin']){
+                case 'true': 
+                    $user->addUserRole($roleAdmin);
+                break;
+                case 'false': 
+                    $user->removeUserRole($roleAdmin);
+                break;
+            }
+
+            $manager->persist($user);
+            $manager->flush();
+            
+        }
+
+        return new Response("");
     }
 
     /**
@@ -134,7 +169,7 @@ class usersController extends AbstractController {
         $graphAge = new PieChart();
         $graphAge->getData()->setArrayToDataTable(
             [
-                ['Sexe', "Tranches d'âges inscris sur le site"],
+                ['Sexe', "Tranches d'âges inscrits sur le site"],
                 ['En dessous de 20 ans', $age['max20']],
                 ['Entre 20 et 30 ans', $age['max30']],
                 ['Entre 31 et 40 ans', $age['max40']],

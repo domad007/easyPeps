@@ -8,6 +8,9 @@
     </header>
 {% endblock %}
 
+{% block scripts %}
+    <script src="/JS/main.js"></script>
+{% endblock %}
 
 {% block container %}
     <div class="jumbotron">
@@ -21,6 +24,7 @@
                     <th>Mail</th>
                     <th>Sexe</th>
                     <th>Data Naissance</th>
+                    <th>Administrateur</th>
                     <th>Actions</th>
                 </thead>
                 <tbody>
@@ -34,7 +38,20 @@
                             <td>{{value.mail}}</td>
                             <td>{{value.sexe}}</td>
                             <td>{{dateNaissance | date('d-m-Y')}}</td>
-                            <td>
+                            <td  style="text-align: center">
+                                {% set break = false %}
+                                {% for v in value.userRoles %}
+                                    {% if break == false %}
+                                    {% if v.title == "ROLE_ADMIN" %}
+                                        <input type="checkbox" name="roleAdmin" id="roleAdmin" onchange="addRole(this, {{value.id}})" checked>
+                                        {% set break = true %}
+                                    {% else %}
+                                        <input type="checkbox" name="roleAdmin" id="roleAdmin" onchange="addRole(this, {{value.id}})">
+                                    {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td width="20%">
                                 <a href="#" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
                                 <a href="#" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
                             </td>
