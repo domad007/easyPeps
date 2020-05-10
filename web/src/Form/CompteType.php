@@ -24,7 +24,11 @@ class CompteType extends AbstractType
             ->add('mail', EmailType::class, $contact->getConfig("Modifiez votre Email", ""))
             ->add('userActif', CheckboxType::class, [
                 "label" => "Desactiver mon compte",
-                'required' => false
+                'required' => false,
+                'attr' => 
+                [
+                    'onchange' => "desactivate(this)"
+                ]
                 
             ])
             ->add('save', SubmitType::class, $contact->getConfig("Enregistrez vos modifications", ""))

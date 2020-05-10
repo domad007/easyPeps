@@ -203,3 +203,48 @@ function addRole(property, idUser){
         });
     }
 }
+
+function desactivate(property){
+    if(property.checked){
+        $('#desactivate').html('<h6>Êtes vous sur de désactiver votre profil ?</h6>').dialog({
+            modal: true, title: 'Confirmation', zIndex: 10000, autoOpen: true,
+            width: 'auto', resizable: false,
+            buttons: {
+              Oui: function () {
+                  $(this).dialog("close");
+              },
+              Non: function () {
+                $('#compte_userActif').prop('checked', false);
+                $(this).dialog("close");
+              }
+            },
+            close: function (event, ui) {
+                $(this).remove();
+            }
+      });
+    }
+    /*$('body').html('<h6>Êtes vous sur de supprimer le profil ?</h6>').dialog({
+      modal: true, title: 'Confirmation', zIndex: 10000, autoOpen: true,
+      width: 'auto', resizable: false,
+      buttons: {
+        Oui: function () {
+            $.ajax({
+                url: '/removeUser',
+                method: 'POST',
+                data: {
+                    userId: idUser
+                },
+                success: $('#deleteUser_'+idUser).remove()
+            });
+            $(this).dialog("close");
+        },
+        Non: function () {
+            $(this).dialog("close");
+        }
+      },
+      close: function (event, ui) {
+          $(this).remove();
+      }
+});*/
+}
+
