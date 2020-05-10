@@ -2,12 +2,16 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints\Date;
+use Symfony\Component\Validator\Constraints\IsTrue;
+use Symfony\Component\Validator\Constraints\DateTime;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use EWZ\Bundle\RecaptchaBundle\Validator\Constraints as Recaptcha;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
@@ -69,6 +73,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="date")
+     * @Assert\DateTime(message="Date invalide")
      */
     private $dateNaiss;
 
@@ -76,6 +81,16 @@ class User implements UserInterface
      * @Assert\EqualTo(propertyPath="mdp", message="Votre mot de passe ne corresponds pas")
      */
     public $confMdp;
+
+    /**
+     * @Assert\EqualTo("true", message="Vous devez accepter les droits de condition générales d'utilisation")
+     */
+    public $acceptCGU;
+
+    /**
+     * @Recaptcha\IsTrue(message="Veuillez valider que vous n'êtes pas un robot")
+     */
+    public $recaptcha;
     
     /**
      * @var string le token qui servira lors de l'oubli de mot de passe
@@ -117,8 +132,6 @@ class User implements UserInterface
      * @ORM\OneToMany(targetEntity="App\Entity\Parametres", mappedBy="professeur")
      */
     private $parametres;
-
-
 
     public function __construct()
     {
