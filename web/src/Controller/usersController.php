@@ -21,6 +21,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class usersController extends AbstractController {
 
     /**
+     * Renvoi de tous les utilisateurs à l'interface d'admin
      * @Route("/admin/accounts", name="admin_accounts")
      */
     public function accounts(UserRepository $users){
@@ -33,6 +34,7 @@ class usersController extends AbstractController {
     }
 
     /**
+     * Modificaiton de l'utilisateur
      * @Route("/admin/editUser/{user}", name="edit_user")
      */
     public function editUser(User $user, Request $request){
@@ -59,6 +61,7 @@ class usersController extends AbstractController {
     }
 
     /**
+     * Ajoute du rôle d'administrateur à un utilisateur
      * @Route("/addRoleAdmin", name="add_role_admin")
      */
     public function addRoleAdmin(Request $request){
@@ -91,6 +94,8 @@ class usersController extends AbstractController {
     }
 
     /**
+     * Affichage des statistiques
+     * Chaque statistique différente est dans une fonction à part
      * @Route("/admin/userStatistiques", name="users_statistiques")
      */
     public function userStatistiques(){
@@ -104,6 +109,11 @@ class usersController extends AbstractController {
         );
     }
 
+    /**
+     * Affichage des statistiques par rapport au sexe des utilisateurs inscrits
+     *
+     * @return void
+     */
     private function statistiqueSexe(){
         $manager = $this->getDoctrine()->getManager();
         $hommes = $manager->getRepository(User::class)->count(['sexe' => "H"]);
@@ -127,6 +137,12 @@ class usersController extends AbstractController {
         return $graphSexe;
     }
 
+    /**
+     * Affichage des statistiques par rapport au nombre d'utilisateurs par école
+     * Ces statistiques viennent des cours dans lequels l'utilisateur a crée 
+     *
+     * @return void
+     */
     private function statistiqueEcole(){
         $manager = $this->getDoctrine()->getManager();
         $totalUser = 0;
@@ -165,6 +181,11 @@ class usersController extends AbstractController {
         return $graphEcole;
     }
 
+    /**
+     * Affichage des statistiques par rapport à l'age des utilisateurs
+     *
+     * @return void
+     */
     private function statistiquesAge(){
         $manager = $this->getDoctrine()->getManager();
         $dateAjd = new \DateTime();

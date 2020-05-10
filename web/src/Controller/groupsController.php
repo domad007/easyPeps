@@ -36,6 +36,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class groupsController extends AbstractController {
     
     /**
+     * Choix du groupe auquel on veut accèder
      * @Route("/groups", name="groups")
      * @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
@@ -76,6 +77,7 @@ class groupsController extends AbstractController {
     }
 
     /**
+     * Création d'un nouveau groupe
      * @Route("/newGroup/{ecole}", name="new_group")
      * @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
@@ -125,6 +127,7 @@ class groupsController extends AbstractController {
     }
 
     /**
+     * Affichage des élèves appartenant au groupe
      * @Route("/group/{group}", name="group")
      * @Security("is_granted('ROLE_ACTIF') and user === group.getProfesseur()", statusCode=405)
      */
@@ -147,6 +150,7 @@ class groupsController extends AbstractController {
     }
 
     /**
+     * Création d'une nouvelle periode pour ce groupe
      * @Route("/newPeriode/{group}", name="new_periode")
      * @Security("is_granted('ROLE_ACTIF') and user === group.getProfesseur()", statusCode=405)
      */
@@ -180,6 +184,7 @@ class groupsController extends AbstractController {
 
     
     /**
+     * Création d'un nouveau cours pour le groupe
      * @Route("/newCours/{group}", name="new_cours")
      * @Security("is_granted('ROLE_ACTIF') and user === group.getProfesseur()", statusCode=405)
      */
@@ -292,6 +297,7 @@ class groupsController extends AbstractController {
     }
 
     /**
+     * Création d'une nouvelle évaluation pour le groupe
      * @Route("/newEvaluation/{group}", name="new_evaluation")
      * @Security("is_granted('ROLE_ACTIF') and user === group.getProfesseur()", statusCode=405)
      */

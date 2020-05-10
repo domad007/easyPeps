@@ -7,6 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class adminDashboardController extends AbstractController {
     
     /**
+     * Gestion du dashboard d'administrateur
+     * Renvoi le nombre d'utilisateurs inscrits sur le site
      * @Route("/admin", name="admin_dashboard")
      */
     public function adminDashboard(){

@@ -9,6 +9,8 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class adminAccountController extends AbstractController {
     
     /**
+     * Connexion d'administrateur
+     * Lorsque l'authentification fail l'utilisateur obtient un message d'erreur
      * @Route("admin/login", name="admin_login")
      */
     public function adminLogin(AuthenticationUtils $utils){

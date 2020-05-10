@@ -21,6 +21,7 @@ class parametresController extends AbstractController {
 
 
     /**
+     * Choix auquel des ecoles on souhaite effectuer le paramètrage
      * @Route("/parametresChoix", name="parametres_choix")
      * @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
@@ -47,6 +48,7 @@ class parametresController extends AbstractController {
     }
 
     /**
+     * Affichage des parametres par rapport à l'école
      * @Route("/parametresEcole/{ecole}", name="parametres_ecole")
      * @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
@@ -95,6 +97,7 @@ class parametresController extends AbstractController {
     }
 
     /**
+     * Création d'une nouvelle pondération entre le cours et l'évaluation
      * @Route("creationPonderation/{ecole}", name="creation_ponderation")
      */
     public function creationPonderation(Ecole $ecole, Request $request){
@@ -134,6 +137,7 @@ class parametresController extends AbstractController {
     }
 
     /**
+     * Création des appréciations pour l'école
      * @Route("creationAppreciations/{ecole}", name="creation_appreciations")
      */
     public function creationAppreciations(Ecole $ecole, Request $request){
@@ -169,6 +173,7 @@ class parametresController extends AbstractController {
     }
 
     /**
+     * Modificaiton des pondérations cours évaluation
      * @Route("/modifPonderation", name="modif_ponderation")
      */
     public function modifPonderation(Request $request){
@@ -199,7 +204,8 @@ class parametresController extends AbstractController {
         return new Response("");
     }
 
-        /**
+    /**
+     * Modifcaition des appréciations crées
      * @Route("/modifAppreciation", name="modif_appreciation")
      */
     public function modifAppreciation(Request $request){
@@ -227,6 +233,7 @@ class parametresController extends AbstractController {
     }
 
     /**
+     * Modifciation sur combien on veut afficher les points dans le cahier de cotes
      * @Route("/modifSurCombien", name="modif_surCombien")
      */
     public function modifSurCombien(Request $request){
@@ -247,6 +254,7 @@ class parametresController extends AbstractController {
     }
 
     /**
+     * Modificaiton des appréciation pour les visualiser dans le cahier de cotes
      * @Route("/modifAppreciationCahier", name="modif_appreciation_cahier")
      */
     public function modifAppreciationCahier(Request $request){
@@ -266,6 +274,12 @@ class parametresController extends AbstractController {
         return new Response("");
     }
 
+    /**
+     * Création des paramètres par défaut pour chaque utilisateur voulant accèder pour la première fois au paraètrage
+     *
+     * @param [type] $ecole
+     * @return void
+     */
     private function createParametres($ecole){
         $manager = $this->getDoctrine()->getManager();
 

@@ -28,6 +28,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class cahierCoteController extends AbstractController {
 
     /**
+     * Choix du groupe pour lequel on veut accèder au cahier de cotes
      * @Route("/choixCahier", name="choix_cahier")
      * @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
@@ -60,6 +61,9 @@ class cahierCoteController extends AbstractController {
 
 
     /**
+     * Affichage de toutes les moyennes des élèves
+     * Les moyennes sont calcules dans des fonction distinctes
+     * Cette fonction joue une sorte de main
      * @Route("/cahierCotes/{group}", name="cahier_cotes")
      * @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
@@ -100,7 +104,7 @@ class cahierCoteController extends AbstractController {
         );
     }
 
-
+    
     public function getMoyenneCours($group){
         $manager = $this->getDoctrine()->getManager();
         $nombreTotalHeures = 0;

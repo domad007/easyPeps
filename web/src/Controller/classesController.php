@@ -81,6 +81,7 @@ class classesController extends AbstractController {
     }
 
      /**
+      * Modification des données de l'élève
      * @Route("/modifEleve", name="modif_eleve")
      * 
      */
@@ -107,6 +108,8 @@ class classesController extends AbstractController {
     }
 
     /**
+     * Suppression des élèves d'une classe
+     * L'élève est mis dans une table dedée aux élèves supprimés
      * @Route("/deleteEleve", name="delete_eleve")
      */
     public function deleteEleve(Request $request){
@@ -133,6 +136,7 @@ class classesController extends AbstractController {
     }
 
     /**
+     * Access à sa propre classe
      * @Route("/classes/{classe}", name="class")
      * @Security("is_granted('ROLE_ACTIF') and user === classe.getProfesseur()", statusCode=405)
      */
@@ -229,6 +233,7 @@ class classesController extends AbstractController {
     }
 
     /**
+     * Changement de classe d'un élève
      * @Route("/changeClasse/{eleve}", name="change_class")
      * @Security("is_granted('ROLE_ACTIF') and user === eleve.getClasse().getProfesseur()", statusCode=405)
      */
