@@ -5,6 +5,8 @@
         "php": "^7.3.12",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "cmen/google-charts-bundle": "^3.2",
+        "excelwebzone/recaptcha-bundle": "^1.5",
         "fzaninotto/faker": "^1.9",
         "guzzlefry/twig-age-extension": "dev-master",
         "oro/doctrine-extensions": "^1.3",

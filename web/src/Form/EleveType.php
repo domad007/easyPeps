@@ -27,8 +27,14 @@ class EleveType extends AbstractType
             ->add('dateNaissance', DateType::class,
             [
                 'label'=> "Date de naissance",
+                'widget' => 'single_text',
+                'html5' => false,
                 'format' => 'dd-MM-yyyy',
-                'years' => range(1990, 2020),
+                'attr'=> 
+                [
+                    'placeholder' => "jj-mm-aaaa"
+                ],
+                'help' => "Veuillez respecter le format suivant: jj-mm-aaaa"
                 
             ]
             )

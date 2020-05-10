@@ -9,6 +9,8 @@
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>   
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>        
         <link rel="shortcut icon" href="/IMG/favicon.png" type="image/x-icon">
+        <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+
         {% block stylesheets %}{% endblock %}
         {% block scripts %}{% endblock %}
     </head>
@@ -23,17 +25,18 @@
             </button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                            <a href="#" class="nav-link">Dashboard</a>
+                        <li class="nav-item">
+                            
+                            <a href="{{path('admin_dashboard')}}" class="nav-link"><i class="fal fa-tachometer"></i> Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{path('admin_accounts')}}">Gestion des profs</a>
-                        </li>
+                            <a href="{{path('users_statistiques')}}" class="nav-link"><i class="fas fa-chart-line"></i>   Statistiques des utilisateurs</a>
+                        </li> 
                         <li class="nav-item">
-                            <a href="#" class="nav-link">Gestion des élèves</a>
-                        </li>                    
+                            <a class="nav-link" href="{{path('admin_accounts')}}"><i class="fas fa-users"></i> Gestion des utilisateurs</a>
+                        </li>                   
                         <li class="nav-item">
-                            <a href="{{path('deconnexion_user')}}" class="nav-link">Deconnexion</a>
+                            <a href="{{path('deconnexion_user')}}" class="nav-link"><i class="fas fa-sign-out-alt"></i> Deconnexion</a>
                         </li>
                     </ul>
                 </div>

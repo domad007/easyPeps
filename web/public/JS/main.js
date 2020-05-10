@@ -3,8 +3,10 @@ $(document).ready(function(){
     addGroup();
     addPeriodes();
     addEvaluation();
+    addAppreciation();
 });
 
+//Suppression de l'élève de la liste des élèves
 function deleteEleve(idEleve, button){
    $(button).remove();
    $('#deleteRow_'+idEleve).remove();
@@ -15,6 +17,10 @@ function deleteEleve(idEleve, button){
    });
 }
 
+/**
+ * Ajout des élèves dans le formulaire
+ * Copie le formulaire en nombre illimité
+ */
 function addEleve(){
     
     $('#addEleve').click(function(){
@@ -27,6 +33,9 @@ function addEleve(){
 }
 
 
+/**
+ * Suppression de la ligne de formulaire lorsqu'on en a crée de trop
+ */
 function deleteRowEleve(){
     $('button[data-action="delete"]').click(function(){
         const target = this.dataset.target;
@@ -35,6 +44,9 @@ function deleteRowEleve(){
     });
 }
 
+/**
+ * Copie du formulaire permettant de créer les groupes
+ */
 function addGroup(){
     $('#addGroup').click(function(){
         const index = $('#add_group_classes div.form-group').length;
@@ -45,6 +57,9 @@ function addGroup(){
     });
 }
 
+/**
+ * Copie du formulaire permettant de créer les périodes
+ */
 function addPeriodes(){
     var index = 0;
     $('#addPeriodes').click(function(){
@@ -57,6 +72,9 @@ function addPeriodes(){
     });
 }
 
+/**
+ * Suppression des lignes de formulaire 
+ */
 function deleteRowPeriodes(){
     $('button[data-action="delete"]').click(function(){
         const target = this.dataset.target;
@@ -64,6 +82,9 @@ function deleteRowPeriodes(){
     });
 }
 
+/**
+ * Copie du formulaire permettant de créer les évaluations
+ */
 function addEvaluation(){
     var index = 0;
     $('#addEvaluation').click(function(){
@@ -74,6 +95,25 @@ function addEvaluation(){
         deleteRowPeriodes();
     });
 }
+
+/**
+ * Copie du formulaire permettant de créer les appréciations
+ */
+function addAppreciation(){
+    var index = 0;
+    $('#addAppreciation').click(function(){
+        index++;
+        const form = $('#new_appreciation_ecole_appreciations').data('prototype').replace(/__name__/g, index);
+        $('#new_appreciation_ecole_appreciations').append(form);
+
+        deleteRowPeriodes();
+    });
+}
+
+/**
+ * Modificaiton dynamique des présences des élèves
+ * @param {*} value 
+ */
 function presenceEleve(value){
     $.ajax({
         url: '/presences',
@@ -83,6 +123,10 @@ function presenceEleve(value){
 
 }
 
+/**
+ * Modificaiton dynamique par rapport aux  présences customisés par l'utilisateur des élèves
+ * @param {*} value 
+ */
 function presenceEleveCustomized(value){
     $.ajax({
         url: '/presencesCustomized',
@@ -93,7 +137,10 @@ function presenceEleveCustomized(value){
 }
 
 
-
+/**
+ * Modification dynamique de la compétence 
+ * @param {*} value 
+ */
 function modifCompetence(value){
     $.ajax({
         url: '/changementCompetence',
@@ -102,27 +149,9 @@ function modifCompetence(value){
     });
 }
 
-/*function gestionEvaluation(property){
-    if(property.checked){
-        $('.evalThead').fadeIn('slow');
-        $('.evalTbody').fadeIn('slow');
-    } 
-    else {
-        $('.evalThead').fadeOut('slow'); 
-        $('.evalTbody').fadeOut('slow');
-    }
-}
-
-function gestionPeriodes(property, id){
-    if(property.checked){
-        $('.periode'+id).fadeIn('slow');
-        $('.periode'+id).fadeIn('slow');
-    } 
-    else {
-        $('.periode'+id).fadeOut('slow'); 
-        $('.periode'+id).fadeOut('slow');
-    }
-}*/
+/**
+ * Affichage ou cachement des évaluations ou cours dans le journal de classe
+ */
 function coursEvaluation(){
     switch($('input[name=checkboxCours]').is(':checked')){
         case false : 
@@ -144,6 +173,9 @@ function coursEvaluation(){
     }
 }
 
+/**
+ * Affichage ou cachement des évaluations ou cours dans le journal de classe par rapport à la période
+ */
 function coursEvaluationPeriode(property= null, idPeriode = null){
     if(!property.checked){
         $('.periodeEval'+idPeriode).fadeOut('slow');
@@ -162,7 +194,91 @@ function coursEvaluationPeriode(property= null, idPeriode = null){
 
 }
 
+/**
+ * Affichage d'erreur lorsque l'utilisateur veut créer un cours mais n'as pas crée de période
+ */
 function periodeError(){
     alert("Aucune période existe, veuillez en créer une avant de créer une évaluation ou un cours!");
+}
+
+/**
+ * Modificaiton dynamique des appréciations dans les paramètres
+ * @param {*} property 
+ * @param {*} idType 
+ */
+function modifAppreciation(property, idType){
+    if(property.checked){
+        $.ajax({
+            url: '/modifAppreciationCahier',
+            method: 'POST',
+            data: {
+                id: idType,
+                appreciation: true
+            }
+        });
+    }
+    else {
+        $.ajax({
+            url: '/modifAppreciationCahier',
+            method: 'POST',
+            data: {
+                id: idType,
+                appreciation: 0
+            }
+        });
+    }
+}
+
+/**
+ * Ajout du rôle d'administrateur à l'utilisateur
+ * @param {} property 
+ * @param {*} idUser 
+ */
+function addRole(property, idUser){
+    if(property.checked){
+        $.ajax({
+            url: '/addRoleAdmin',
+            method: 'POST',
+            data: {
+                userId: idUser,
+                admin: true
+            }
+        });
+    }
+    else {
+        $.ajax({
+            url: '/addRoleAdmin',
+            method: 'POST',
+            data: {
+                userId: idUser,
+                admin: false
+            }
+        });
+    }
+}
+
+/**
+ * Message d'information pour voir si l'utilisateur est sur de désactiver son compte
+ * @param {} property 
+ */
+function desactivate(property){
+    if(property.checked){
+        $('#desactivate').html('<h6>Êtes vous sur de désactiver votre profil ?</h6>').dialog({
+            modal: true, title: 'Confirmation', zIndex: 10000, autoOpen: true,
+            width: 'auto', resizable: false,
+            buttons: {
+              Oui: function () {
+                  $(this).dialog("close");
+              },
+              Non: function () {
+                $('#compte_userActif').prop('checked', false);
+                $(this).dialog("close");
+              }
+            },
+            close: function (event, ui) {
+                $(this).remove();
+            }
+      });
+    }
 }
 

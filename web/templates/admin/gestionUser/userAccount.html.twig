@@ -1,0 +1,114 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %} Administration des comptes {% endblock %}
+
+{% block header %}
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">Gestion des comptes</h1>
+    </header>
+{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css">
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="/JS/main.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('.table').DataTable({
+                "language": {
+                    "sEmptyTable":     "Pas d'utilisateurs inscrits sur le site",
+                    "sInfo":           "Affichage de _TOTAL_ utilisateurs",
+                    "sInfoEmpty":      "Affichage de l'élément 0 à 0 sur 0 élément",
+                    "sInfoFiltered":   "(filtré à partir de _MAX_ éléments au total)",
+                    "sInfoPostFix":    "",
+                    "sInfoThousands":  ",",
+                    "sLengthMenu":     "Afficher _MENU_ éléments",
+                    "sLoadingRecords": "Chargement...",
+                    "sProcessing":     "Traitement...",
+                    "sSearch":         "Rechercher un utilisateur :",
+                    "sZeroRecords":    "Aucun élément correspondant trouvé",
+                    "oPaginate": {
+                        "sFirst":    "Premier",
+                        "sLast":     "Dernier",
+                        "sNext":     "Suivant",
+                        "sPrevious": "Précédent"
+                    },
+                    "oAria": {
+                        "sSortAscending":  ": activer pour trier la colonne par ordre croissant",
+                        "sSortDescending": ": activer pour trier la colonne par ordre décroissant"
+                    },
+                    "select": {
+                            "rows": {
+                                "_": "%d lignes sélectionnées",
+                                "0": "Aucune ligne sélectionnée",
+                                "1": "1 ligne sélectionnée"
+                            } 
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block container %}
+    <div class="jumbotron">
+        <div class="row row d-flex justify-content-center">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}  
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Prenom</th>
+                    <th>Nom user</th>
+                    <th>Mail</th>
+                    <th>Sexe</th>
+                    <th>Data Naissance</th>
+                    <th>Administrateur</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>
+                    {% for key, value in users %}
+                    {% set dateNaissance = date(value.dateNaiss) %}
+                        <tr>
+                            <td>{{value.id}}</td>
+                            <td>{{value.nom}}</td>
+                            <td>{{value.prenom}}</td>
+                            <td>{{value.nomUser}}</td>
+                            <td>{{value.mail}}</td>
+                            <td>{{value.sexe}}</td>
+                            <td>{{dateNaissance | date('d-m-Y')}}</td>
+                            <td  style="text-align: center">
+                                {% set break = false %}
+                                {% for v in value.userRoles %}
+                                    {% if break == false %}
+                                        {% if v.title == "ROLE_ADMIN" %}
+                                            <input type="checkbox" name="roleAdmin" id="roleAdmin" onchange="addRole(this, {{value.id}})" checked>
+                                            {% set break = true %}
+                                        {% else %}
+                                            <input type="checkbox" name="roleAdmin" id="roleAdmin" onchange="addRole(this, {{value.id}})">
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                <a href="{{path('edit_user', {user: value.id})}}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

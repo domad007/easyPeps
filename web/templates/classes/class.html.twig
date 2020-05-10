@@ -71,8 +71,8 @@
                             <td><span title="Modifiez le prénom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="prenom">{{value.prenom}}</p></span></td>
                             <td>{{dateNaissance | date('d-m-Y')}}</td>
                             <td>{{ dateNaissance | age }}</td>
-                            <td><a href="{{path('change_class', {eleve: value.id})}}" class="btn btn-default btn-md">Changer la classe</a></td>
-                            <td><button id="deleteEleve" class="btn btn-danger btn-sm" onclick="deleteEleve({{value.id}}, this);">Supprimer élève</button></td>
+                            <td style="text-align: center"><a href="{{path('change_class', {eleve: value.id})}}" class="btn btn-default btn-md"><i class="fal fa-repeat-alt"></i></a></td>
+                            <td style="text-align: center"><button id="deleteEleve" class="btn btn-danger btn-sm" onclick="deleteEleve({{value.id}}, this);"><i class="fas fa-trash"></i></button></td>
                         </tr>    
                         {% endfor %}
                 </tbody>
@@ -95,7 +95,7 @@
             {{form_widget(form)}}
        </div>  
         <div class="form-group text-center">
-            <button type="button" id="addEleve" class="btn btn-primary">Ajoutez un élève</button>
+            <button type="button" id="addEleve" class="btn btn-success"><b>+</b></button>
         </div>
     </div>
 {% endblock %}
@@ -104,7 +104,7 @@
     <div class="form-row" id="block_{{id}}"> 	
         <div class="form-group col-md-3">{{form_widget(form.nom)}}</div>	
         <div class="form-group col-md-3">{{form_widget(form.prenom)}}</div>	
-        <div class="form-group col-5">{{form_widget(form.dateNaissance)}}</div>	
+        <div class="form-group col-3">{{form_widget(form.dateNaissance)}}</div>	
         <div class="form-group col-sm-1">
             <button type="button" data-action="delete" data-target="#block_{{id}}" class="btn btn-danger">X</button>
         </div>

@@ -97,7 +97,7 @@
                             <td>{{dateNaissance | date('d-m-Y')}}</td>
                             <td>{{ dateNaissance | age }}</td>
                             <td>{{value.classe.nomClasse}}</td>
-                            <td><button id="deleteEleve" class="btn btn-danger btn-sm" onclick="deleteEleve({{value.id}}, this);">Supprimer élève</button></td>
+                            <td style="text-align: center"><button id="deleteEleve" class="btn btn-danger btn-sm" onclick="deleteEleve({{value.id}}, this);"><i class="fas fa-trash"></i></button></td>
                         </tr>
                     {% endfor %}                  
                 </tbody>

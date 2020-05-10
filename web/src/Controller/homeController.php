@@ -174,6 +174,15 @@ class homeController extends AbstractController {
     }
 
     /**
+     * @Route("CGU", name="cgu")
+     */
+    public function CGU(){
+        return $this->render(
+            'contenu/CGU.html.twig'
+        );
+    }
+
+    /**
      * @Route("/descriptionCompSocles", name="description_comp_socles")
      */
     public function descriptionCompSocles(){

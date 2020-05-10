@@ -10,9 +10,11 @@ use App\Entity\Classe;
 use App\Entity\Groups;
 use App\Entity\Periodes;
 use App\Entity\Evaluation;
+use App\Entity\Parametres;
 use App\Entity\Competences;
 use App\Entity\CoursGroupe;
 use App\Entity\Ponderation;
+use App\Entity\Appreciation;
 use App\Form\GroupPeriodeType;
 use App\Entity\EvaluationGroup;
 use Doctrine\ORM\Query\ResultSetMapping;
@@ -25,8 +27,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class cahierCoteController extends AbstractController {
 
-
     /**
+     * Choix du groupe pour lequel on veut accèder au cahier de cotes
      * @Route("/choixCahier", name="choix_cahier")
      * @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
@@ -59,6 +61,9 @@ class cahierCoteController extends AbstractController {
 
 
     /**
+     * Affichage de toutes les moyennes des élèves
+     * Les moyennes sont calcules dans des fonction distinctes
+     * Cette fonction joue une sorte de main
      * @Route("/cahierCotes/{group}", name="cahier_cotes")
      * @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
@@ -81,18 +86,11 @@ class cahierCoteController extends AbstractController {
         $getGroups->setParameter(1, $user->getId());
 
         $groups = $getGroups->getResult();
-        /*try {
-            $this->getMoyennesEleve($group);
-        }
-        catch(\Exception $e){
-            return new Response("alo");
-        }*/
-
         return $this->render(
             '/cahierCotes/cahierCotes.html.twig',
             [
                 'groups' => $groups,
-                'eleves' => $this->getMoyennesEleve($group),
+                'eleves' => $this->moyennesEleve($group),
                 'moyennePeriodes' => $this->getMoyenneCours($group),
                 'moyenneChampPeriode' => $this->getMoyenneChamps($group),
                 'moyenneCompetence' => $this->getMoyenneCompetences($group),
@@ -106,7 +104,7 @@ class cahierCoteController extends AbstractController {
         );
     }
 
-
+    
     public function getMoyenneCours($group){
         $manager = $this->getDoctrine()->getManager();
         $nombreTotalHeures = 0;
@@ -114,6 +112,8 @@ class cahierCoteController extends AbstractController {
         $coursPeriode = $manager
         ->getRepository(Cours::class)
         ->findBygroupe($group);
+
+        if(empty($coursPeriode)) return 0;
 
         foreach($coursPeriode as $key => $value){
             $nombreTotalHeures += $value->getNombreHeures();
@@ -143,6 +143,7 @@ class cahierCoteController extends AbstractController {
         ->getRepository(Evaluation::class)
         ->findBygroupe($group);
 
+        if(empty($coursEvaluation)) return 0;
         foreach($coursEvaluation as $key => $value){
             $nombreTotalHeures += $value->getHeuresCompetence();
             if($value->getPeriode()){
@@ -170,6 +171,8 @@ class cahierCoteController extends AbstractController {
         $coursEvaluationCompetences = $manager
         ->getRepository(Evaluation::class)
         ->findBygroupe($group);
+
+        if(empty($coursEvaluationCompetences)) return 0;
 
         foreach($coursEvaluationCompetences as $key => $value){
             if($value->getCompetence()->getTypeCompetence()->getId()){
@@ -225,6 +228,8 @@ class cahierCoteController extends AbstractController {
         ->getRepository(Evaluation::class)
         ->findBygroupe($group);
 
+        if(empty($coursEvaluationCompetences)) return 0;
+
         foreach($coursEvaluationCompetences as $key => $value){
             if($value->getCompetence()->getTypeCompetence()->getId()){
                 $nombreTotalPeriode[$value->getPeriode()->getNomPeriode()][$value->getCompetence()->getNom()][] =  $value->getHeuresCompetence();
@@ -278,6 +283,7 @@ class cahierCoteController extends AbstractController {
         ->getRepository(Cours::class)
         ->findBygroupe($group);
 
+        if(empty($coursSem)) return 0;
         $nombreHeuresTotal =0;
 
         foreach($coursSem as $key => $value){
@@ -302,6 +308,8 @@ class cahierCoteController extends AbstractController {
         $evalSem = $manager
         ->getRepository(Evaluation::class)
         ->findBygroupe($group);
+
+        if(empty($evalSem)) return 0;
 
         $nombreHeuresTotal =0;
 
@@ -328,6 +336,7 @@ class cahierCoteController extends AbstractController {
         ->getRepository(Evaluation::class)
         ->findBygroupe($group);
 
+        if(empty($coursEvaluationCompetences)) return 0;
 
         foreach($coursEvaluationCompetences as $key => $value){
             if($value->getCompetence()->getTypeCompetence()->getId()){
@@ -384,6 +393,7 @@ class cahierCoteController extends AbstractController {
         ->getRepository(Evaluation::class)
         ->findBygroupe($group);
 
+        if(empty($coursEvaluationCompetence)) return 0;
 
         foreach($coursEvaluationCompetences as $key => $value){
             if($value->getCompetence()->getTypeCompetence()->getId()){
@@ -432,40 +442,367 @@ class cahierCoteController extends AbstractController {
         return $moyenne;
     }
 
-    public function getMoyennesEleve($group){
+    private function getMoyenneCoursPeriodeEleve($group){
         $manager = $this->getDoctrine()->getManager();
         $getCours = $manager
         ->getRepository(Cours::class)
         ->findBygroupe($group);
 
-        $getEvaluation = $manager
-        ->getRepository(Evaluation::class)
-        ->findBygroupe($group);
-        
         $coursGroupe = $manager
         ->getRepository(CoursGroupe::class)
         ->findBycoursId($getCours);
+
+        if(empty($coursGroupe)){
+            return null;
+        }
+        $i=0;
+        foreach($getCours as $key => $value){
+            $heures[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()][] = $value->getNombreHeures();
+            $heuresTotal[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()] = array_sum($heures[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()]);
+
+            $points[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()][] = $value->getSurCombien();
+            $pointsTotal[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()] =  array_sum($points[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()]);
+        }
+
+        foreach($coursGroupe as $key => $value){
+            $pointsEleve[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()][] = $value->getPoints();
+            $pointsEleveTotal[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["points"] = array_sum($pointsEleve[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]);
+            $pointsEleveTotal[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["total"] =  $pointsTotal[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()];
+
+            if($value->getCustomizedPresences() == null){
+                if($value->getPresences()->getId() != 1 && $value->getPresences()->getId() != 4 &&$value->getPresences()->getId() != 12 ){
+                    $pointsEleveAbs[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["points"][] = $value->getPoints();
+                    $pointsEleveAbs[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["total"][] = $value->getCoursId()->getSurCombien();
+
+                    $pointsEleveAbsTotal[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["points"] = array_sum($pointsEleveAbs[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["points"]);
+                    $pointsEleveAbsTotal[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["total"] = array_sum($pointsEleveAbs[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["total"]);
+                }
+            }
+            else {
+                if($value->getCustomizedPresences()->getTypePresence()->getId() != 1 &&$value->getCustomizedPresences()->getTypePresence()->getId() != 4 &&$value->getCustomizedPresences()->getTypePresence()->getId() != 12 ){
+                    $pointsEleveAbs[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["points"][] = $value->getPoints();
+                    $pointsEleveAbs[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["total"][] = $value->getCoursId()->getSurCombien();
+
+                    $pointsEleveAbsTotal[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["points"] = array_sum( $pointsEleveAbs[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["points"]);
+                    $pointsEleveAbsTotal[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["total"] = array_sum( $pointsEleveAbs[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]["total"]);
+                }
+            }
+
+            if($value->getCustomizedPresences() == null){
+                if($value->getPresences()->getId() == 4){
+                    $oubliTshirt[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()][] = $value->getCoursId()->getId();
+                    $countOubli[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()] = count($oubliTshirt[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]);
+                }
+            }
+            else {
+                if($value->getCustomizedPresences()->getTypePresence()->getId() == 4 ){
+                    $oubliTshirt[$value->getCoursId()->getPeriode()->getSemestres()->getIntitule()][$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()][] = $value->getCoursId()->getId();
+                }
+            }
+        }
+        if(!empty($pointsEleveAbsTotal)){
+            foreach($pointsEleveAbsTotal as $key => $value){
+                foreach($value as $k => $v){
+                    foreach($v as $a => $b){
+                        $pointsEleveTotal[$key][$k][$a]["points"] = $pointsEleveTotal[$key][$k][$a]["points"] - $pointsEleveAbsTotal[$key][$k][$a]["points"];
+                        $pointsEleveTotal[$key][$k][$a]["total"] = $pointsEleveTotal[$key][$k][$a]["total"] - $pointsEleveAbsTotal[$key][$k][$a]["total"];
+                    }
+                }
+            }
+        }
+
+        foreach($pointsEleveTotal as $key => $value){
+            foreach($value as $k => $v){
+                foreach($v as $a => $b){
+                    $moyenne[$key][$k][$a] = ($pointsEleveTotal[$key][$k][$a]["points"]/$pointsEleveTotal[$key][$k][$a]["total"])*10;
+                }
+            }
+            ksort($moyenne[$key]);
+        }
+        if(!empty($countOubli)){
+            foreach($countOubli as $key => $value){
+                foreach($value as $cle => $valeur){
+                    foreach($valeur as $k => $v){             
+                        if($v %  2 == 0){
+                            $moyenne[$key][$cle][$k] = $moyenne[$key][$cle][$k] - $v/2;
+                        }
+                        if($v % 2 == 1){
+                            $enleverPoints = ($v-1)/2;
+                            $moyenne[$key][$cle][$k] = $moyenne[$key][$cle][$k] - $enleverPoints;
+                        }
+                    }
+                }
+            }
+        }
+        return array(
+            'heuresPeriode' => $heuresTotal, 
+            'moyennesEleves' => $moyenne
+        );
+    }
+
+    private function getMoyenneCoursSemestreEleve($group){
+        $coursPeriode = $this->getMoyenneCoursPeriodeEleve($group);
+        $heuresPeriode = $coursPeriode['heuresPeriode'];
+        $moyennePeriode = $coursPeriode['moyennesEleves'];
+
+        if(empty($coursPeriode)){
+            return 0;
+        }
+
+        foreach($heuresPeriode as $key => $value){
+            foreach($value as $k => $v){
+                $heuresSemestre[$key][] = $heuresPeriode[$key][$k];
+                $heuresSemestreTotal[$key] = array_sum($heuresSemestre[$key]);
+            }
+        }
+
+        foreach($moyennePeriode as $key => $value){
+            foreach($value as $k => $v){
+                foreach($v as $a => $b){
+                    $moyenneSemestre[$key][$a][] = $moyennePeriode[$key][$k][$a]*$heuresPeriode[$key][$k];
+                    $moyenne[$key][$a] = array_sum($moyenneSemestre[$key][$a])/$heuresSemestreTotal[$key];
+                }
+            }
+        }
+        return $moyenne;
+    }
+
+    private function getMoyenneChampsPeriodeEleve($group){
+        $manager = $this->getDoctrine()->getManager();
+        $getEvaluation = $manager
+        ->getRepository(Evaluation::class)
+        ->findBygroupe($group);
 
         $evaluationGroup = $manager
         ->getRepository(EvaluationGroup::class)
         ->findByevaluation($getEvaluation);
 
-        $classes = $manager
-        ->getRepository(Classe::class)
-        ->findByGroups($group);
-
-        $eleves =  $manager
-        ->getRepository(Eleve::class)
-        ->findByclasse($classes);
-
-        $periodes = $manager
-        ->getRepository(Periodes::class)
-        ->findBygroupe($group);
-
         $typeCompetences =  $manager
         ->getRepository(Types::class)
         ->findAll();
 
+        if(empty($evaluationGroup)){
+            return 0;
+        }
+
+        foreach($getEvaluation as $key => $value){
+            $heures[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getHeuresCompetence();
+            $points[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getSurCombien();
+        
+            $heuresTotal[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()] = array_sum( $heures[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()]);
+            $pointsTotal[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()] = array_sum($points[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()]);
+        }
+
+        foreach($evaluationGroup as $key => $value){
+            $pointsEleve[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getPoints();
+            $pointsEleveTotal[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()]["points"][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()]= array_sum($pointsEleve[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()]);
+            $pointsEleveTotal[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()]["total"][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()]=$pointsTotal[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEvaluation()->getPeriode()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()];
+            
+            if(!(string)(int)$value->getPoints() && $value->getPoints() != 0){
+                $pointsEleveAbs[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()]["points"][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()][] = 0;
+                $pointsEleveAbs[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()]["total"][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getEvaluation()->getSurCombien();
+
+                $pointsEleveAbsTotal[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()]["total"][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()] = array_sum($pointsEleveAbs[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()]["total"][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()]);
+            }
+        }
+
+        if(!empty($pointsEleveAbsTotal)){
+            foreach($pointsEleveAbsTotal as $key => $value){
+                foreach($value as $cle => $valeur){
+                    foreach($valeur as $k => $v){
+                        foreach($v as $a => $b){
+                            foreach($b as $c => $d){
+                                $pointsEleveTotal[$key][$cle][$k]["total"][$c] = $pointsEleveTotal[$key][$cle][$k]["total"][$c] - $pointsEleveAbsTotal[$key][$cle][$k]["total"][$c];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        foreach($heuresTotal as $key => $value){
+            foreach($value as $cle => $valeur){
+                foreach($typeCompetences as $a => $b){
+                    if(empty($heuresTotal[$key][$cle][$b->getIntitule()])){
+                        $heuresTotal[$key][$cle][$b->getIntitule()] = 0;
+                    }
+                }
+            }
+        }
+        foreach($pointsEleveTotal as $key => $value){
+            foreach($value as $cle => $valeur){
+                foreach($valeur as $k => $v){
+                    foreach($v as $a => $b){
+                        foreach($b as $c => $d){
+                            $moyenne[$key][$cle][$k][$c] = ($pointsEleveTotal[$key][$cle][$k]["points"][$c]/$pointsEleveTotal[$key][$cle][$k]["total"][$c])*10;                 
+                            foreach($typeCompetences as $a => $b){
+                                if(empty($moyenne[$key][$cle][$k][$b->getIntitule()])){
+                                    $moyenne[$key][$cle][$k][$b->getIntitule()] = 0;
+                                }
+                            }
+                            ksort($moyenne[$key][$cle][$k]);
+                            ksort($moyenne[$key]);
+                        }
+                    }
+                }
+            }
+        }
+        
+        return array(
+            'moyenneEleves' => $moyenne,
+            'heuresTotal' => $heuresTotal
+        );
+    }
+
+    private function getMoyenneEvaluationPeriodeEleve($group){
+        $evaluationChamp = $this->getMoyenneChampsPeriodeEleve($group);
+        $heuresChamp = $evaluationChamp['heuresTotal'];
+        $moyennesChamp = $evaluationChamp['moyenneEleves'];
+
+        if(empty($evaluationChamp)){
+            return 0;
+        }
+
+        foreach($heuresChamp as $key => $value){
+            foreach($value as $cle => $valeur){
+                $heuresChampTotal[$key][$cle] = array_sum($heuresChamp[$key][$cle]);
+            }
+        }
+
+        foreach($moyennesChamp as $key => $value){
+            foreach($value as $cle => $valeur){
+                foreach($valeur as $k => $v){
+                    foreach($v as $a => $b){
+                        $totalChamps[$key][$cle][$k][] = $moyennesChamp[$key][$cle][$k][$a]*$heuresChamp[$key][$cle][$a];
+                        $moyenne[$key][$cle][$k] = array_sum($totalChamps[$key][$cle][$k])/$heuresChampTotal[$key][$cle];
+                        
+                        ksort($moyenne[$key]);
+                    }
+                }
+            }
+        }
+
+        return $moyenne;
+    }
+
+    private function getMoyenneChampsSemestreEleve($group){
+        $evaluationPeriode =  $this->getMoyenneChampsPeriodeEleve($group);
+        $moyennePeriode = $evaluationPeriode['moyenneEleves'];
+        $heuresPeriode = $evaluationPeriode['heuresTotal'];
+
+        if(empty($evaluationPeriode)){
+            return 0;
+        }
+        foreach($heuresPeriode as $key => $value){
+            foreach($value as $cle => $valeur){
+                foreach($valeur as $k => $v){
+                    $heuresSemestre[$key][$k][] = $heuresPeriode[$key][$cle][$k];
+                    $heuresSemestreTotal[$key][$k] = array_sum($heuresSemestre[$key][$k]);
+                }
+            }
+        }
+        foreach($moyennePeriode as $key => $value){
+            foreach($value as $cle => $valeur){
+                foreach($valeur as $k => $v){
+                    foreach($v as $a => $b){
+                        $moyenneSemestre[$key][$k][$a][] = $moyennePeriode[$key][$cle][$k][$a]*$heuresPeriode[$key][$cle][$a];
+                        try {
+                            $moyenne[$key][$k][$a] = array_sum($moyenneSemestre[$key][$k][$a])/$heuresSemestreTotal[$key][$a];
+                        }
+                        catch(\Exception $e){
+                            $moyenne[$key][$k][$a] = 0;
+
+                        }
+                        ksort($moyenne[$key][$k]);
+                    }
+                }
+            }
+        }
+        return array(
+            'moyenne' => $moyenne,
+            'heures' => $heuresSemestreTotal
+        );
+    }
+
+    private function getMoyenneEvaluationSemestreEleve($group){
+        $champsSemestre = $this->getMoyenneChampsSemestreEleve($group);
+
+        $moyennesChamp = $champsSemestre['moyenne'];
+        $heuresChamp= $champsSemestre['heures'];
+
+        if(empty($champsSemestre)){
+            return 0;
+        }
+
+        foreach($heuresChamp as $key => $value){
+            $heuresSemestreTotal[$key] = array_sum($heuresChamp[$key]);
+        }
+
+        foreach($moyennesChamp as $key => $value){
+            foreach($value as $cle => $valeur){
+                foreach($valeur as $k => $v){
+                    $totalChamps[$key][$cle][] = $moyennesChamp[$key][$cle][$k]*$heuresChamp[$key][$k];
+                    $moyenne[$key][$cle] = array_sum($totalChamps[$key][$cle])/$heuresSemestreTotal[$key];
+                }
+            }
+        }
+        
+        return $moyenne;
+    }
+
+    private function getMoyenneCoursEvalPeriodeEleve($group){
+        $manager= $this->getDoctrine()->getManager();
+        $coursPeriode = $this->getMoyenneCoursPeriodeEleve($group);
+        $moyenneEvalPeriode =  $this->getMoyenneEvaluationPeriodeEleve($group);
+        $moyenneCoursPeriode = $coursPeriode['moyennesEleves'];
+
+        if(empty($coursPeriode)){
+            return 0;
+        }
+        $classes = $manager
+        ->getRepository(Classe::class)
+        ->findByGroups($group);
+        $ponderation = $manager
+        ->getRepository(Ponderation::class)
+        ->findOneBy(
+            [
+                'ecole' => $classes[0]->getEcole()->getId(),
+                'professeur' => $this->getUser()->getId()
+            ]
+        );
+        if(!empty($ponderation)){
+            foreach($moyenneCoursPeriode as $key => $value){
+                foreach($value as $cle => $valeur){
+                    foreach($valeur as $k => $v){
+                        $moyenne[$key][$cle][$k] = ($v*$ponderation->getCours() + $moyenneEvalPeriode[$key][$cle][$k]*$ponderation->getEvaluation())/100;
+                        
+                        ksort($moyenne[$key]);
+                    }
+                }
+            }
+        }
+        else {
+            foreach($moyenneCoursPeriode as $key => $value){
+                foreach($value as $cle => $valeur){
+                    foreach($valeur as $k => $v){
+                        $moyenne[$key][$cle][$k] = ($v + $moyenneEvalPeriode[$key][$cle][$k])/2;
+                        ksort($moyenne[$key]);
+                    }
+                }
+            }
+        }
+        return $moyenne;
+    }
+    private function getMoyenneCoursEvalSemEleve($group){
+        $manager= $this->getDoctrine()->getManager();
+        $moyenneEvalSem = $this->getMoyenneEvaluationSemestreEleve($group);
+        $moyenneCoursSem = $this->getMoyenneCoursSemestreEleve($group);
+
+        if(empty($moyenneEvalSem)) return 0;
+        if(empty($moyenneCoursSem)) return 0;
+        $classes = $manager
+        ->getRepository(Classe::class)
+        ->findByGroups($group);
         $ponderation = $manager
         ->getRepository(Ponderation::class)
         ->findOneBy(
@@ -475,297 +812,571 @@ class cahierCoteController extends AbstractController {
             ]
         );
 
-        foreach($getCours as $key => $value){
-            if($value->getPeriode()){
-                $heuresPeriode[$value->getPeriode()->getId()][] = $value->getNombreHeures();
-                $pointsTotal[$value->getPeriode()->getId()][] =  $value->getSurCombien();
-
-                $heuresPeriodeTotal[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()] = array_sum($heuresPeriode[$value->getPeriode()->getId()]);
-                ksort($heuresPeriodeTotal[$value->getPeriode()->getSemestres()->getIntitule()]);
-                $pointsTotalPeriode[$value->getPeriode()->getId()] = array_sum($pointsTotal[$value->getPeriode()->getId()]);
-            }
-        }
-
-        foreach($coursGroupe as $key => $value){
-            if($value->getCoursId()->getPeriode()){
-                $pointsElevePeriode[$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()][] = $value->getPoints(); 
-                $totalPointsPeriode[$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()] = array_sum($pointsElevePeriode[$value->getCoursId()->getPeriode()->getId()][$value->getEleveId()->getId()]);
-            }
-        }
-        foreach($totalPointsPeriode as $key => $value){
-            foreach($pointsTotalPeriode as $cle => $valeur){
-                if($key == $cle){
-                    foreach($value as $ke => $val){
-                        $pointsElevePeriode[$cle][$ke] = ($val/$valeur)*10;
-                    }
-                }
-            }
-        }
-
-        foreach($getEvaluation as $key => $value){
-            if($value->getPeriode()){
-                $heuresPeriodeEval[$value->getPeriode()->getId()][] = $value->getHeuresCompetence();
-                $pointsTotalEval[$value->getPeriode()->getId()][] =  $value->getSurCombien();
-
-                $heuresPeriodeTotalEval[$value->getPeriode()->getSemestres()->getIntitule()][$value->getPeriode()->getId()] = array_sum($heuresPeriodeEval[$value->getPeriode()->getId()]);
-                ksort($heuresPeriodeTotalEval[$value->getPeriode()->getSemestres()->getIntitule()]);
-                $pointsTotalPeriodeEval[$value->getPeriode()->getId()] = array_sum($pointsTotalEval[$value->getPeriode()->getId()]);
-            }
-        }
-
-        foreach($getEvaluation as $key => $value){
-            if($value->getPeriode()->getSemestres()){
-                $heuresChampSem[$value->getPeriode()->getSemestres()->getIntitule()][$value->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getHeuresCompetence();
-                $pointsChampSem[$value->getPeriode()->getSemestres()->getIntitule()][$value->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getSurCombien();
-
-                $pointsTotalChampSem[$value->getPeriode()->getSemestres()->getIntitule()][$value->getCompetence()->getTypeCompetence()->getIntitule()] = array_sum($pointsChampSem[$value->getPeriode()->getSemestres()->getIntitule()][$value->getCompetence()->getTypeCompetence()->getIntitule()]);
-                $heuresTotalChampSem[$value->getPeriode()->getSemestres()->getIntitule()][$value->getCompetence()->getTypeCompetence()->getIntitule()] = array_sum($heuresChampSem[$value->getPeriode()->getSemestres()->getIntitule()][$value->getCompetence()->getTypeCompetence()->getIntitule()]);
-                $heuresTotalChampsSem[$value->getPeriode()->getSemestres()->getIntitule()] = array_sum($heuresTotalChampSem[$value->getPeriode()->getSemestres()->getIntitule()]);
-            }
-        }
-        foreach($getEvaluation as $key => $value){
-            if($value->getPeriode()){
-                $heuresChampsPer[$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getHeuresCompetence();
-                $pointsChampPer[$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getSurCombien();
-                
-                $pointsTotalChampPer[$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()] = array_sum($pointsChampPer[$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()]);
-                $heuresTotalChampPer[$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()] = array_sum($heuresChampsPer[$value->getPeriode()->getId()][$value->getCompetence()->getTypeCompetence()->getIntitule()]);
-                $heuresTotalChampsPer[$value->getPeriode()->getId()] = array_sum($heuresTotalChampPer[$value->getPeriode()->getId()]);
-            }
-        }
-
-        foreach($evaluationGroup as $key => $value){
-            if($value->getEvaluation()->getPeriode()){
-                $pointsElevePeriodeEval[$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()][] = $value->getPoints(); 
-                $totalPointsPeriodeEval[$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()] = array_sum($pointsElevePeriodeEval[$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()]);
-            }
-        }
-        foreach($evaluationGroup as $key => $value){
-            if($value->getEvaluation()->getPeriode()->getSemestres()){
-                $pointsEleveChampSem[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getPoints();
-                $pointsTotalEleveChampSem[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()] = array_sum($pointsEleveChampSem[$value->getEvaluation()->getPeriode()->getSemestres()->getIntitule()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()]);
-            }
-        }
-        foreach($evaluationGroup as $key => $value){
-            if($value->getEvaluation()->getPeriode()){
-                $pointsEleveChampPer[$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()][] = $value->getPoints();
-                $pointsTotalEleveChampPer[$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()] = array_sum($pointsEleveChampPer[$value->getEvaluation()->getPeriode()->getId()][$value->getEleve()->getId()][$value->getEvaluation()->getCompetence()->getTypeCompetence()->getIntitule()]);
-            }
-        }
-        foreach($pointsTotalEleveChampPer as $key => $value){
-            foreach($value as $cle => $valeur){
-                foreach($valeur as $k => $v){
-                    foreach($typeCompetences as $a => $b){
-                        if(empty($valeur[$b->getIntitule()])){
-                            $pointsEleveChampPer[$key][$cle][$b->getIntitule()] = 0;
-                        }
-                    }
-                    $pointsEleveChampPer[$key][$cle][$k] = ($v/$pointsTotalChampPer[$key][$k])*10;
-                }
-            }
-        }
-        ksort($pointsEleveChampPer);
-        foreach($pointsTotalEleveChampSem as $key => $value){       
-            foreach($value as $cle => $valeur){
-                foreach($valeur as $k => $v){
-                    foreach($typeCompetences as $a => $b){
-                        if(empty($valeur[$b->getIntitule()])){
-                            $pointsEleveChamp[$key][$cle][$b->getIntitule()] = 0;
-                        }
-                    }
-                    $pointsEleveChamp[$key][$cle][$k] = ($v/$pointsTotalChampSem[$key][$k])*10;
-                }
-            }
-        }
-        ksort($pointsEleveChamp);
-        foreach($pointsEleveChamp as $key => $value){
-            foreach($value as $cle => $valeur){
-                foreach($valeur as $k => $v){
-                    $moyChamp[$key][$cle][$k] = $pointsEleveChamp[$key][$cle][$k]*$heuresTotalChampSem[$key][$k];
-                    $moyenneChampsTotal[$key][$cle] = array_sum($moyChamp[$key][$cle])/$heuresTotalChampsSem[$key];
-                }
-            }
-        }
-        
-
-        foreach($totalPointsPeriodeEval as $key => $value){
-            foreach($pointsTotalPeriodeEval as $cle => $valeur){
-                if($key == $cle){
-                    foreach($value as $ke => $val){
-                        $pointsEleveEval[$cle][$ke] = ($val/$valeur)*10;
-                    }
-                }
-            }
-        } 
-
-        ksort($pointsElevePeriode);
-        ksort($pointsEleveEval);
-
-
-        foreach($periodes as $key => $value){
-            foreach($pointsElevePeriode as $cle => $valeur){
-                if($value->getId() == $cle){
-                    $pointsEleveSemCours[$value->getSemestres()->getIntitule()][$cle] = $valeur;
-                }
-            }
-
-            foreach($pointsEleveEval as $cle => $valeur){
-                if($value->getId() == $cle){
-                    $pointsEleveSemEval[$value->getSemestres()->getIntitule()][$cle] = $valeur;
-                }
-            }
-        }
-
-        foreach($periodes as $key => $value){
-            foreach($heuresPeriodeTotal as $k => $v){
-                foreach($v as $cle => $valeur){
-                    if($value->getId() == $cle){
-                        $heuresSemCours[$value->getSemestres()->getIntitule()][] = $valeur;
-                        $heuresSemCoursTotal[$value->getSemestres()->getIntitule()] = array_sum($heuresSemCours[$value->getSemestres()->getIntitule()]);
-                    }
-                }
-            }
-
-            foreach($heuresPeriodeTotalEval as $k => $v){
-                foreach($v as $a => $b){
-                    if($value->getId() == $a){                   
-                        $heuresSemEval[$value->getSemestres()->getIntitule()][] = $b;
-                        $heuresSemEvalTotal[$value->getSemestres()->getIntitule()] = array_sum($heuresSemEval[$value->getSemestres()->getIntitule()]);
-    
-                    }
-                }
-            }
-        }
-        foreach($pointsEleveSemCours as $key => $value){
-            foreach($value as $cle => $valeur){
-                foreach($valeur as $k => $v){
-                    $moyCours[$key][$k][] = ($pointsEleveSemCours[$key][$cle][$k]*$heuresPeriodeTotal[$key][$cle]);
-                    $moyenneCours[$key][$k] = array_sum($moyCours[$key][$k])/$heuresSemCoursTotal[$key];
-                }
-            }
-        }
-        foreach($pointsEleveSemEval as $key => $value){
-            foreach($value as $cle => $valeur){
-                foreach($valeur as $k => $v){
-                    $moyEval[$key][$k][] = ($pointsEleveSemEval[$key][$cle][$k]*$heuresPeriodeTotalEval[$key][$cle]);
-                    $moyenneEval[$key][$k] = array_sum($moyEval[$key][$k])/$heuresSemEvalTotal[$key];
-                }
-            }
-        }
-
-        if(empty($ponderation)){
-            foreach($pointsElevePeriode as $key => $value){
-                foreach($value as $cle => $valeur){
-                    $moyenneElevePeriode[$key][$cle] = ($valeur+$pointsEleveEval[$key][$cle])/2;
-                }
-            }
-            foreach($moyenneCours as $key => $value){
-                foreach($value as $cle => $valeur){
-                    $moyenneEleveSemestre[$key][$cle] = ($valeur+$moyenneChampsTotal[$key][$cle])/2;
+        if(!empty($ponderation)){
+            foreach($moyenneEvalSem as $key => $value){
+                foreach($value as $k => $v){
+                    $moyenne[$key][$k] = ($v*$ponderation->getEvaluation() + $moyenneCoursSem[$key][$k]*$ponderation->getCours())/100;
                 }
             }
         }
         else {
-            foreach($pointsElevePeriode as $key => $value){
-                foreach($value as $cle => $valeur){
-                    $moyenneElevePeriode[$key][$cle] = ($valeur*$ponderation->getCours()+$pointsEleveEval[$key][$cle]*$ponderation->getEvaluation())/100;
-                }
-            }
-            foreach($moyenneCours as $key => $value){
-                foreach($value as $cle => $valeur){
-                    $moyenneEleveSemestre[$key][$cle] = ($valeur*$ponderation->getCours()+$moyenneChampsTotal[$key][$cle]*$ponderation->getEvaluation())/100;
+            foreach($moyenneEvalSem as $key => $value){
+                foreach($value as $k => $v){
+                    $moyenne[$key][$k] = ($v + $moyenneCoursSem[$key][$k])/2;
                 }
             }
         }
 
-        foreach($moyenneEleveSemestre as $key => $value){
-            $sumSemCoursEval[$key] = $heuresTotalChampsSem[$key] + $heuresSemCoursTotal[$key];
-            $sumSem = array_sum($sumSemCoursEval);
-            foreach($value as $cle => $valeur){
-                $moyenneEleveAnnee[$cle][$key] = $valeur;
-                $moyenneTotaleAnnee[$cle][$key] = ($moyenneEleveAnnee[$cle][$key]*$sumSemCoursEval[$key]);
-                $moyenneEleveTotaleAnnee[$cle] = array_sum($moyenneTotaleAnnee[$cle])/$sumSem;
+        return $moyenne;
+    }
+
+    private function getMoyenneCoursEvalAnneeEleve($group){
+        $manager = $this->getDoctrine()->getManager();
+        $moyenneSemestre = $this->getMoyenneCoursEvalSemEleve($group);
+        $periodeCours= $this->getMoyenneCoursPeriodeEleve($group);
+        $heuresPeriodeCours = $periodeCours['heuresPeriode'];
+
+        if(empty($moyenneSemestre)) return 0;
+        if(empty($periodeCours)) return 0;
+        foreach($heuresPeriodeCours as $key => $value){
+           $heuresTotalCoursSem[$key] = array_sum($value);      
+        }
+
+        $heuresTotalAnnee = array_sum($heuresTotalCoursSem);
+
+        foreach($moyenneSemestre as $key => $value){
+            foreach($value as $k => $v){
+                $moyenneSem[$k][] = $v*$heuresTotalCoursSem[$key];
+                $moyenne[$k] = array_sum($moyenneSem[$k])/$heuresTotalAnnee;
             }
         }
+
+        return $moyenne;
+    }
+
+    private function applicationParametres($group){
+        $moyenneCoursPeriode = $this->getMoyenneCoursPeriodeEleve($group)['moyennesEleves'];
+        $moyenneCoursSemestre = $this->getMoyenneCoursSemestreEleve($group);
+        $moyenneChampsPeriode = $this->getMoyenneChampsPeriodeEleve($group)['moyenneEleves'];
+        $moyenneChampsSemestre = $this->getMoyenneChampsSemestreEleve($group)['moyenne'];
+        $moyenneEvalPeriode = $this->getMoyenneEvaluationPeriodeEleve($group);
+        $moyenneEvalSemestre = $this->getMoyenneEvaluationSemestreEleve($group);
+        $moyenneCoursEvalPeriode = $this->getMoyenneCoursEvalPeriodeEleve($group);
+        $moyenneCoursEvalSemestre = $this->getMoyenneCoursEvalSemEleve($group);
+        $moyenneAnnee = $this->getMoyenneCoursEvalAnneeEleve($group);
+
+        $manager = $this->getDoctrine()->getManager();
+        $classes = $manager
+        ->getRepository(Classe::class)
+        ->findByGroups($group);
+        $parametres = $manager
+        ->getRepository(Parametres::class)
+        ->findBy(
+            [
+                'ecole' => $classes[0]->getEcole()->getId(),
+                'professeur' => $this->getUser()->getId()
+            ]
+        );
+        $appreciation = $manager
+        ->getRepository(Appreciation::class)
+        ->findBy(
+            [
+                'ecole' => $classes[0]->getEcole()->getId(),
+                'professeur' => $this->getUser()->getId()
+            ]
+        );
+        if(!empty($parametres)){
+            foreach($parametres as $key => $value){
+                if(!$value->getAppreciation()){
+                    switch($value->getType()){
+                        case 'Periodes':
+                            try {
+                                foreach($moyenneCoursPeriode as $cle => $valeur){
+                                    foreach($valeur as $k => $v){
+                                        foreach($v as $a => $b){
+                                            $moyenneCoursPeriode[$cle][$k][$a] = ($b/10)*$value->getSurCombien();
+                                        }
+                                    }
+                                }
+                                foreach($moyenneChampsPeriode as $cle => $valeur){
+                                    foreach($valeur as $k => $v){
+                                        foreach($v as $a => $b){
+                                            foreach($b as $c => $d){
+                                                $moyenneChampsPeriode[$cle][$k][$a][$c] = ($d/10)*$value->getSurCombien();
+                                            }
+                                        }
+                                    }
+                                }
+                                foreach($moyenneEvalPeriode as $cle => $valeur){
+                                    foreach($valeur as $k => $v){
+                                        foreach($v as $a => $b){
+                                            $moyenneEvalPeriode[$cle][$k][$a] = ($b/10)*$value->getSurCombien();
+                                        }
+                                    }
+                                }
+                                foreach($moyenneCoursEvalPeriode as $cle => $valeur){
+                                    foreach($valeur as $k => $v){
+                                        foreach($v as $a => $b){
+                                            $moyenneCoursEvalPeriode[$cle][$k][$a] = ($b/10)*$value->getSurCombien();
+                                        }
+                                    }
+                                }
+                            } 
+                            catch(\Exception $e){
+
+                            }
+                            
+                        break;
+                        
+                        case 'Semestre 1': 
+                            try {
+                                foreach($moyenneCoursSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 1"){
+                                        foreach($valeur as $k => $v){
+                                            $moyenneCoursSemestre[$cle][$k] = ($v/10)*$value->getSurCombien();
+                                        }
+                                    }
+                                }
+                                foreach($moyenneChampsSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 1"){
+                                        foreach($valeur as $k => $v){
+                                            foreach($v as $a => $b){
+                                                $moyenneChampsSemestre[$cle][$k][$a] = ($b/10)*$value->getSurCombien();
+                                            }
+                                        }
+                                    }
+                                }
+                                foreach($moyenneEvalSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 1"){
+                                        foreach($valeur as $k => $v){
+                                            $moyenneEvalSemestre[$cle][$k] = ($v/10)*$value->getSurCombien();
+                                        }
+                                    }
+                                }
+                                foreach($moyenneCoursEvalSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 1"){
+                                        foreach($valeur as $k => $v){
+                                            $moyenneCoursEvalSemestre[$cle][$k] = ($v/10)*$value->getSurCombien();
+                                        }
+                                    }
+                                }
+                            }
+                            catch(\Exception $e){
+
+                            }
+                        break;
+                        case 'Semestre 2': 
+                            try {
+                                foreach($moyenneCoursSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 2"){
+                                        foreach($valeur as $k => $v){
+                                            $moyenneCoursSemestre[$cle][$k] = ($v/10)*$value->getSurCombien();
+                                        }
+                                    }
+                                }
+                                foreach($moyenneChampsSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 2"){
+                                        foreach($valeur as $k => $v){
+                                            foreach($v as $a => $b){
+                                                $moyenneChampsSemestre[$cle][$k][$a] = ($b/10)*$value->getSurCombien();
+                                            }
+                                        }
+                                    }
+                                }
+                                foreach($moyenneEvalSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 2"){
+                                        foreach($valeur as $k => $v){
+                                            $moyenneEvalSemestre[$cle][$k] = ($v/10)*$value->getSurCombien();
+                                        }
+                                    }
+                                }
+                                foreach($moyenneCoursEvalSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 2"){
+                                        foreach($valeur as $k => $v){
+                                            $moyenneCoursEvalSemestre[$cle][$k] = ($v/10)*$value->getSurCombien();
+                                        }
+                                    }
+                                }
+                            }
+                            catch(\Exception $e){
+
+                            }
+                        break;
+
+                        case 'Annee': 
+                            try {
+                                foreach($moyenneAnnee as $cle => $valeur){
+                                    $moyenneAnnee[$cle] = ($valeur/10)*$value->getSurCombien();
+                                }
+                            }
+                            catch(\Exception $e){
+
+                            }
+                        break;
+                    }
+                }
+                else {
+                    switch($value->getType()){
+                        case 'Periodes': 
+                            try {
+                                foreach($moyenneCoursPeriode as $cle => $valeur){
+                                    foreach($valeur as $k => $v){
+                                        foreach($v as $a => $b){
+                                            $getAppreciation = array();
+                                            foreach($appreciation as $c => $d){
+                                                if($d->getCote() <= $b && $d->getCote() <= $b){
+                                                    $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                                    ksort($getAppreciation);
+                                                }
+                                            }
+                                            $moyenneCoursPeriode[$cle][$k][$a] = end($getAppreciation);
+                                        }
+                                    }
+                                }
+                                foreach($moyenneChampsPeriode as $cle => $valeur){
+                                    foreach($valeur as $k => $v){
+                                        foreach($v as $a => $b){
+                                            foreach($b as $c => $d){
+                                                $getAppreciation = array();
+                                                foreach($appreciation as $e => $f){
+                                                    if($f->getCote() <= $d && $f->getCote() <= $d){
+                                                        $getAppreciation[$f->getCote()] = $f->getIntitule();
+                                                        ksort($getAppreciation);
+                                                    }
+                                                }
+                                                $moyenneChampsPeriode[$cle][$k][$a][$c] = end($getAppreciation);
+                                            }
+                                        }
+                                    }
+                                }
+                                foreach($moyenneEvalPeriode as $cle => $valeur){
+                                    foreach($valeur as $k => $v){
+                                        foreach($v as $a => $b){
+                                            $getAppreciation = array();
+                                            foreach($appreciation as $c => $d){
+                                                if($d->getCote() <= $b && $d->getCote() <= $b){
+                                                    $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                                    ksort($getAppreciation);
+                                                }
+                                            }
+                                            $moyenneEvalPeriode[$cle][$k][$a] = end($getAppreciation);
+                                        }
+                                    }
+                                }
+                                foreach($moyenneCoursEvalPeriode as $cle => $valeur){
+                                    foreach($valeur as $k => $v){
+                                        foreach($v as $a => $b){
+                                            $getAppreciation = array();
+                                            foreach($appreciation as $c => $d){
+                                                if($d->getCote() <= $b && $d->getCote() <= $b){
+                                                    $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                                    ksort($getAppreciation);
+                                                }
+                                            }
+                                            $moyenneCoursEvalPeriode[$cle][$k][$a] = end($getAppreciation);
+                                        }
+                                    }
+                                }
+                            } 
+                            catch(\Exception $e){
+
+                            }
+                        break;
+                        case 'Semestre 1': 
+                            try {
+                                foreach($moyenneCoursSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 1"){
+                                        foreach($valeur as $k => $v){
+                                            $getAppreciation = array();
+                                            foreach($appreciation as $c => $d){
+                                                if($d->getCote() <= $v && $d->getCote() <= $v){
+                                                    $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                                    ksort($getAppreciation);
+                                                }
+                                            }
+                                            $moyenneCoursSemestre[$cle][$k] = end($getAppreciation);
+                                        }
+                                    }
+                                }
+                                foreach($moyenneChampsSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 1"){
+                                        foreach($valeur as $k => $v){
+                                            foreach($v as $a => $b){
+                                                $getAppreciation = array();
+                                                foreach($appreciation as $c => $d){
+                                                    if($d->getCote() <= $b && $d->getCote() <= $b){
+                                                        $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                                        ksort($getAppreciation);
+                                                    }
+                                                }
+                                                $moyenneChampsSemestre[$cle][$k][$a] = end($getAppreciation);
+                                            }
+                                        }
+                                    }
+                                }
+                                foreach($moyenneEvalSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 1"){
+                                        foreach($valeur as $k => $v){
+                                            $getAppreciation = array();
+                                            foreach($appreciation as $c => $d){
+                                                if($d->getCote() <= $v && $d->getCote() <= $v){
+                                                    $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                                    ksort($getAppreciation);
+                                                }
+                                            }
+                                            $moyenneEvalSemestre[$cle][$k] = end($getAppreciation);
+                                        }
+                                    }
+                                }
+                                foreach($moyenneCoursEvalSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 1"){
+                                        foreach($valeur as $k => $v){
+                                            $getAppreciation = array();
+                                            foreach($appreciation as $c => $d){
+                                                if($d->getCote() <= $v && $d->getCote() <= $v){
+                                                    $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                                    ksort($getAppreciation);
+                                                }
+                                            }
+                                            $moyenneCoursEvalSemestre[$cle][$k] = end($getAppreciation);
+                                        }
+                                    }
+                                }
+                            }
+                            catch(\Exception $e){
+
+                            }
+                        break;
+                        case 'Semestre 2': 
+                            try {
+                                foreach($moyenneCoursSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 2"){
+                                        foreach($valeur as $k => $v){
+                                            $getAppreciation = array();
+                                            foreach($appreciation as $c => $d){
+                                                if($d->getCote() <= $v && $d->getCote() <= $v){
+                                                    $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                                    ksort($getAppreciation);
+                                                }
+                                            }
+                                            $moyenneCoursSemestre[$cle][$k] = end($getAppreciation);
+                                        }
+                                    }
+                                }
+                                foreach($moyenneChampsSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 2"){
+                                        foreach($valeur as $k => $v){
+                                            foreach($v as $a => $b){
+                                                $getAppreciation = array();
+                                                foreach($appreciation as $c => $d){
+                                                    if($d->getCote() <= $b && $d->getCote() <= $b){
+                                                        $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                                        ksort($getAppreciation);
+                                                    }
+                                                }
+                                                $moyenneChampsSemestre[$cle][$k][$a] = end($getAppreciation);
+                                            }
+                                        }
+                                    }
+                                }
+                                foreach($moyenneEvalSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 2"){
+                                        foreach($valeur as $k => $v){
+                                            $getAppreciation = array();
+                                            foreach($appreciation as $c => $d){
+                                                if($d->getCote() <= $v && $d->getCote() <= $v){
+                                                    $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                                    ksort($getAppreciation);
+                                                }
+                                            }
+                                            $moyenneEvalSemestre[$cle][$k] = end($getAppreciation);
+                                        }
+                                    }
+                                }
+                                foreach($moyenneCoursEvalSemestre as $cle => $valeur){
+                                    if($cle == "Semestre 2"){
+                                        foreach($valeur as $k => $v){
+                                            $getAppreciation = array();
+                                            foreach($appreciation as $c => $d){
+                                                if($d->getCote() <= $v && $d->getCote() <= $v){
+                                                    $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                                    ksort($getAppreciation);
+                                                }
+                                            }
+                                            $moyenneCoursEvalSemestre[$cle][$k] = end($getAppreciation);
+                                        }
+                                    }
+                                }
+                            }
+                            catch(\Exception $e){
+
+                            }
+                        break;
+
+                        case 'Annee': 
+                            try {
+                                foreach($moyenneAnnee as $cle => $valeur){
+                                    $getAppreciation = array();
+                                    foreach($appreciation as $c => $d){
+                                        if($d->getCote() <= $valeur && $d->getCote() <= $valeur){
+                                            $getAppreciation[$d->getCote()] = $d->getIntitule();
+                                            ksort($getAppreciation);
+                                        }
+                                    }
+                                    $moyenneAnnee[$cle] = end($getAppreciation);
+                                }
+                            }
+                            catch(\Exception $e){
+
+                            }
+                        break;
+                    }
+                }
+            }
+        }
+
+        return array(
+            'moyenneCoursPeriode' => $moyenneCoursPeriode,
+            'moyenneCoursSemestre' => $moyenneCoursSemestre,
+            'moyenneChampsPeriode' => $moyenneChampsPeriode,
+            'moyenneChampsSemestre' => $moyenneChampsSemestre,
+            'moyenneEvalPeriode' => $moyenneEvalPeriode,
+            'moyenneEvalSemestre' => $moyenneEvalSemestre,
+            'moyenneCoursEvalPeriode' => $moyenneCoursEvalPeriode,
+            'moyenneCoursEvalSemestre' => $moyenneCoursEvalSemestre,
+            'moyenneAnnee' => $moyenneAnnee
+        );
+    }
+
+    private function moyennesEleve($group){
+        $manager = $this->getDoctrine()->getManager();
+        $moyenne = $this->applicationParametres($group); 
+        
+        $classes = $manager
+        ->getRepository(Classe::class)
+        ->findByGroups($group);
+        
+        $eleves =  $manager
+        ->getRepository(Eleve::class)
+        ->findByclasse($classes);
+
+        $periodes = $manager
+        ->getRepository(Periodes::class)
+        ->findBygroupe($group);
 
         foreach($eleves as $key => $value){
-            foreach($pointsElevePeriode as $cle => $valeur){
-                foreach($periodes as $a => $b){
-                    if($b->getId() == $cle){
-                        foreach($valeur as $k => $v){
-                            if($value->getId() == $k){
-                                $value->addMoyennePeriodeCours([$b->getNomPeriode() => $v]);
+            if(empty($moyenne['moyenneCoursPeriode'])) $value->addMoyennePeriodeCours([1 => "NE"]);
+            else {
+                foreach($moyenne['moyenneCoursPeriode'] as $cle => $valeur){
+                    foreach($valeur as $k => $v){
+                        foreach($periodes as $a => $b){
+                            if($b->getId() == $k){
+                                foreach($v as $c => $d){
+                                    if($value->getId() == $c){
+                                        $value->addMoyennePeriodeCours([$b->getNomPeriode() => $d]);
+                                    }
+                                }
                             }
                         }
-                    }
-                }               
-            }
-            foreach($pointsEleveEval as $cle => $valeur){
-                foreach($periodes as $a => $b){
-                    if($b->getId() == $cle){
-                        foreach($valeur as $k => $v){
-                            if($value->getId() == $k){
-                                $value->addMoyennePeriodeEval([$b->getNomPeriode() => $v]);
-                            }
-                        }
-                    }
+                    }  
                 }
             }
-            foreach($moyenneCours as $cle => $valeur){
-                foreach($valeur as $k => $v){
-                    if($value->getId() == $k){
-                        $value->addMoyenneSemCours([$cle => $v]);
-                    }
-                }
-            }
-            foreach($pointsEleveChamp as $cle => $valeur){
-                foreach($valeur as $k => $v){
-                    if($value->getId() == $k){
-                        $value->addMoyenneChampSem([$cle => $v]);
-                    }
-                }
-            }
-            foreach($moyenneChampsTotal as $cle => $valeur){
-                foreach($valeur as $k => $v){
-                    if($value->getId() == $k){
-                        $value->addMoyenneSemEval([$cle => $v]);
-                    }
-                }
-            }
-            foreach($pointsEleveChampPer as $cle => $valeur){
-                foreach($periodes as $a => $b){
-                    if($b->getId() == $cle){
-                        foreach($valeur as $k => $v){
-                            if($value->getId() == $k){
-                                $value->addMoyenneChampPer([$b->getNomPeriode() => $v]);
-                            }
+            if(empty($moyenne['moyenneCoursSemestre'])) $value->addMoyenneSemCours([0 => "NE"]);
+            else {
+                foreach($moyenne['moyenneCoursSemestre'] as $cle => $valeur){
+                    foreach($valeur as $k => $v){
+                        if($value->getId() == $k){
+                            $value->addMoyenneSemCours([$cle => $v]);
                         }
                     }
                 }
             }
-            foreach($moyenneElevePeriode as $cle => $valeur){
-                foreach($periodes as $a => $b){
-                    if($b->getId() == $cle){
-                        foreach($valeur as $k => $v){
-                            if($value->getId() == $k){
-                                $value->addMoyennePeriode([$b->getNomPeriode() => $v]);
+            if(empty($moyenne['moyenneEvalPeriode'])) $value->addMoyennePeriodeEval([0 => "NE"]);
+            else {
+                foreach($moyenne['moyenneEvalPeriode'] as $cle => $valeur){
+                    foreach($valeur as $k => $v){
+                        foreach($periodes as $a => $b){
+                            if($b->getId() == $k){
+                                foreach($v as $c => $d){
+                                    if($value->getId() == $c){
+                                        $value->addMoyennePeriodeEval([$b->getNomPeriode() => $d]);
+                                    }
+                                }
                             }
+                        }
+                    }  
+                }
+            }
+            if(empty($moyenne['moyenneEvalSemestre'])) $value->addMoyenneSemEval(["Semestres" => "NE"]);
+            else {
+                foreach($moyenne['moyenneEvalSemestre'] as $cle => $valeur){
+                    foreach($valeur as $k => $v){
+                        if($value->getId() == $k){
+                            $value->addMoyenneSemEval([$cle => $v]);
                         }
                     }
                 }
             }
-            foreach($moyenneEleveSemestre as $cle => $valeur){
-                foreach($valeur as $k => $v){
-                    if($value->getId() == $k){
-                        $value->addMoyenneSem([$cle => $v]);
+            if(empty($moyenne['moyenneChampsPeriode'])) $value->addMoyenneChampPer(["Périodes" => "NE"]);
+            else {
+                foreach($moyenne['moyenneChampsPeriode'] as $cle => $valeur){
+                    foreach($valeur as $k => $v){
+                        foreach($periodes as $a => $b){
+                            if($b->getId() == $k){
+                                foreach($v as $c => $d){
+                                    if($value->getId() == $c){
+                                        $value->addMoyenneChampPer([$b->getNomPeriode() => $d]);
+                                    }
+                                }
+                            }
+                        }
+                    }  
+                }
+            }
+            if(empty($moyenne['moyenneChampsSemestre'])) $value->addMoyenneChampSem(["Semestres" => "NE"]);
+            else {
+                foreach($moyenne['moyenneChampsSemestre'] as $cle => $valeur){
+                    foreach($valeur as $k => $v){
+                        if($value->getId() == $k){
+                            $value->addMoyenneChampSem([$cle => $v]);
+                        }
                     }
                 }
             }
-            foreach($moyenneEleveTotaleAnnee as $cle => $valeur){
-                if($value->getId() == $cle){
-                    $value->addMoyenneAnnee([$cle => $valeur]);
+            if(empty($moyenne['moyenneCoursEvalPeriode'])) $value->addMoyennePeriode(["Périodes" => "NE"]);
+            else {
+                foreach($moyenne['moyenneCoursEvalPeriode'] as $cle => $valeur){
+                    foreach($valeur as $k => $v){
+                        foreach($periodes as $a => $b){
+                            if($b->getId() == $k){
+                                foreach($v as $c => $d){
+                                    if($value->getId() == $c){
+                                        $value->addMoyennePeriode([$b->getNomPeriode() => $d]);
+                                    }
+                                }
+                            }
+                        }
+                    }  
                 }
             }
+            if(empty($moyenne['moyenneCoursEvalSemestre'])) $value->addMoyenneSem(["Semestres" => "NE"]);
+            else {
+                foreach($moyenne['moyenneCoursEvalSemestre'] as $cle => $valeur){
+                    foreach($valeur as $k => $v){
+                        if($value->getId() == $k){
+                            $value->addMoyenneSem([$cle => $v]);
+                        }
+                    }
+                }
+            }
+            if(empty($moyenne['moyenneAnnee'])) $value->addMoyenneAnnee([0 => "NE"]);
+            else {
+                foreach($moyenne['moyenneAnnee'] as $cle => $valeur){
+                    if($value->getId() == $cle){
+                        $value->addMoyenneAnnee([$cle => $valeur]);
+                    }
+                }
+            }   
         }
         return $eleves;
     }

@@ -2,12 +2,16 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints\Date;
+use Symfony\Component\Validator\Constraints\IsTrue;
+use Symfony\Component\Validator\Constraints\DateTime;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use EWZ\Bundle\RecaptchaBundle\Validator\Constraints as Recaptcha;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
@@ -69,6 +73,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="date")
+     * @Assert\DateTime(message="Date invalide")
      */
     private $dateNaiss;
 
@@ -76,6 +81,16 @@ class User implements UserInterface
      * @Assert\EqualTo(propertyPath="mdp", message="Votre mot de passe ne corresponds pas")
      */
     public $confMdp;
+
+    /**
+     * @Assert\EqualTo("true", message="Vous devez accepter les droits de condition générales d'utilisation")
+     */
+    public $acceptCGU;
+
+    /**
+     * @Recaptcha\IsTrue(message="Veuillez valider que vous n'êtes pas un robot")
+     */
+    public $recaptcha;
     
     /**
      * @var string le token qui servira lors de l'oubli de mot de passe
@@ -108,7 +123,15 @@ class User implements UserInterface
      */
     private $userActif;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Appreciation", mappedBy="professeur")
+     */
+    private $appreciations;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Parametres", mappedBy="professeur")
+     */
+    private $parametres;
 
     public function __construct()
     {
@@ -116,6 +139,8 @@ class User implements UserInterface
         $this->customizedPresences = new ArrayCollection();
         $this->userRoles = new ArrayCollection();
         $this->groups = new ArrayCollection();
+        $this->appreciations = new ArrayCollection();
+        $this->parametres = new ArrayCollection();
     }
 
 
@@ -380,6 +405,68 @@ class User implements UserInterface
     public function setUserActif(bool $userActif): self
     {
         $this->userActif = $userActif;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Appreciation[]
+     */
+    public function getAppreciations(): Collection
+    {
+        return $this->appreciations;
+    }
+
+    public function addAppreciation(Appreciation $appreciation): self
+    {
+        if (!$this->appreciations->contains($appreciation)) {
+            $this->appreciations[] = $appreciation;
+            $appreciation->setProfesseur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAppreciation(Appreciation $appreciation): self
+    {
+        if ($this->appreciations->contains($appreciation)) {
+            $this->appreciations->removeElement($appreciation);
+            // set the owning side to null (unless already changed)
+            if ($appreciation->getProfesseur() === $this) {
+                $appreciation->setProfesseur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Parametres[]
+     */
+    public function getParametres(): Collection
+    {
+        return $this->parametres;
+    }
+
+    public function addParametre(Parametres $parametre): self
+    {
+        if (!$this->parametres->contains($parametre)) {
+            $this->parametres[] = $parametre;
+            $parametre->setProfesseur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParametre(Parametres $parametre): self
+    {
+        if ($this->parametres->contains($parametre)) {
+            $this->parametres->removeElement($parametre);
+            // set the owning side to null (unless already changed)
+            if ($parametre->getProfesseur() === $this) {
+                $parametre->setProfesseur(null);
+            }
+        }
 
         return $this;
     }

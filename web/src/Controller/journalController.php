@@ -25,6 +25,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class journalController extends AbstractController {
 
     /**
+     * Choix du groupe pour lequel on doit afficher le journal de classe
      * @Route("/journalDeClasse", name="journal")
      *  @Security("is_granted('ROLE_ACTIF')", statusCode=405)
      */
@@ -57,6 +58,7 @@ class journalController extends AbstractController {
     }
     
     /**
+     * Affichage du journal de classe pour le groupe
      * @Route("/journalDeClasse/{group}", name="journal_de_classe")
      * @Security("is_granted('ROLE_ACTIF') and user === group.getProfesseur()", statusCode=405)
      */
@@ -154,6 +156,7 @@ class journalController extends AbstractController {
     }
 
     /**
+     * Modification des points pour le cours donné dans le journal de classe
      * @Route("/modifPointsCours", name="modif_points_cours")
      */
     public function modifPoints(Request $request){
@@ -182,6 +185,7 @@ class journalController extends AbstractController {
     }
 
     /**
+     * Gestion des présences dans le journal de classe
      * @Route("/presences", name="presence_eleve")
      */
     public function presenceEleve(Request $request){
@@ -211,6 +215,7 @@ class journalController extends AbstractController {
     }
 
     /**
+     * Gestion des présences des élèves avec les presences customisés
      * @Route("/presencesCustomized", name="presences_customized")
      */
     public function presencesCustomized(Request $request){
@@ -244,6 +249,7 @@ class journalController extends AbstractController {
     }
 
     /**
+     * Modification de la date du cours 
      * @Route("/modifDateCours", name="modif_date_cours")
      */
     public function modifDate(Request $request){
@@ -271,6 +277,7 @@ class journalController extends AbstractController {
     }
 
     /**
+     * Modification de l'intitulé du cours
      * @Route("/modifIntituleCours", name="modif_intitule_cours")
      */
     public function modifIntitule(Request $request){
@@ -292,6 +299,7 @@ class journalController extends AbstractController {
     }
 
     /**
+     * Modification des heures du cours
      * @Route("/modifHeuresCours", name="modif_heures_cours")
      */
     public function modifHeuresCours(Request $request){
@@ -317,6 +325,7 @@ class journalController extends AbstractController {
     }
 
      /**
+      * Modificaiton de la cote pour le cours
      * @Route("/modifCoteCours", name="modif_cote_cours")
      */
     public function modfiCoteCours(Request $request){
@@ -338,6 +347,7 @@ class journalController extends AbstractController {
     }
 
     /**
+     * Modification des heures d'évaluation 
      * @Route("/modifHeuresEval", name="modif_heures_eval")
      */
     public function modifHeuresCompetence(Request $request){
@@ -361,6 +371,7 @@ class journalController extends AbstractController {
     }
 
     /**
+     * Modification de l'intitulé
      * @Route("modifIntituleEval", name="modif_inititule_eval")
      */
     public function modifIntituleEval(Request $request){
@@ -382,6 +393,7 @@ class journalController extends AbstractController {
     }
 
     /**
+     * Modification de la date d'évaluation
      * @Route("modifDateEval", name="modif_date_eval")
      */
     public function modifDateEval(Request $request){
@@ -402,6 +414,7 @@ class journalController extends AbstractController {
     }
 
     /**
+     * Modification des points d'évaluation
      * @Route("modifPointsEval", name="modif_points_evaluation")
      */
     public function modifPointsEval(Request $request){
@@ -427,6 +440,7 @@ class journalController extends AbstractController {
     }
 
     /**
+     * Modification de la compétence
      * @Route("/changementCompetence", name="changement_competence")
      */
     public function chagementCompetence(Request $request){
@@ -453,6 +467,7 @@ class journalController extends AbstractController {
     }
 
      /**
+      * Modification de la cote d'évaluation
      * @Route("/modifCoteEval", name="modif_cote_eval")
      */
     public function modfiCoteEval(Request $request){

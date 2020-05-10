@@ -31,7 +31,10 @@ class AddNewEvaluationsType extends AbstractType
             ->add('dateEvaluation', DateType::class, [
                 'label' => "Date d'évaluation",
                 'data' => new \DateTime(),
+                'widget' => 'single_text',
+                'html5' => false,
                 'format' => 'dd-MM-yyyy',
+                'help' => "Veuillez respecter le format suivant: jj-mm-aaaa"
             ])
             ->add('periode', ChoiceType::class, [
                 'choices' => 

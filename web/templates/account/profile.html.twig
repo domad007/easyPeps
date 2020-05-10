@@ -1,5 +1,13 @@
 {% extends 'base.html.twig' %}
 {% block title %} -Modification de votre profil {% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
+{% endblock %}
+{% block scripts %}
+    <script src="/JS/main.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+{% endblock %}
 {% block header %}
     <header class="jumbotron my-4">
         <h1 class="display-3" style="text-align: center">Modification de votre profil</h1>
@@ -15,9 +23,8 @@
                     </div>
                 {% endfor %}  
                 {{ form_start(form) }}
-                    <div class="form-group">
-                    </div>
                 {{ form_end(form) }}
+                <div id="desactivate"></div>
             </div>
         </div>    
     </div>

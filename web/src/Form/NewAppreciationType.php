@@ -2,46 +2,41 @@
 
 namespace App\Form;
 
-use App\Form\ContactType;
-use App\Entity\Ponderation;
+use App\Entity\Appreciation;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
-class NewPonderationType extends AbstractType
+class NewAppreciationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $contact = new ContactType();
         $builder
-            ->add('evaluation', IntegerType::class,
+            ->add('intitule', TextType::class,
             [
                 'attr' => 
                 [
-                    'placeholder' => "%",
-                    'min' => 1,
-                    'max' => 100,
+                    'placeholder' => "Nom de l'appréciation",
                 ]
             ])
-            ->add('cours', IntegerType::class,
+            ->add('cote', IntegerType::class,
             [
                 'attr' => 
                 [
-                    'placeholder' => "%",
-                    'min' => 1,
-                    'max' => 100,
+                    'placeholder' => "A partir de quelle cote appréciation va être appliqué",
+                    'min' => 0,
+                    'max' => 10
                 ]
             ])
-            ->add('save', SubmitType::class, $contact->getConfig("Créez la pondération", ""))
         ;
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Ponderation::class,
+            'data_class' => Appreciation::class,
         ]);
     }
 }

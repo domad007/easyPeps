@@ -28,6 +28,9 @@
         </div>
         <br>
         <div id="detailsEleveCours" class="collapse">
+            <div class="row">
+                <small><b>NE: Non évalué</b></small>
+            </div>
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -35,28 +38,36 @@
                             <th>#</th>
                             <th>Nom</th>
                             <th>Prenom</th>
-                            <th>Classe</th>                           
-                            {% for key, value in moyennePeriodes %}
-                                <th id="{{key}}">
-                                    {{key}}
-                                    <p>
-                                        <small>
-                                            {{value|number_format(2)}} %
-                                        </small>
-                                    </p>
-                                </th>
-                            {% endfor %}
-    
-                            {% for key, value in moyennesSemestres %}                
-                                <th id="{{key}}">
-                                    {{key}}
-                                    <p>
-                                        <small>
-                                            {{value|number_format(2)}} %
-                                        </small>
-                                    </p>
-                                </th>                 
-                            {% endfor %}
+                            <th>Classe</th>  
+                            {% if moyennePeriodes == 0 %}
+                                <th>Périodes</th>
+                            {% else %}                
+                                {% for key, value in moyennePeriodes %}
+                                    <th id="{{key}}">
+                                        {{key}}
+                                        <p>
+                                            <small>
+                                                {{value|number_format(2)}} %
+                                            </small>
+                                        </p>
+                                    </th>
+                                {% endfor %}
+                            {% endif %}    
+
+                            {% if moyennesSemestres == 0 %}
+                                <th>Semestres</th>
+                            {% else %}
+                                {% for key, value in moyennesSemestres %}                
+                                    <th id="{{key}}">
+                                        {{key}}
+                                        <p>
+                                            <small>
+                                                {{value|number_format(2)}} %
+                                            </small>
+                                        </p>
+                                    </th>                 
+                                {% endfor %}
+                            {% endif %}
                         </tr>
                     </thead>
                     <tbody>
@@ -68,15 +79,23 @@
                                 <td>{{val.classe.nomClasse}}</td>  
                                 {% for cle, valeur in val.moyennePeriodeCours %}
                                     {% for k,v in valeur %}
-                                        <td id="{{k}}">
-                                            {{v|number_format(2)}}
+                                        <td>
+                                            {% if v|isInteger %}
+                                                {{v|number_format(2)}}
+                                            {% else  %}
+                                                {{v}}
+                                            {% endif %}
                                         </td> 
                                     {% endfor %}
                                 {% endfor %}
                                 {% for cle, valeur in val.moyenneSemCours %}
                                     {% for k,v in valeur %}
                                         <td id="{{k}}">
-                                            {{v|number_format(2)}}
+                                            {% if v|isInteger %}
+                                                {{v|number_format(2)}}
+                                            {% else  %}
+                                                {{v}}
+                                            {% endif %}
                                         </td> 
                                     {% endfor %}
                                 {% endfor %}
@@ -87,6 +106,9 @@
             </div>       
         </div>
         <div id="detailsEleveEval" class="collapse">
+            <div class="row">
+                <small><b>NE: Non évalué</b></small>
+            </div>
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -95,22 +117,30 @@
                             <th>Nom</th>
                             <th>Prenom</th>
                             <th>Classe</th>
-                            {% for cle, valeur in moyenneEvaluationPeriodes %}                              
-                                <th id="">
-                                    {{cle}}
-                                    <p>
-                                        <small>{{valeur|number_format(2)}} %</small>
-                                    </p>
-                                </th>
-                            {% endfor %}
-                            {% for cle, valeur in moyenneEvaluationSem %}
-                               <th>
-                                    {{cle}}
-                                    <p>
-                                        <small>{{valeur|number_format(2)}} %</small>
-                                    </p>
-                                </th>
-                            {% endfor %}
+                            {% if moyenneEvaluationPeriodes == 0 %}
+                                <th>Periodes</th>
+                            {% else %}
+                                {% for cle, valeur in moyenneEvaluationPeriodes %}                              
+                                    <th id="">
+                                        {{cle}}
+                                        <p>
+                                            <small>{{valeur|number_format(2)}} %</small>
+                                        </p>
+                                    </th>
+                                {% endfor %}
+                            {% endif %}
+                            {% if moyenneEvaluationSem == 0 %}
+                                <th>Semestres</th>
+                            {% else %}
+                                {% for cle, valeur in moyenneEvaluationSem %}
+                                <th>
+                                        {{cle}}
+                                        <p>
+                                            <small>{{valeur|number_format(2)}} %</small>
+                                        </p>
+                                    </th>
+                                {% endfor %}
+                            {% endif %}
                         </tr>
                     </thead>
                     <tbody>
@@ -123,14 +153,22 @@
                                 {% for cle, valeur in val.moyennePeriodeEval %}
                                     {% for k,v in valeur %}
                                         <td>
-                                            {{v|number_format(2)}}
+                                            {% if v|isInteger %}
+                                                {{v|number_format(2)}}
+                                            {% else  %}
+                                                {{v}}
+                                            {% endif %}
                                         </td> 
                                     {% endfor %}
                                 {% endfor %}
                                 {% for cle, valeur in val.moyenneSemEval %}
                                     {% for k,v in valeur %}
                                         <td>
-                                            {{v|number_format(2)}}
+                                            {% if v|isInteger %}
+                                                {{v|number_format(2)}}
+                                            {% else  %}
+                                                {{v}}
+                                            {% endif %}
                                         </td> 
                                     {% endfor %}
                                 {% endfor %}
@@ -142,14 +180,17 @@
         </div>
         <div id="detailsEleveChamp" class="collapse">
             <div class="row">
+                <div class="col">                 
+                    <small><b>NE: Non évalué</b></small>
+                </div>
                 <div class="col">
                     <small><b>CP: Condition Physique</b></small>
                 </div>
                 <div class="col">
-                    <small><b>HGM: Habilité gestuelles et motrices</b></small>
+                    <small><b>CSM: Coopération socio motrice</b></small>
                 </div>
                 <div class="col">
-                    <small><b>CSM: Coopération socio motrice</b></small>
+                    <small><b>HGM: Habilité gestuelles et motrices</b></small>
                 </div>
             </div>
             <div class="table-responsive">
@@ -168,11 +209,11 @@
                                             <div class="col">                                                  
                                                 <small>CP</small>      
                                             </div>
-                                                <div class="col">                                                  
-                                                <small>HGM</small>      
-                                            </div>
-                                                <div class="col">                                                  
+                                            <div class="col">                                                  
                                                 <small>CSM</small>      
+                                            </div>
+                                            <div class="col">                                                  
+                                                <small>HGM</small>      
                                             </div>
                                         </div>
                                     </th>
@@ -186,12 +227,12 @@
                                             <div class="col">                                                  
                                                 <small>CP</small>      
                                             </div>
-                                                <div class="col">                                                  
-                                                <small>HGM</small>      
-                                            </div>
-                                                <div class="col">                                                  
+                                            <div class="col">                                                  
                                                 <small>CSM</small>      
                                             </div>
+                                            <div class="col">                                                  
+                                                <small>HGM</small>      
+                                            </div>                    
                                         </div>
                                     </th>
                                 {% endfor %}
@@ -209,7 +250,11 @@
                                     {% for k, v in valeur %}
                                         {% for a, b in v %}
                                         <td>
-                                            {{b|number_format(2)}}
+                                            {% if b|isInteger %}
+                                                {{b|number_format(2)}}                                             
+                                            {% else %}
+                                                {{b}}
+                                            {% endif %}
                                         </td> 
                                         {% endfor %}
                                     {% endfor %}
@@ -218,7 +263,11 @@
                                     {% for k, v in valeur %}
                                         {% for a, b in v %}
                                         <td>
-                                            {{b|number_format(2)}}
+                                           {% if b|isInteger %}
+                                                {{b|number_format(2)}}         
+                                            {% else %}
+                                                {{b}}
+                                            {% endif %}
                                         </td> 
                                         {% endfor %}
                                     {% endfor %}
@@ -229,7 +278,10 @@
                 </table>
             </div>   
         </div>
-        <div id="detailsEleveMoyenne" class="collapse">
+        <div id="detailsEleveMoyenne" class="collapse show">
+            <div class="row">
+                <small><b>NE: Non évalué</b></small>
+            </div>
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -245,7 +297,13 @@
                             {% endfor %}
                             {% for key, value in eleves.0.moyenneSem %}
                                 {% for cle, valeur in value %}
-                                    <th>{{cle}}</th>
+                                    <th>
+                                        {{cle}}
+                                        <div class="row d-flex justify-content-center">
+                                            <small>Bilan</small>
+                                        </div>
+                                    </th>
+                                    
                                 {% endfor %}
                             {% endfor %}
                             <th>Annee</th>
@@ -261,20 +319,34 @@
                                 {% for cle, valeur in val.moyennePeriode %}
                                     {% for k, v in valeur %}                                      
                                         <td>
-                                            {{v|number_format(2)}}
+                                            {% if v|isInteger %}
+                                                {{v|number_format(2)}}
+                                            {% else %}
+                                                {{v}}
+                                            {% endif %}
                                         </td>                                    
                                     {% endfor %}
                                 {% endfor %}
                                 {% for cle, valeur in val.moyenneSem %}
                                     {% for k, v in valeur %}                                      
-                                        <td>
-                                            {{v|number_format(2)}}
+                                        <td class="text-center">
+                                            {% if v|isInteger %}
+                                                {{v|number_format(2)}}
+                                            {% else  %}
+                                                {{v}}
+                                            {% endif %}
                                         </td>                                        
                                     {% endfor %}
                                 {% endfor %}
                                 {% for cle, valeur in val.moyenneAnnee %}
                                     {% for k, v in valeur %}
-                                        <td>{{v|number_format(2)}}</td>
+                                        <td>
+                                            {% if v|isInteger %}
+                                                {{v|number_format(2)}}
+                                            {% else  %}
+                                                {{v}}
+                                            {% endif %}
+                                        </td>
                                     {% endfor %}
                                 {% endfor %}
                             </tr>                                                                         
