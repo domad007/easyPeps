@@ -111,6 +111,7 @@ class accountController extends AbstractController {
                 $this->addFlash('success', "Votre compte a bien été désactivé");
                 return $this->redirectToRoute('homepage');
             }
+
             else {
                 $roleInactif = $manager
                 ->getRepository(Role::class)
@@ -127,7 +128,6 @@ class accountController extends AbstractController {
 
                 $this->addFlash('success', "Votre profil a bien été modifié");
                 return $this->redirectToRoute('homepage');
-
             }
 
             $this->addFlash(

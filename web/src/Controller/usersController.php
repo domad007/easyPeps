@@ -4,7 +4,12 @@ namespace App\Controller;
 use DateTime;
 use App\Entity\Role;
 use App\Entity\User;
+use App\Entity\Cours;
+use App\Entity\Groups;
+use App\Form\CompteType;
+use App\Entity\Appreciation;
 use App\Repository\UserRepository;
+use App\Entity\CustomizedPresences;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +28,32 @@ class usersController extends AbstractController {
             'admin/gestionUser/userAccount.html.twig',
             [
                 'users' => $users->findAll()
+            ]
+        );
+    }
+
+    /**
+     * @Route("/admin/editUser/{user}", name="edit_user")
+     */
+    public function editUser(User $user, Request $request){
+        $manager = $this->getDoctrine()->getManager();
+        $form = $this->createForm(CompteType::class, $user);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+
+            $manager->persist($user);
+            $manager->flush();
+
+            $this->addFlash('success', "Le profil a été modifié avec succes !");
+            return $this->redirectToRoute('admin_accounts');
+        }
+
+        return $this->render(
+            'admin/gestionUser/editUser.html.twig',
+            [
+                'form' => $form->createView(),
+                'user' => $user
             ]
         );
     }

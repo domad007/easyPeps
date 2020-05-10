@@ -115,27 +115,6 @@ function modifCompetence(value){
     });
 }
 
-/*function gestionEvaluation(property){
-    if(property.checked){
-        $('.evalThead').fadeIn('slow');
-        $('.evalTbody').fadeIn('slow');
-    } 
-    else {
-        $('.evalThead').fadeOut('slow'); 
-        $('.evalTbody').fadeOut('slow');
-    }
-}
-
-function gestionPeriodes(property, id){
-    if(property.checked){
-        $('.periode'+id).fadeIn('slow');
-        $('.periode'+id).fadeIn('slow');
-    } 
-    else {
-        $('.periode'+id).fadeOut('slow'); 
-        $('.periode'+id).fadeOut('slow');
-    }
-}*/
 function coursEvaluation(){
     switch($('input[name=checkboxCours]').is(':checked')){
         case false : 
@@ -224,4 +203,3 @@ function addRole(property, idUser){
         });
     }
 }
-
