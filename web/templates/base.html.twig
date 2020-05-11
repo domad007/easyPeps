@@ -182,6 +182,11 @@
                         {{ message }}
                     </div>
                 {% endfor %}
+                {% for message in app.flashes('danger') %}
+                    <div class="alert alert-danger">
+                        {{ message }}
+                    </div>
+                {% endfor %}
                 <div class="jumbotron" style="font-size: 1.3em;">
                     <p> 
                         Par l'intermédiaire de ce site, j'aimerais vous présenter mon programme de gestion de classe et toute une batterie d'outils mis au point afin de répondre 

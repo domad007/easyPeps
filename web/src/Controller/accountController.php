@@ -261,7 +261,7 @@ class accountController extends AbstractController {
             );
 
             if ($user === null) {
-                $this->addFlash('danger', 'Le token semble inconnu');
+                $this->addFlash('danger', 'Erreur lors de changement de passe, le token a expiré !');
                 return $this->redirectToRoute('homepage');
             }
 
@@ -299,7 +299,7 @@ class accountController extends AbstractController {
             $data = $formContact->getData();
             $message = (new \Swift_Message('Contact avec administrateur'))
                 ->setFrom($data['mail'])
-                ->setTo('dominikfiedorczuk69@gmail.com')
+                ->setTo('contact.easypeps@gmail.com')
                 ->setBody(
                     'Nom: ' .$data['nom'].'<br>'. 
                     'Prénom: '. $data['prenom'] .'<br>'. 
@@ -310,6 +310,7 @@ class accountController extends AbstractController {
 
             $mailer->send($message);
             $this->addFlash('success', 'Votre message a été envoyé, nous essayerons de vous répondre au plus vite');
+            return $this->redirectToRoute('homepage');
         }
 
         return $this->render(
