@@ -1,5 +1,13 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, TouchableOpacity, Text, ScrollView, AsyncStorage } from 'react-native';
+import 
+{ 
+    StyleSheet, 
+    View, 
+    ScrollView, 
+    AsyncStorage, 
+    ActivityIndicator, 
+    Alert 
+} from 'react-native';
 import { DataTable } from 'react-native-paper';
 
 class Eleves extends Component {
@@ -18,7 +26,15 @@ class Eleves extends Component {
         .then((response) => response.json())
         .then((responseJson) => {
             if(responseJson == "probleme"){
-                alert("Vous n'avez pas créé d'élèves, veuillez en créer sur notre site web")
+                Alert.alert(
+                    "Problème d'élèves",
+                    "Vous n'avez pas créé d'élèves, veuillez en créer sur notre site web",
+                    [
+                        {
+                            text: "OK", onPress: () => this.props.navigation.navigate("MenuGroup") 
+                        }
+                    ]
+                );
             }
             else {
                 this.setState({eleves: responseJson})
@@ -28,7 +44,13 @@ class Eleves extends Component {
     render(){
         let eleves = this.state.eleves
         let afficheEleves = [];
-    
+        if(eleves.length === 0) {
+            return( 
+                <View style={style.loading}>
+                    <ActivityIndicator size="large" color="red" />
+                </View>
+            )
+        } 
         for(let i = 0; i<eleves.length; i++){
             afficheEleves.push(
                 <DataTable.Row>
@@ -55,4 +77,12 @@ class Eleves extends Component {
         )
     }
 }
+
+const style= StyleSheet.create({
+    loading: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+    }
+})
 export default Eleves

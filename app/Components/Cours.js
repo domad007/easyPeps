@@ -1,5 +1,15 @@
-import React, { Component } from 'react';
-import { StyleSheet, View, TouchableOpacity, Text, ScrollView, AsyncStorage } from 'react-native';
+import React, { Component, useRef } from 'react';
+import 
+{ 
+    StyleSheet, 
+    View, 
+    Text, 
+    ScrollView, 
+    AsyncStorage, 
+    Alert, 
+    ActivityIndicator, 
+    Animated  
+} from 'react-native';
 
 class Cours extends Component {
     constructor(props){
@@ -17,7 +27,15 @@ class Cours extends Component {
         .then((response) => response.json())
         .then((responseJson) => {
             if(responseJson == "probleme"){
-                alert("Vous n'avez pas de cours veuillez en créer sur notre site web")
+                Alert.alert(
+                    "Problème de cours",
+                    "Vous n'avez pas de cours veuillez en créer sur notre site web",
+                    [
+                        {
+                            text: "OK", onPress: () => this.props.navigation.navigate("MenuGroup") 
+                        }
+                    ]
+                );
             }
             else {
                 this.setState({cours: responseJson})
@@ -25,15 +43,50 @@ class Cours extends Component {
         })
     }
     render(){
-        let coursUser = this.state.cours;
+        let coursUser = this.state.cours;  
         let afficheCours = [];
+        if(coursUser.length === 0) {
+            return( 
+                <View style={style.loading}>
+                    <ActivityIndicator size="large" color="red" />
+                </View>
+            )
+        } 
+        const FadeInView = (props) => {
+            const fadeAnim = useRef(new Animated.Value(0)).current  // Initial value for opacity: 0
+          
+            React.useEffect(() => {
+              Animated.timing(
+                fadeAnim,
+                {
+                  toValue: 1,
+                  duration: 800,
+                }
+              ).start();
+            }, [])
+          
+            return (
+              <Animated.View                 // Special animatable View
+                style={{
+                  ...props.style,
+                  opacity: fadeAnim,         // Bind opacity to animated value
+                }}
+              >
+                {props.children}
+              </Animated.View>
+            );
+          }
         for(let i = 0; i < coursUser.length; i++){
             afficheCours.push(
-                <View key = { i } style={style.container}>
-                    <Text style={{ fontSize: 20 }}>{coursUser[i]['cours']}</Text>
-                    <Text>Date de cours: {coursUser[i]['date_cours']}</Text>
-                    <Text>Nombre d'heures: {coursUser[i]['heures']}</Text>
-                    <Text>Periode: {coursUser[i]['periode']}</Text>
+                <View>
+                    <FadeInView>
+                        <View key = { i } style={style.container}>
+                            <Text style={{ fontSize: 20, color: 'white' }}>{coursUser[i]['cours']}</Text>
+                            <Text style={{color: 'white'}}>Date de cours: {coursUser[i]['date_cours']}</Text>
+                            <Text style={{color: 'white'}}>Nombre d'heures: {coursUser[i]['heures']}</Text>
+                            <Text style={{color: 'white'}}>Periode: {coursUser[i]['periode']}</Text>
+                        </View>
+                    </FadeInView>
                 </View>
             )
         }
@@ -47,18 +100,22 @@ class Cours extends Component {
 const style= StyleSheet.create({
     container: {
         flex : 1,
-        backgroundColor: '#fff',
+        backgroundColor: 'red',
         alignItems: 'center',
         justifyContent: 'space-between',
         marginTop: 10,
         marginLeft: 10,
         width: '95%',
-        backgroundColor:'lightgrey',
         borderRadius: 25,
         marginVertical: 10,
         paddingVertical: 13,
         textAlign: 'center',
         color: '#FFFFFF'
+    },
+    loading: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
     }
 })
 export default Cours

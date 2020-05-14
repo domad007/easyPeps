@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { 
+import 
+{ 
     StyleSheet, 
     View, 
     TextInput, 
@@ -7,9 +8,12 @@ import {
     TouchableOpacity, 
     Text, 
     ScrollView, 
-    AsyncStorage
-} 
-from 'react-native';
+    AsyncStorage,
+    Alert,
+    ActivityIndicator 
+} from 'react-native';
+import axios from 'axios'
+
 export default class Connexion extends Component {
     constructor(props) {
         super(props)
@@ -18,27 +22,35 @@ export default class Connexion extends Component {
             mdp: '',
         }
     }
-    connexion = ()=> {
+    componentWillUnMount(){
+        this.props.navigation.navigate('ChoixGroup')
+    }
+    connexion = async ()=> {
         const { pseudo } = this.state;
         const { mdp } = this.state;
-
-        /*if(pseudo == ""){
-            alert("Pseudo ou mot de passe incorrect")
+        let user = await axios.post('http://192.168.1.3/connexionAppli', 
+            {
+                pseudo: pseudo,
+                mdp: mdp
+            }
+        )
+        if(user.data == "problemUser"){
+            Alert.alert(
+                "Problème d'utilisateur",
+                "Votre pseudo semble incorrect, veuillez réessayer"
+            );
         }
-        else {*/
-            fetch('http://192.168.1.3/connexionAppli/domad007')
-            .then((response) => response.json())
-            .then((responseJson) => {
-                if(responseJson == "problem"){
-                    alert("L'utilisateur ou le mot de passe est incorrect")
-                }
-                else {
-                    AsyncStorage.clear()
-                    AsyncStorage.setItem('idUser', JSON.stringify(responseJson['id']))
-                    this.props.navigation.navigate('ChoixGroup')
-                }
-            })
-        //}
+        else if(user.data  == "problemPassword"){
+            Alert.alert(
+                "Problème de mot de passe",
+                "Votre mot de passe semble incorrect, veuillez réessayer"
+            )
+        }
+        else {
+            AsyncStorage.clear()
+            AsyncStorage.setItem('idUser', JSON.stringify(user.data['id']))
+            this.componentWillUnMount()
+        }
     }
     render(){
         return (
@@ -108,6 +120,6 @@ const style = StyleSheet.create({
 		paddingVertical: 13,
         textAlign: 'center',
         color: '#FFFFFF'
-    }
+    },
 
 });    

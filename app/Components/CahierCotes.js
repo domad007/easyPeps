@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, TouchableOpacity, Text, ScrollView, flexDirection, AsyncStorage } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text, ScrollView, flexDirection, AsyncStorage, ActivityIndicator } from 'react-native';
 import { DataTable } from 'react-native-paper';
 class CahierCotes extends Component {
     constructor(props){
@@ -37,7 +37,7 @@ class CahierCotes extends Component {
             )
         }
         return (
-            <ScrollView>
+            <ScrollView style={{width: 1000}}>
                 <DataTable>
                     <DataTable.Header>
                         <DataTable.Title>Nom</DataTable.Title>
@@ -60,5 +60,13 @@ class CahierCotes extends Component {
         )
     }
 }
+
+const style= StyleSheet.create({
+    loading: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+    }
+})
 
 export default CahierCotes

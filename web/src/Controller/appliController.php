@@ -12,6 +12,7 @@ use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -22,25 +23,39 @@ class appliController extends AbstractController {
         $this->serializer = $serializer;
     }
     /**
-     * @Route("/connexionAppli/{pseudo}", name="connexion_appli")
+     * @Route("/connexionAppli", name="connexion_appli")
      */
-    public function connexionAppli($pseudo){
+    public function connexionAppli(Request $request,  UserPasswordEncoderInterface $encoder){
         $manager = $this->getDoctrine()->getManager();
-        $getUser = $manager
-        ->getRepository(User::class)
-        ->findBy(
-            [
-                'nomUser' => $pseudo,
-            ]
-        );
-        foreach($getUser as $key => $value){
-            $user['id'] = $value->getId();
-        }
-        if(!empty($getUser)){
-            echo json_encode($user);
-        }
-        else {
-            echo json_encode("problem");
+
+        if($request->isMethod('post')){
+            $content = $request->getContent();
+            $decodeContent = json_decode($content, true);
+            $pseudo = $decodeContent['pseudo'];
+            $mdp = $decodeContent['mdp'];
+
+            $getUser = $manager
+            ->getRepository(User::class)
+            ->findOneBy(
+                [
+                    'nomUser' => $pseudo
+                ]
+            );
+            if(!empty($getUser)){
+                $checkPassword = $encoder->isPasswordValid($getUser, $mdp);
+                if($checkPassword){
+                    $user['id'] = $getUser->getId();
+
+                    echo json_encode($user);
+                }
+                else {
+                    echo json_encode("problemPassword");
+                }
+            }
+            else {
+                echo json_encode("problemUser");
+            }
+            
         }
         return new Response("");
     }
@@ -50,11 +65,13 @@ class appliController extends AbstractController {
      */
     public function ecolesUser($user){
         $manager = $this->getDoctrine()->getManager();
+
         $rsm = new ResultSetMapping();
         $rsm->addScalarResult('ecole', 'ecole')
         ->addScalarResult('groups_id', 'groups_id')
         ->addScalarResult('groupes', 'groupes')
         ->addScalarResult('nombreEleves', 'nombreEleves');
+
         $groupsSql = "select ecole.nom_ecole as ecole, groups_id, GROUP_CONCAT(nom_classe SEPARATOR '/') as groupes 
         from classe
         join ecole on classe.ecole_id = ecole.id

@@ -1,5 +1,15 @@
-import React, { Component } from 'react';
-import { StyleSheet, View, TouchableOpacity, Text, ScrollView, AsyncStorage } from 'react-native';
+import React, { Component, useRef } from 'react';
+import 
+{ 
+    StyleSheet, 
+    View, 
+    Text, 
+    ScrollView, 
+    AsyncStorage, 
+    Alert, 
+    ActivityIndicator, 
+    Animated 
+} from 'react-native';
 
 class Evaluations extends Component {
     constructor(props){
@@ -17,7 +27,16 @@ class Evaluations extends Component {
         .then((response) => response.json())
         .then((responseJson) => {
             if(responseJson == "probleme"){
-                alert("Vous n'avez pas d'évaluation' veuillez en créer sur notre site web")
+                Alert.alert(
+                    "Problème d'évaluations",
+                    "Vous n'avez pas d'évaluation, veuillez en créer sur notre site web",
+                    [
+                        {
+                            text: "OK", onPress: () => this.props.navigation.navigate("MenuGroup") 
+                        }
+                    ]
+                );
+
             }
             else {
                 this.setState({evaluations: responseJson})
@@ -27,16 +46,49 @@ class Evaluations extends Component {
     render(){
         let evaluations = this.state.evaluations
         let afficheEval = [];
+        if(evaluations.length === 0) {
+            return( 
+                <View style={style.loading}>
+                    <ActivityIndicator size="large" color="red" />
+                </View>
+            )
+        } 
+        const FadeInView = (props) => {
+            const fadeAnim = useRef(new Animated.Value(0)).current  // Initial value for opacity: 0
+          
+            React.useEffect(() => {
+              Animated.timing(
+                fadeAnim,
+                {
+                  toValue: 1,
+                  duration: 800,
+                }
+              ).start();
+            }, [])
+          
+            return (
+              <Animated.View                 // Special animatable View
+                style={{
+                  ...props.style,
+                  opacity: fadeAnim,         // Bind opacity to animated value
+                }}
+              >
+                {props.children}
+              </Animated.View>
+            );
+          }
         for(let i = 0; i<evaluations.length; i++){
             afficheEval.push(
-                <View key = { i } style={style.container}>
-                    <Text style={{ fontSize: 20 }}>{ evaluations[i]['evaluation'] }</Text>
-                    <Text>Date de l'évaluation: { evaluations[i]['date_evaluation'] }</Text>
-                    <Text>Herues d'évaluation: { evaluations[i]['heures'] }</Text>
-                    <Text>Compétence: { evaluations[i]['competence'] }</Text>
-                    <Text>Cotation: { evaluations[i]['sur_combien'] }</Text>
-                    <Text>Periode: { evaluations[i]['periode'] }</Text>
-                </View>
+                <FadeInView>
+                    <View key = { i } style={style.container}>
+                        <Text style={{ fontSize: 20, color: 'white' }}>{ evaluations[i]['evaluation'] }</Text>
+                        <Text style={{color: 'white'}}>Date de l'évaluation: { evaluations[i]['date_evaluation'] }</Text>
+                        <Text style={{color: 'white'}}>Herues d'évaluation: { evaluations[i]['heures'] }</Text>
+                        <Text style={{color: 'white'}}>Compétence: { evaluations[i]['competence'] }</Text>
+                        <Text style={{color: 'white'}}>Cotation: { evaluations[i]['sur_combien'] }</Text>
+                        <Text style={{color: 'white'}}>Periode: { evaluations[i]['periode'] }</Text>
+                    </View>
+                </FadeInView>
             )
         }
         return (
@@ -50,18 +102,22 @@ class Evaluations extends Component {
 const style= StyleSheet.create({
     container: {
         flex : 1,
-        backgroundColor: '#fff',
+        backgroundColor: 'red',
         alignItems: 'center',
         justifyContent: 'space-between',
         marginTop: 10,
         marginLeft: 10,
         width: '95%',
-        backgroundColor:'lightgrey',
         borderRadius: 25,
         marginVertical: 10,
         paddingVertical: 13,
         textAlign: 'center',
         color: '#FFFFFF'
+    },
+    loading: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
     }
 })
 export default Evaluations
