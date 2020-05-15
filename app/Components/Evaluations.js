@@ -28,7 +28,7 @@ class Evaluations extends Component {
         .then((responseJson) => {
             if(responseJson == "probleme"){
                 Alert.alert(
-                    "Problème d'évaluations",
+                    "",
                     "Vous n'avez pas d'évaluation, veuillez en créer sur notre site web",
                     [
                         {

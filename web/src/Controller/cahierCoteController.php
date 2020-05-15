@@ -21,6 +21,7 @@ use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -90,7 +91,7 @@ class cahierCoteController extends AbstractController {
             '/cahierCotes/cahierCotes.html.twig',
             [
                 'groups' => $groups,
-                'eleves' => $this->moyennesEleve($group),
+                'eleves' => $this->moyennesEleve($group, $user->getId()),
                 'moyennePeriodes' => $this->getMoyenneCours($group),
                 'moyenneChampPeriode' => $this->getMoyenneChamps($group),
                 'moyenneCompetence' => $this->getMoyenneCompetences($group),
@@ -750,7 +751,7 @@ class cahierCoteController extends AbstractController {
         return $moyenne;
     }
 
-    private function getMoyenneCoursEvalPeriodeEleve($group){
+    private function getMoyenneCoursEvalPeriodeEleve($group, $user){
         $manager= $this->getDoctrine()->getManager();
         $coursPeriode = $this->getMoyenneCoursPeriodeEleve($group);
         $moyenneEvalPeriode =  $this->getMoyenneEvaluationPeriodeEleve($group);
@@ -767,7 +768,7 @@ class cahierCoteController extends AbstractController {
         ->findOneBy(
             [
                 'ecole' => $classes[0]->getEcole()->getId(),
-                'professeur' => $this->getUser()->getId()
+                'professeur' => $user
             ]
         );
         if(!empty($ponderation)){
@@ -793,7 +794,7 @@ class cahierCoteController extends AbstractController {
         }
         return $moyenne;
     }
-    private function getMoyenneCoursEvalSemEleve($group){
+    private function getMoyenneCoursEvalSemEleve($group, $user){
         $manager= $this->getDoctrine()->getManager();
         $moyenneEvalSem = $this->getMoyenneEvaluationSemestreEleve($group);
         $moyenneCoursSem = $this->getMoyenneCoursSemestreEleve($group);
@@ -808,7 +809,7 @@ class cahierCoteController extends AbstractController {
         ->findOneBy(
             [
                 'ecole' => $classes[0]->getEcole()->getId(),
-                'professeur' => $this->getUser()->getId()
+                'professeur' => $user
             ]
         );
 
@@ -830,9 +831,9 @@ class cahierCoteController extends AbstractController {
         return $moyenne;
     }
 
-    private function getMoyenneCoursEvalAnneeEleve($group){
+    private function getMoyenneCoursEvalAnneeEleve($group, $user){
         $manager = $this->getDoctrine()->getManager();
-        $moyenneSemestre = $this->getMoyenneCoursEvalSemEleve($group);
+        $moyenneSemestre = $this->getMoyenneCoursEvalSemEleve($group, $user);
         $periodeCours= $this->getMoyenneCoursPeriodeEleve($group);
         $heuresPeriodeCours = $periodeCours['heuresPeriode'];
 
@@ -854,16 +855,16 @@ class cahierCoteController extends AbstractController {
         return $moyenne;
     }
 
-    private function applicationParametres($group){
+    private function applicationParametres($group, $user){
         $moyenneCoursPeriode = $this->getMoyenneCoursPeriodeEleve($group)['moyennesEleves'];
         $moyenneCoursSemestre = $this->getMoyenneCoursSemestreEleve($group);
         $moyenneChampsPeriode = $this->getMoyenneChampsPeriodeEleve($group)['moyenneEleves'];
         $moyenneChampsSemestre = $this->getMoyenneChampsSemestreEleve($group)['moyenne'];
         $moyenneEvalPeriode = $this->getMoyenneEvaluationPeriodeEleve($group);
         $moyenneEvalSemestre = $this->getMoyenneEvaluationSemestreEleve($group);
-        $moyenneCoursEvalPeriode = $this->getMoyenneCoursEvalPeriodeEleve($group);
-        $moyenneCoursEvalSemestre = $this->getMoyenneCoursEvalSemEleve($group);
-        $moyenneAnnee = $this->getMoyenneCoursEvalAnneeEleve($group);
+        $moyenneCoursEvalPeriode = $this->getMoyenneCoursEvalPeriodeEleve($group, $user);
+        $moyenneCoursEvalSemestre = $this->getMoyenneCoursEvalSemEleve($group, $user);
+        $moyenneAnnee = $this->getMoyenneCoursEvalAnneeEleve($group, $user);
 
         $manager = $this->getDoctrine()->getManager();
         $classes = $manager
@@ -874,7 +875,7 @@ class cahierCoteController extends AbstractController {
         ->findBy(
             [
                 'ecole' => $classes[0]->getEcole()->getId(),
-                'professeur' => $this->getUser()->getId()
+                'professeur' => $user
             ]
         );
         $appreciation = $manager
@@ -882,7 +883,7 @@ class cahierCoteController extends AbstractController {
         ->findBy(
             [
                 'ecole' => $classes[0]->getEcole()->getId(),
-                'professeur' => $this->getUser()->getId()
+                'professeur' => $user
             ]
         );
         if(!empty($parametres)){
@@ -1248,9 +1249,9 @@ class cahierCoteController extends AbstractController {
         );
     }
 
-    private function moyennesEleve($group){
+    private function moyennesEleve($group, $user){
         $manager = $this->getDoctrine()->getManager();
-        $moyenne = $this->applicationParametres($group); 
+        $moyenne = $this->applicationParametres($group, $user); 
         
         $classes = $manager
         ->getRepository(Classe::class)
@@ -1378,6 +1379,35 @@ class cahierCoteController extends AbstractController {
                 }
             }   
         }
+
         return $eleves;
+    }
+
+    /**
+     * @Route("test/{group}/{user}", name="test")
+     */
+    public function appliMoyennes($group, $user){
+        $moyennes = $this->moyennesEleve($group, $user);
+        foreach($moyennes as $key => $value){
+            $eleves[$key]['Nom'] = $value->getNom();
+            $eleves[$key]['Prenom'] = $value->getPrenom();
+            $eleves[$key]['Classe'] = $value->getClasse()->getNomClasse();
+            foreach($value->getMoyennePeriode() as $k => $v){
+                foreach($v as $a => $b){
+                    $eleves[$key][$a] = $b;
+                }
+            }
+            foreach($value->getMoyenneSem() as $k => $v){
+                foreach($v as $a => $b){
+                    $eleves[$key][$a] = $b;
+                }
+            }
+            foreach($value->getMoyenneAnnee() as $k => $v){
+                foreach($v as $a => $b){
+                    $eleves[$key]['Annee'] = $b;
+                }
+            }
+        }
+        return new JsonResponse($eleves);
     }
 }

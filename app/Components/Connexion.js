@@ -36,13 +36,13 @@ export default class Connexion extends Component {
         )
         if(user.data == "problemUser"){
             Alert.alert(
-                "Problème d'utilisateur",
+                "",
                 "Votre pseudo semble incorrect, veuillez réessayer"
             );
         }
         else if(user.data  == "problemPassword"){
             Alert.alert(
-                "Problème de mot de passe",
+                "",
                 "Votre mot de passe semble incorrect, veuillez réessayer"
             )
         }

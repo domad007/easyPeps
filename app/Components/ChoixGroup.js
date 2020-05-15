@@ -30,7 +30,7 @@ class ChoixGroup extends Component {
         .then((responseJson) => {
             if(responseJson == "probleme"){
                 Alert.alert(
-                    "Problème de groupes",
+                    "",
                     "Vous n'avez pas de groupes disponible, veuillez en créer sur notre site web"
                 );
             }

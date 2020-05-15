@@ -28,7 +28,7 @@ class Cours extends Component {
         .then((responseJson) => {
             if(responseJson == "probleme"){
                 Alert.alert(
-                    "Problème de cours",
+                    "",
                     "Vous n'avez pas de cours veuillez en créer sur notre site web",
                     [
                         {

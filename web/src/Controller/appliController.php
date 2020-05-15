@@ -173,4 +173,20 @@ class appliController extends AbstractController {
         return new Response();
     }
 
+    /**
+     * @Route("moyenneEleves/{group}/{user}", name="moyenne_eleves")
+     */
+    public function moyenneEleves(Groups $group, $user){
+        $manager = $this->getDoctrine()->getManager();
+        $moyennes = $this->forward('App\Controller\cahierCoteController::appliMoyennes', [
+            'group' => $group,
+            'user' => $user
+        ]);
+
+        echo $moyennes->getContent();
+
+        return new Response();
+    }
+        
+
 }

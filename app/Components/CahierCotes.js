@@ -5,56 +5,68 @@ class CahierCotes extends Component {
     constructor(props){
         super(props);
         this.state = {
-            idGroup: ""
+            cotes: []
         }
-    }
-    loadGroup = async () => {
-        let groupId = await AsyncStorage.getItem('idGroup');
-        this.setState({idGroup: groupId})
     }
 
     componentDidMount(){
-        this.loadGroup().done()
+        AsyncStorage.multiGet(['idUser', 'idGroup']).then(this.cotes)
+        /*AsyncStorage.getItem('idUser').then(this.cotes);
+        AsyncStorage.getItem('idGroup').then(this.cotes);*/
     }
+
+    cotes = (value) => {
+        fetch('http://192.168.1.3/moyenneEleves/'+value[1][1]+'/'+value[0][1])
+        .then((response) => response.json())
+        .then((responseJson) => {
+            if(responseJson == "probleme"){
+                Alert.alert(
+                    "",
+                    "Vous n'avez pas créé d'élèves, veuillez en créer sur notre site web",
+                    [
+                        {
+                            text: "OK", onPress: () => this.props.navigation.navigate("MenuGroup") 
+                        }
+                    ]
+                );
+            }
+            else {
+                this.setState({cotes: responseJson})
+            }
+        })
+    }
+
     render(){
-        
-        let ecoles = [];
-        for(let i = 0; i<15; i++){
-            ecoles.push(
-                <DataTable.Row>
-                    <DataTable.Cell>Jean</DataTable.Cell>
-                    <DataTable.Cell>Michel</DataTable.Cell>
-                    <DataTable.Cell>6G1</DataTable.Cell>
-                    <DataTable.Cell>18</DataTable.Cell>
-                    <DataTable.Cell>5</DataTable.Cell>
-                    <DataTable.Cell>5</DataTable.Cell>
-                    <DataTable.Cell>5</DataTable.Cell>
-                    <DataTable.Cell>5</DataTable.Cell>
-                    <DataTable.Cell>5</DataTable.Cell>
-                    <DataTable.Cell>5</DataTable.Cell>
-                    <DataTable.Cell>5</DataTable.Cell>
-                </DataTable.Row>
+        let cotes = this.state.cotes
+        let moyennes = [];
+        let header= [];
+        if(cotes.length === 0) {
+            return( 
+                <View style={style.loading}>
+                    <ActivityIndicator size="large" color="red" />
+                </View>
+            )
+        } 
+        let keys = Object.keys(cotes[0]);
+        for(let i = 0; i<keys.length; i++){
+            header.push(
+                <DataTable.Title>{ keys[i] }</DataTable.Title>
             )
         }
+        for(let i = 0; i<cotes.length; i++){
+            <DataTable.Row>
+            {moyennes.push(
+                <DataTable.Cell>{cotes[i]['Nom']}</DataTable.Cell>      
+            )}
+            </DataTable.Row>
+        }
         return (
-            <ScrollView style={{width: 1000}}>
+            <ScrollView>
                 <DataTable>
                     <DataTable.Header>
-                        <DataTable.Title>Nom</DataTable.Title>
-                        <DataTable.Title>Prénom</DataTable.Title>
-                        <DataTable.Title>Classe</DataTable.Title>
-                        <DataTable.Title>Age</DataTable.Title>
-                        <DataTable.Title>P1</DataTable.Title>
-                        <DataTable.Title>P2</DataTable.Title>
-                        <DataTable.Title>P3</DataTable.Title>
-                        <DataTable.Title>P4</DataTable.Title>
-                        <DataTable.Title>Semestre 1</DataTable.Title>
-                        <DataTable.Title>Semestre 2</DataTable.Title>
-                        <DataTable.Title>Année</DataTable.Title>
-                        
+                        { header }
                     </DataTable.Header>
-
-                    { ecoles }
+                    { moyennes }
                 </DataTable>
             </ScrollView>
         )
