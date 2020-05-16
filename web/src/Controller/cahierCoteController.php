@@ -1394,17 +1394,32 @@ class cahierCoteController extends AbstractController {
             $eleves[$key]['Classe'] = $value->getClasse()->getNomClasse();
             foreach($value->getMoyennePeriode() as $k => $v){
                 foreach($v as $a => $b){
-                    $eleves[$key][$a] = $b;
+                    if(is_string($b)){
+                        $eleves[$key][$a] = $b;
+                    }
+                    else {
+                        $eleves[$key][$a] = round($b, 2);
+                    }
                 }
             }
             foreach($value->getMoyenneSem() as $k => $v){
                 foreach($v as $a => $b){
-                    $eleves[$key][$a] = $b;
+                    if(is_string($b)){
+                        $eleves[$key][$a] = $b;
+                    }
+                    else {
+                        $eleves[$key][$a] = round($b, 2);
+                    }
                 }
             }
             foreach($value->getMoyenneAnnee() as $k => $v){
                 foreach($v as $a => $b){
-                    $eleves[$key]['Annee'] = $b;
+                    if(is_string($b)){
+                        $eleves[$key]['Annee'] = $b;
+                    }
+                    else {
+                        $eleves[$key]['Annee'] = round($b, 2);
+                    }
                 }
             }
         }

@@ -11,8 +11,6 @@ class CahierCotes extends Component {
 
     componentDidMount(){
         AsyncStorage.multiGet(['idUser', 'idGroup']).then(this.cotes)
-        /*AsyncStorage.getItem('idUser').then(this.cotes);
-        AsyncStorage.getItem('idGroup').then(this.cotes);*/
     }
 
     cotes = (value) => {
@@ -38,8 +36,8 @@ class CahierCotes extends Component {
 
     render(){
         let cotes = this.state.cotes
-        let moyennes = [];
         let header= [];
+        let table = [];
         if(cotes.length === 0) {
             return( 
                 <View style={style.loading}>
@@ -49,25 +47,30 @@ class CahierCotes extends Component {
         } 
         let keys = Object.keys(cotes[0]);
         for(let i = 0; i<keys.length; i++){
-            header.push(
+            header.push(       
                 <DataTable.Title>{ keys[i] }</DataTable.Title>
             )
         }
         for(let i = 0; i<cotes.length; i++){
-            <DataTable.Row>
-            {moyennes.push(
-                <DataTable.Cell>{cotes[i]['Nom']}</DataTable.Cell>      
-            )}
-            </DataTable.Row>
+            let moyennes = [];
+            for(let j= 0; j<keys.length; j++){
+                moyennes.push(
+                    <DataTable.Cell>{ cotes[i][keys[j]] }</DataTable.Cell> 
+                )
+            }
+        table.push(<DataTable.Row>{ moyennes }</DataTable.Row>)
+                
         }
         return (
-            <ScrollView>
-                <DataTable>
-                    <DataTable.Header>
-                        { header }
-                    </DataTable.Header>
-                    { moyennes }
-                </DataTable>
+            <ScrollView  contentContainerStyle={{height: 1000}}>
+                <ScrollView horizontal contentContainerStyle={{width: 1000}}>
+                    <DataTable>
+                        <DataTable.Header>
+                            { header }
+                        </DataTable.Header>
+                        { table }
+                    </DataTable>
+                </ScrollView>
             </ScrollView>
         )
     }
