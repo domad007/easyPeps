@@ -248,6 +248,11 @@
                                 <td>{{val.classe.nomClasse}}</td>  
                                 {% for cle, valeur in val.moyenneChampPer %}
                                     {% for k, v in valeur %}
+                                        {% if v == "NE" %}
+                                            <td>NE</td>
+                                            <td>NE</td>
+                                            <td>NE</td>
+                                        {% endif %}
                                         {% for a, b in v %}
                                         <td>
                                             {% if b|isInteger %}
@@ -261,6 +266,11 @@
                                 {% endfor %}
                                 {% for cle, valeur in val.moyenneChampSem %}
                                     {% for k, v in valeur %}
+                                        {% if v == "NE" %}
+                                            <td>NE</td>
+                                            <td>NE</td>
+                                            <td>NE</td>
+                                        {% endif %}
                                         {% for a, b in v %}
                                         <td>
                                            {% if b|isInteger %}
@@ -453,10 +463,11 @@
                             {% endfor %}
                         </thead>
                         <tbody>
+
                             {% for key, value in moyennesChampSem %}
                                 <tr>
                                 <td>{{key}}</td>
-                                    {% for cle, valeur in value %}               
+                                    {% for cle, valeur in value %}            
                                         <td>{{valeur|number_format(2)}} %</td>
                                     {% endfor %}
                                 </tr>

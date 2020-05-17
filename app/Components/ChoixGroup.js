@@ -25,7 +25,7 @@ class ChoixGroup extends Component {
     }
 
     getGroups = async (value) => {
-        await fetch('http://192.168.1.3/groupsUser/'+value)
+        await fetch('https://easypeps.be/groupsUser/'+value)
         .then((response) => response.json())
         .then((responseJson) => {
             if(responseJson == "probleme"){
@@ -78,7 +78,7 @@ class ChoixGroup extends Component {
           }
         for(let i = 0; i<groups.length; i++){
             ecoles.push(
-                <View>
+                <View key={ i }>
                     <FadeInView>
                         <TouchableOpacity style={style.button} onPress={() => this.props.navigation.navigate('MenuGroup', AsyncStorage.setItem('idGroup', groups[i]['groups_id']))}>
                             <Text style={{ fontSize: 30, color: 'white' }}>{groups[i]['groupes']}</Text>

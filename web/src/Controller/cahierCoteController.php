@@ -394,7 +394,7 @@ class cahierCoteController extends AbstractController {
         ->getRepository(Evaluation::class)
         ->findBygroupe($group);
 
-        if(empty($coursEvaluationCompetence)) return 0;
+        if(empty($coursEvaluationCompetences)) return 0;
 
         foreach($coursEvaluationCompetences as $key => $value){
             if($value->getCompetence()->getTypeCompetence()->getId()){
@@ -645,7 +645,6 @@ class cahierCoteController extends AbstractController {
                 }
             }
         }
-        
         return array(
             'moyenneEleves' => $moyenne,
             'heuresTotal' => $heuresTotal
@@ -679,7 +678,6 @@ class cahierCoteController extends AbstractController {
                 }
             }
         }
-
         return $moyenne;
     }
 
@@ -704,12 +702,9 @@ class cahierCoteController extends AbstractController {
                 foreach($valeur as $k => $v){
                     foreach($v as $a => $b){
                         $moyenneSemestre[$key][$k][$a][] = $moyennePeriode[$key][$cle][$k][$a]*$heuresPeriode[$key][$cle][$a];
-                        try {
-                            $moyenne[$key][$k][$a] = array_sum($moyenneSemestre[$key][$k][$a])/$heuresSemestreTotal[$key][$a];
-                        }
-                        catch(\Exception $e){
+                        $moyenne[$key][$k][$a] = array_sum($moyenneSemestre[$key][$k][$a])/$heuresSemestreTotal[$key][$a];
+                        if(is_nan($moyenne[$key][$k][$a])){
                             $moyenne[$key][$k][$a] = 0;
-
                         }
                         ksort($moyenne[$key][$k]);
                     }

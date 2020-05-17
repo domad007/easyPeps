@@ -22,7 +22,7 @@ class Eleves extends Component {
         AsyncStorage.getItem('idGroup').then(this.eleves);
     }
     eleves = (value) => {
-        fetch('http://192.168.1.3/userEleves/'+value)
+        fetch('https://easypeps.be/userEleves/'+value)
         .then((response) => response.json())
         .then((responseJson) => {
             if(responseJson == "probleme"){
@@ -53,7 +53,7 @@ class Eleves extends Component {
         } 
         for(let i = 0; i<eleves.length; i++){
             afficheEleves.push(
-                <DataTable.Row>
+                <DataTable.Row key= { i }>
                     <DataTable.Cell>{eleves[i]['nom']}</DataTable.Cell>
                     <DataTable.Cell>{eleves[i]['prenom']}</DataTable.Cell>
                     <DataTable.Cell>{eleves[i]['classe']}</DataTable.Cell>

@@ -23,7 +23,7 @@ class Cours extends Component {
         AsyncStorage.getItem('idGroup').then(this.cours);
     }
     cours = (value) => {
-        fetch('http://192.168.1.3/coursUser/'+value)
+        fetch('https://easypeps.be/coursUser/'+value)
         .then((response) => response.json())
         .then((responseJson) => {
             if(responseJson == "probleme"){
@@ -78,7 +78,7 @@ class Cours extends Component {
           }
         for(let i = 0; i < coursUser.length; i++){
             afficheCours.push(
-                <View>
+                <View key= { i }>
                     <FadeInView>
                         <View key = { i } style={style.container}>
                             <Text style={{ fontSize: 20, color: 'white' }}>{coursUser[i]['cours']}</Text>

@@ -28,7 +28,7 @@ export default class Connexion extends Component {
     connexion = async ()=> {
         const { pseudo } = this.state;
         const { mdp } = this.state;
-        let user = await axios.post('http://192.168.1.3/connexionAppli', 
+        let user = await axios.post('https://easypeps.be/connexionAppli', 
             {
                 pseudo: pseudo,
                 mdp: mdp

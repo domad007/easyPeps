@@ -14,7 +14,7 @@ class CahierCotes extends Component {
     }
 
     cotes = (value) => {
-        fetch('http://192.168.1.3/moyenneEleves/'+value[1][1]+'/'+value[0][1])
+        fetch('https://easypeps.be/moyenneEleves/'+value[1][1]+'/'+value[0][1])
         .then((response) => response.json())
         .then((responseJson) => {
             if(responseJson == "probleme"){

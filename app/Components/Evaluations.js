@@ -23,7 +23,7 @@ class Evaluations extends Component {
         AsyncStorage.getItem('idGroup').then(this.evaluations);
     }
     evaluations = (value) => {
-        fetch('http://192.168.1.3/evaluationUser/'+value)
+        fetch('https://easypeps.be/evaluationUser/'+value)
         .then((response) => response.json())
         .then((responseJson) => {
             if(responseJson == "probleme"){
@@ -79,8 +79,8 @@ class Evaluations extends Component {
           }
         for(let i = 0; i<evaluations.length; i++){
             afficheEval.push(
-                <FadeInView>
-                    <View key = { i } style={style.container}>
+                <FadeInView key= { i }>
+                    <View style={style.container}>
                         <Text style={{ fontSize: 20, color: 'white' }}>{ evaluations[i]['evaluation'] }</Text>
                         <Text style={{color: 'white'}}>Date de l'évaluation: { evaluations[i]['date_evaluation'] }</Text>
                         <Text style={{color: 'white'}}>Herues d'évaluation: { evaluations[i]['heures'] }</Text>
