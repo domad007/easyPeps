@@ -138,11 +138,11 @@ class homeController extends AbstractController {
     }
 
     /**
-     * @Route("/application", name="application")
+     * @Route("application", name="application")
      */
     public function application(){
         return $this->render(
-            '/contenu/appli.html.twig'
+            'contenu/application.html.twig'
         );
     }
 
