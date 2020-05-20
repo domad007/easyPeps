@@ -1,7 +1,71 @@
-User: nom_user, nom, prenom, mail, mot de passe, sexe, dateNaiss
-Gère, 1N User, 11 Classe
-Classe: professeur, nomClasse, titulaire, ecole
-Peut avoir, 11 Classe, 1N Ecole
-Eleve: nom, prenom, dateNaiss, sexe
-Est dans, 11 Eleve, 1N Classe
-Ecole: nomEcole
+Classe: id, nomClasse, titulaire
+CustomizedPresences: id, abreviationCustomized
+Role: id, title
+User: id, nom, prenom, nomUser, mail, mdp, sexe, dateNaiss
+Groups: id
+Appreciation: id, intitule, cote
+Parametres: id, type, appreciation, surCombien
+Ecole: id, nomEcole
+Eleve: id, nom, prenom, dateNaissance
+Competences: id, nom, description
+Types: id, intitule
+Degre: id, intitule
+Evaluation: id, intitule, dateEvaluation, heuresCompetence
+Cours: id, intitule, dateCours, nombreHeures, surCombien
+CoursGroupe: id, points
+Periodes: id, nomPeriode, dateDebut, dateFin
+Presences: id, libelle, abreviation
+Ponderation: id, evaluation, cours
+EvaluationGroup: id, points
+EleveSupprime: id, nom, prenom, dateNaissance
+Semestres: id, intitule
+
+peut afficher, 1N User, 01 Appreciation
+donne cours, 1N User, 01 Groups
+peut prendre, 1N User, 11 CustomizedPresences
+possede, 1N User, 11 Classe
+peut paramtrer, 1N User, 11 Parametres
+est créé par, 11 Ponderation, 01 User
+
+
+
+peut avoir, 1N Ecole, 01 Appreciation
+composé, 1N Ecole, 11 Classe
+impose, 1N Ecole, 01 Ponderation
+réglemente, 1N Ecole, 11 Parametres
+peut supprimer les, 1N Ecole, 01 EleveSupprime
+
+
+participe, 1N Groups, 11 Cours
+fait partie, 1N Groups, 11 Degre
+est évalué, 1N Groups, 01 Evaluation
+fait partie des, 1N Groups, 01 Periodes
+est combiné, 1N Groups, 11 Classe
+
+
+sont prises, 1N Presences, 11 CoursGroupe
+sont prisess, 1N CustomizedPresences, 11 CoursGroupe
+est donné, 1N Cours, 11 CoursGroupe
+appartient, 1N Eleve, 11 CoursGroupe
+
+sont personnalisables, 1N Presences, 11 CustomizedPresences
+
+
+contient, 1N Classe, 11 Eleve
+peut supprimer, 1N Classe, 01 EleveSupprime
+
+fait parti, 1N Eleve, 01 EvaluationGroup
+est une exstension de, 1N Evaluation, 01 EvaluationGroup
+
+
+est basé sur, 1N Evaluation, 11 Competences
+sont composés, 1N Periodes, 11 Evaluation
+est composite des, 1N Periodes, 11 Cours
+
+
+étends, 1N Types, 11 Competences
+compose, 1N Degre, 11 Competences
+
+est associé, 1N Semestres, 11 Periodes
+
+
