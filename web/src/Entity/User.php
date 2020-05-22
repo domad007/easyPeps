@@ -73,7 +73,6 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="date")
-     * @Assert\DateTime(message="Date invalide")
      */
     private $dateNaiss;
 

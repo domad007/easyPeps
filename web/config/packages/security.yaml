@@ -39,7 +39,7 @@ security:
             
             logout: 
                 path: deconnexion_user
-                target: homepage     
+                target: homepage         
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication

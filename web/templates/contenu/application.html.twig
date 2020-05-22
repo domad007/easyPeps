@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+{% block title %} -Téléchargement application {% endblock %}
+
+{% block header %}
+    <!-- Jumbotron Header -->
+    <header class="jumbotron my-4">
+        <h1 class="display-3" style="text-align: center">Téléchargement d'application</h1>
+    </header>
+{% endblock %}
+
+{% block container %}
+    <div class="appli">
+        <div class="jumbotron" style="font-size: 1.3em;">
+            <div class="container">
+                <h3 class="display-4" style="text-align: center">Que faut il savoir sur notre application ?</h1>
+                <p>
+                    Notre application fonctionne seulement pour les membres inscrits sur notre site internet. 
+                    Elle permet de visuliser les informations tels que: 
+                    <ul>
+                        <li>Les cours</li>
+                        <li>Les évaluations</li>
+                        <li>Cahier de côtes</li>
+                        <li>Les élèves</li>
+                    </ul>
+                </p>
+                <p>
+                    Cet outil est dédiéé seulement pour la visualisation des informations importantes pour un professeur d'éducation physique. 
+                </p>
+                <p>
+                    <h3 class="display-4" style="text-align: center">Interessé ?</h3>
+                    <p style="text-align: center">Téléchargez notre application sur la plateforme de votre choix !</p>
+                    <br>
+                    <div class="row d-flex justify-content-center">
+                        <a href="downloadAppli/easypeps-93e23cee26344f32ad861228133f8944-signed.apk" class="btn btn-primary mr-2">Android</a>
+                        <!--<a href="downloadAppli/easypeps-93e23cee26344f32ad861228133f8944-signed.apk" class="btn btn-primary">iOS</a> -->
+                    </div>
+                </p>
+            </div>
+        </div>
+{% endblock %}       

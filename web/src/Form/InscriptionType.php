@@ -59,7 +59,7 @@ class InscriptionType extends AbstractType
             'label' => false,
             'language' => 'fr'
         ])
-        ->add('save', SubmitType::class, $contact->getConfig("Inscrivez-vous", ""));
+        ->add('save', SubmitType::class, $contact->getConfig("Inscrivez Vous !", ""));
         ;
     }
 

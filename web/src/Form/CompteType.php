@@ -9,6 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use EWZ\Bundle\RecaptchaBundle\Form\Type\EWZRecaptchaType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
@@ -30,6 +31,11 @@ class CompteType extends AbstractType
                     'onchange' => "desactivate(this)"
                 ]
                 
+            ])
+            ->add('recaptcha', EWZRecaptchaType::class,
+            [
+                'label' => false,
+                'language' => 'fr'
             ])
             ->add('save', SubmitType::class, $contact->getConfig("Enregistrez vos modifications", ""))
         ;
