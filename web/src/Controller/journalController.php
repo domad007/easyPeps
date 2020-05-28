@@ -165,19 +165,22 @@ class journalController extends AbstractController {
 
         if($request->isMethod('post')){
             $infos =  $request->request->all();
-
+            $value = explode(',', $infos['name']);
+            $csrf = $value[1];
             $getCoursGroupe = $manager
             ->getRepository(CoursGroupe::class)
             ->findOneBy(
                 [
                     'coursId' => $infos['pk'],
-                    'eleveId' => $infos['name'],
+                    'eleveId' => $value[0],
                 ]
             );
 
-            $getCoursGroupe->setPoints($infos['value']);
-            $manager->persist($getCoursGroupe);
-            $manager->flush();
+            if($this->isCsrfTokenValid('edit_pts_cours', $csrf)){
+                $getCoursGroupe->setPoints($infos['value']);
+                $manager->persist($getCoursGroupe);
+                $manager->flush();
+            }
 
             
         }
@@ -192,6 +195,7 @@ class journalController extends AbstractController {
         $manager = $this->getDoctrine()->getManager();
         if($request->isMethod('post')){
             $presence = $request->request->all();
+            $csrf= $presence['csrf'];
             $values = explode(",", $presence['presence']);
             
             $typePresence = $this->getDoctrine()
@@ -207,9 +211,11 @@ class journalController extends AbstractController {
                 ]
             );
 
-            $presenceEleve->setPresences($typePresence);
-            $manager->persist($presenceEleve);
-            $manager->flush();
+            if($this->isCsrfTokenValid('edit_presence', $csrf)){
+                $presenceEleve->setPresences($typePresence);
+                $manager->persist($presenceEleve);
+                $manager->flush();
+            }
         }    
         return new Response("");
     }
@@ -223,6 +229,7 @@ class journalController extends AbstractController {
 
         if($request->isMethod('post')){
             $presence = $request->request->all();
+            $csrf= $presence['csrf'];
             $values = explode(",", $presence['presence']);
             
             $typePresence = $this->getDoctrine()
@@ -238,11 +245,14 @@ class journalController extends AbstractController {
                 ]
             );
 
-            $presenceEleve
-            ->setCustomizedPresences($typePresence)
-            ->setPresences($typePresence->getTypePresence());
-            $manager->persist($presenceEleve);
-            $manager->flush();
+            if($this->isCsrfTokenValid('edit_presence', $csrf)){
+                $presenceEleve
+                ->setCustomizedPresences($typePresence)
+                ->setPresences($typePresence->getTypePresence());
+
+                $manager->persist($presenceEleve);
+                $manager->flush();
+            }
         }
 
         return new Response();
@@ -257,6 +267,7 @@ class journalController extends AbstractController {
         if($request->isMethod('post')){
            
             $date =  $request->request->all();
+            $csrf= $date['name'];
             $newDate = new \DateTime($date['value']);
 
             $cours = 
@@ -267,9 +278,11 @@ class journalController extends AbstractController {
             ->getRepository(Periodes::class)
             ->findBygroupe($cours->getGroupe());
 
-            $cours->setDateCours($newDate);
-            $manager->persist($cours);
-            $manager->flush();
+            if($this->isCsrfTokenValid('edit_date', $csrf)){
+                $cours->setDateCours($newDate);
+                $manager->persist($cours);
+                $manager->flush();
+            }
             
         }    
 
@@ -285,14 +298,16 @@ class journalController extends AbstractController {
 
         if($request->isMethod('post')){
             $intitule =  $request->request->all();
-
+            $csrf = $intitule['name'];
             $cours = 
             $manager->getRepository(Cours::class)
             ->findOneById($intitule['pk']);
 
-            $cours->setIntitule($intitule['value']);
-            $manager->persist($cours);
-            $manager->flush();
+            if($this->isCsrfTokenValid('edit_int', $csrf)){
+                $cours->setIntitule($intitule['value']);
+                $manager->persist($cours);
+                $manager->flush();
+            }
             
         }    
         return new Response("");
@@ -306,7 +321,7 @@ class journalController extends AbstractController {
         $manager = $this->getDoctrine()->getManager();
         if($request->isMethod('post')){
             $heures =  $request->request->all();
-
+            $csrf = $heures['name'];
             $cours = 
             $manager->getRepository(Cours::class)
             ->findOneBy(
@@ -314,9 +329,12 @@ class journalController extends AbstractController {
                     'id' => $heures['pk']
                 ]
             );
-            $cours->setNombreHeures($heures['value']);
-            $manager->persist($cours);
-            $manager->flush();
+
+            if($this->isCsrfTokenValid('edit_heures', $csrf)){
+                $cours->setNombreHeures($heures['value']);
+                $manager->persist($cours);
+                $manager->flush();
+            }
 
 
         }
@@ -333,14 +351,16 @@ class journalController extends AbstractController {
 
         if($request->isMethod('post')){
             $cote = $request->request->all();
-
+            $csrf = $cote['name'];
             $cours = $manager
             ->getRepository(Cours::class)
             ->findOneById($cote['pk']);
 
-            $cours->setSurCombien($cote['value']);
-            $manager->persist($cours);
-            $manager->flush();
+            if($this->isCsrfTokenValid('edit_cote_cours', $csrf)){
+                $cours->setSurCombien($cote['value']);
+                $manager->persist($cours);
+                $manager->flush();
+            }
         }
 
         return new Response("");
@@ -355,14 +375,17 @@ class journalController extends AbstractController {
 
         if($request->isMethod('post')){
             $heures =  $request->request->all();
+            $csrf = $heures['name'];
 
             $evaluation = $this->getDoctrine()
             ->getRepository(Evaluation::class)
             ->findOneById($heures['pk']);
 
-            $evaluation->setHeuresCompetence($heures['value']);
-            $manager->persist($evaluation);
-            $manager->flush();
+            if($this->isCsrfTokenValid('edit_heure_eval', $csrf)){
+                $evaluation->setHeuresCompetence($heures['value']);
+                $manager->persist($evaluation);
+                $manager->flush();
+            }
 
         }
 
@@ -379,14 +402,16 @@ class journalController extends AbstractController {
 
         if($request->isMethod('post')){
             $intitule =  $request->request->all();
-
+            $csrf = $intitule['name'];
             $evaluation = $this->getDoctrine()
             ->getRepository(Evaluation::class)
             ->findOneById($intitule['pk']);
 
-            $evaluation->setIntitule($intitule['value']);
-            $manager->persist($evaluation);
-            $manager->flush();
+            if($this->isCsrfTokenValid('edit_int_eval', $csrf)){
+                $evaluation->setIntitule($intitule['value']);
+                $manager->persist($evaluation);
+                $manager->flush();
+            }
         }
 
         return new Response("");
@@ -400,15 +425,18 @@ class journalController extends AbstractController {
         $manager = $this->getDoctrine()->getManager();
         if($request->isMethod('post')){
             $date = $request->request->all();
+            $csrf = $date['name'];
             $newDate = new \DateTime($date['value']);
 
             $evaluation = $this->getDoctrine()
             ->getRepository(Evaluation::class)
             ->findOneById($date['pk']);
 
-            $evaluation->setDateEvaluation($newDate);
-            $manager->persist($evaluation);
-            $manager->flush();
+            if($this->isCsrfTokenValid('edit_date_eval', $csrf)){
+                $evaluation->setDateEvaluation($newDate);
+                $manager->persist($evaluation);
+                $manager->flush();
+            }
         }
         return new Response("");
     }
@@ -422,18 +450,22 @@ class journalController extends AbstractController {
 
         if($request->isMethod('post')){
             $points = $request->request->all();
-
+            $values = explode(',', $points['name']);
+            $csrf = $values[1];
             $evalGroup = $manager
             ->getRepository(EvaluationGroup::class)
             ->findOneBy(
                 [
                     'evaluation' => $points['pk'],
-                    'eleve' => $points['name']
+                    'eleve' => $values[0]
                 ]
             );
-            $evalGroup->setPoints($points['value']);
-            $manager->persist($evalGroup);
-            $manager->flush();
+
+            if($this->isCsrfTokenValid('edit_pts_eval', $csrf)){
+                $evalGroup->setPoints($points['value']);
+                $manager->persist($evalGroup);
+                $manager->flush();
+            }
         }
 
         return new Response("");
@@ -448,7 +480,8 @@ class journalController extends AbstractController {
 
         if($request->isMethod('post')){
             $competence = $request->request->all();
-            $values = explode(",", $competence['competences']);
+            $csrf = $competence['csrf'];
+            $values = explode(",", $competence['competence']);
 
             $typeCompetence =  $this->getDoctrine()
             ->getRepository(Competences::class)
@@ -458,9 +491,11 @@ class journalController extends AbstractController {
             ->getRepository(Evaluation::class)
             ->findOneById($values[1]);
 
-            $evaluation->setCompetence($typeCompetence);
-            $manager->persist($evaluation);
-            $manager->flush();
+            if($this->isCsrfTokenValid('edit_comp_eval', $csrf)){
+                $evaluation->setCompetence($typeCompetence);
+                $manager->persist($evaluation);
+                $manager->flush();
+            }
         }
         
         return new Response("");
@@ -475,14 +510,16 @@ class journalController extends AbstractController {
 
         if($request->isMethod('post')){
             $cote = $request->request->all();
-
+            $csrf = $cote['name'];
             $evaluation = $manager
             ->getRepository(Evaluation::class)
             ->findOneById($cote['pk']);
 
-            $evaluation->setSurCombien($cote['value']);
-            $manager->persist($evaluation);
-            $manager->flush();
+            if($this->isCsrfTokenValid('edit_cote_eval', $csrf)){
+                $evaluation->setSurCombien($cote['value']);
+                $manager->persist($evaluation);
+                $manager->flush();
+            }
         }
 
         return new Response("");

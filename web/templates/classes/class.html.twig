@@ -67,12 +67,12 @@
                         {% set dateNaissance = date(value.dateNaissance.date) %}
                         <tr id="deleteRow_{{value.id}}">
                             <td>{{ loop.index }}</td>
-                            <td><span title="Modifiez le nom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="nom">{{value.nom}}</p></span></td>
-                            <td><span title="Modifiez le prénom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="prenom">{{value.prenom}}</p></span></td>
+                            <td><span title="Modifiez le nom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="{{csrf_token('modif_nom')}}">{{value.nom}}</p></span></td>
+                            <td><span title="Modifiez le prénom de l'élève"><p data-pk="{{value.id}}" data-url="{{path('modif_eleve')}}" data-name="{{csrf_token('modif_prenom')}}">{{value.prenom}}</p></span></td>
                             <td>{{dateNaissance | date('d-m-Y')}}</td>
                             <td>{{ dateNaissance | age }}</td>
                             <td style="text-align: center"><a href="{{path('change_class', {eleve: value.id})}}" class="btn btn-default btn-md"><i class="fal fa-repeat-alt"></i></a></td>
-                            <td style="text-align: center"><button id="deleteEleve" class="btn btn-danger btn-sm" onclick="deleteEleve({{value.id}}, this);"><i class="fas fa-trash"></i></button></td>
+                            <td style="text-align: center"><button id="deleteEleve" class="btn btn-danger btn-sm" onclick="deleteEleve({{value.id}}, this, '{{csrf_token('del_eleve')}}');"><i class="fas fa-trash"></i></button></td>
                         </tr>    
                         {% endfor %}
                 </tbody>

@@ -89,15 +89,16 @@ class classesController extends AbstractController {
         if($request->isMethod('post')){
             $manager = $this->getDoctrine()->getManager();
             $studentData = $request->request->all();
+            $csrf= $studentData['name'];
 
             $student = $this->getDoctrine()
             ->getRepository(Eleve::class)
             ->findOneById($studentData['pk']);
 
-            if($studentData['name'] == "nom"){
+            if($this->isCsrfTokenValid('modif_nom', $csrf)){
                 $student->setNom($studentData['value']);
             }
-            else {
+            if($this->isCsrfTokenValid('modif_prenom', $csrf)){
                 $student->setPrenom($studentData['value']);
             }
             
@@ -117,20 +118,23 @@ class classesController extends AbstractController {
         if($request->isMethod('post')){
             $manager = $this->getDoctrine()->getManager();
             $idEleve = $request->request->all();
+            $csrf = $idEleve['csrf'];
 
             $eleve = $this->getDoctrine()
             ->getRepository(Eleve::class)
             ->findOneById($idEleve['eleve']);
-            
-            $eleveSuppr->setNom($eleve->getNom())
-            ->setPrenom($eleve->getPrenom())
-            ->setClasse($eleve->getClasse())
-            ->setDateNaissance($eleve->getDateNaissance())
-            ->setEcole($eleve->getClasse()->getEcole());
-            
-            $manager->remove($eleve);
-            $manager->persist($eleveSuppr);
-            $manager->flush();
+
+            if($this->isCsrfTokenValid('del_eleve', $csrf)){
+                $eleveSuppr->setNom($eleve->getNom())
+                ->setPrenom($eleve->getPrenom())
+                ->setClasse($eleve->getClasse())
+                ->setDateNaissance($eleve->getDateNaissance())
+                ->setEcole($eleve->getClasse()->getEcole());
+
+                $manager->remove($eleve);
+                $manager->persist($eleveSuppr);
+                $manager->flush();
+            }
         }
         return new Response("");
     }

@@ -249,45 +249,48 @@ class homeController extends AbstractController {
         $manager = $this->getDoctrine()->getManager();
         if($request->isMethod('post')){
             $presence = $request->request->all();
+            $csrf = $presence['name'];
 
+            if($this->isCsrfTokenValid('modif_presence', $csrf) == true){
 
-            $getPresenceCustomized = $manager
-            ->getRepository(CustomizedPresences::class)
-            ->findOneById($presence['pk']);
-
-            if(!empty($getPresenceCustomized)){
-                $getPresenceCustomized->setAbreviationCustomized($presence['value']);
-                $manager->persist($getPresenceCustomized);
-                $manager->flush();
-            }
-            else {
-                $getTypePresence = $manager
-                ->getRepository(Presences::class)
-                ->findAll();                
-
-                foreach($getTypePresence as $key => $value){
-                    $newPresenceCustomized = new CustomizedPresences();
-                    $newPresenceCustomized
-                    ->setTypePresence($value)
-                    ->setUser($user)
-                    ->setAbreviationCustomized($value->getAbreviation());
-                    $manager->persist($newPresenceCustomized);
-                }
-                $manager->flush();
-
-                $setCustomPresence = $manager
+                $getPresenceCustomized = $manager
                 ->getRepository(CustomizedPresences::class)
-                ->findOneBy(
-                    [
-                        'typePresence' => $presence['pk'],
-                        'user' => $user->getId()
-                    ]
-                );
-                $setCustomPresence
-                ->setAbreviationCustomized($presence['value']);
-                $manager->persist($setCustomPresence);
-                $manager->flush();
+                ->findOneById($presence['pk']);
 
+                if(!empty($getPresenceCustomized)){
+                    $getPresenceCustomized->setAbreviationCustomized($presence['value']);
+                    $manager->persist($getPresenceCustomized);
+                    $manager->flush();
+                }
+                else {
+                    $getTypePresence = $manager
+                    ->getRepository(Presences::class)
+                    ->findAll();                
+
+                    foreach($getTypePresence as $key => $value){
+                        $newPresenceCustomized = new CustomizedPresences();
+                        $newPresenceCustomized
+                        ->setTypePresence($value)
+                        ->setUser($user)
+                        ->setAbreviationCustomized($value->getAbreviation());
+                        $manager->persist($newPresenceCustomized);
+                    }
+                    $manager->flush();
+
+                    $setCustomPresence = $manager
+                    ->getRepository(CustomizedPresences::class)
+                    ->findOneBy(
+                        [
+                            'typePresence' => $presence['pk'],
+                            'user' => $user->getId()
+                        ]
+                    );
+                    $setCustomPresence
+                    ->setAbreviationCustomized($presence['value']);
+                    $manager->persist($setCustomPresence);
+                    $manager->flush();
+
+                }
             }
 
         }
