@@ -7,13 +7,17 @@ $(document).ready(function(){
 });
 
 //Suppression de l'élève de la liste des élèves
-function deleteEleve(idEleve, button){
+function deleteEleve(idEleve, button, csrf){
    $(button).remove();
    $('#deleteRow_'+idEleve).remove();
    $.ajax({
        url: '/deleteEleve',
        method: 'POST',
-       data: 'eleve='+idEleve
+       data: 
+        {
+           eleve: idEleve,
+           csrf: csrf
+        }
    });
 }
 
@@ -114,11 +118,14 @@ function addAppreciation(){
  * Modificaiton dynamique des présences des élèves
  * @param {*} value 
  */
-function presenceEleve(value){
+function presenceEleve(value, csrf){
     $.ajax({
         url: '/presences',
         method: 'POST',
-        data: $(value)
+        data: {
+            csrf: csrf,
+            presence: $(value).val()
+        }
     });
 
 }
@@ -127,11 +134,14 @@ function presenceEleve(value){
  * Modificaiton dynamique par rapport aux  présences customisés par l'utilisateur des élèves
  * @param {*} value 
  */
-function presenceEleveCustomized(value){
+function presenceEleveCustomized(value, csrf){
     $.ajax({
         url: '/presencesCustomized',
         method: 'POST',
-        data: $(value)
+        data: {
+            presence: $(value).val(),
+            csrf: csrf
+        }
     });
 
 }
@@ -141,11 +151,14 @@ function presenceEleveCustomized(value){
  * Modification dynamique de la compétence 
  * @param {*} value 
  */
-function modifCompetence(value){
+function modifCompetence(value, csrf){
     $.ajax({
         url: '/changementCompetence',
         method: 'POST',
-        data: $(value)
+        data: {
+            competence: $(value).val(), 
+            csrf: csrf
+        }
     });
 }
 
@@ -206,14 +219,15 @@ function periodeError(){
  * @param {*} property 
  * @param {*} idType 
  */
-function modifAppreciation(property, idType){
+function modifAppreciation(property, idType, csrf){
     if(property.checked){
         $.ajax({
             url: '/modifAppreciationCahier',
             method: 'POST',
             data: {
                 id: idType,
-                appreciation: true
+                appreciation: true,
+                csrf: csrf
             }
         });
     }
@@ -223,7 +237,8 @@ function modifAppreciation(property, idType){
             method: 'POST',
             data: {
                 id: idType,
-                appreciation: 0
+                appreciation: 0,
+                csrf: csrf
             }
         });
     }
@@ -234,14 +249,15 @@ function modifAppreciation(property, idType){
  * @param {} property 
  * @param {*} idUser 
  */
-function addRole(property, idUser){
+function addRole(property, idUser, csrf){
     if(property.checked){
         $.ajax({
             url: '/addRoleAdmin',
             method: 'POST',
             data: {
                 userId: idUser,
-                admin: true
+                admin: true,
+                csrf: csrf
             }
         });
     }
@@ -251,7 +267,8 @@ function addRole(property, idUser){
             method: 'POST',
             data: {
                 userId: idUser,
-                admin: false
+                admin: false,
+                csrf: csrf
             }
         });
     }

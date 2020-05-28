@@ -68,6 +68,8 @@ class usersController extends AbstractController {
         $manager = $this->getDoctrine()->getManager();
         if($request->isMethod('post')){
             $data = $request->request->all();
+            $csrf = $data['csrf'];
+
             $user = $manager
             ->getRepository(User::class)
             ->findOneById($data['userId']);
@@ -75,18 +77,20 @@ class usersController extends AbstractController {
             ->getRepository(Role::class)
             ->findOneBytitle("ROLE_ADMIN");
 
+            if($this->isCsrfTokenValid('role', $csrf)){
 
-            switch($data['admin']){
-                case 'true': 
-                    $user->addUserRole($roleAdmin);
-                break;
-                case 'false': 
-                    $user->removeUserRole($roleAdmin);
-                break;
+                switch($data['admin']){
+                    case 'true': 
+                        $user->addUserRole($roleAdmin);
+                    break;
+                    case 'false': 
+                        $user->removeUserRole($roleAdmin);
+                    break;
+                }
+    
+                $manager->persist($user);
+                $manager->flush();
             }
-
-            $manager->persist($user);
-            $manager->flush();
             
         }
 

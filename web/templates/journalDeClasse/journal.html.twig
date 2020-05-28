@@ -83,17 +83,17 @@
                         {% for key, value in eleves.0.0.coursGroupes|sort((a,b) => a.coursId.dateCours <=> b.coursId.dateCours) %}                           
                             {% set dateCours = date(value.coursId.dateCours.date) %}
                             <td colspan="2" class="text-center periodeCours periodeCours{{value.coursId.periode.id}}" style="font-size: 0.8em">
-                                <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_intitule_cours')}}" data-name="intitule" class="editable editable-click editable-empty editable-open"> {{value.coursId.intitule}} </span>                             
+                                <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_intitule_cours')}}" data-name="{{csrf_token('edit_int')}}" class="editable editable-click editable-empty editable-open"> {{value.coursId.intitule}} </span>                             
                                 <div id="cours" class="collapse">                               
                                     <p>
-                                        <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_date_cours')}}" data-name="cours"> {{dateCours | date('d-m-Y')}}</span>
+                                        <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_date_cours')}}" data-name="{{csrf_token('edit_date')}}"> {{dateCours | date('d-m-Y')}}</span>
                                     </p>
                                     <p>
-                                        <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_heures_cours')}}" data-name="heures">{{value.coursId.nombreHeures}}</span>h
+                                        <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_heures_cours')}}" data-name="{{csrf_token('edit_heures')}}">{{value.coursId.nombreHeures}}</span>h
                                     </p>
                                     <p>
                                     <p>
-                                        Evalué sur <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_cote_cours')}}">{{value.coursId.surCombien}}</span>
+                                        Evalué sur <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_cote_cours')}}" data-name="{{csrf_token('edit_cote_cours')}}">{{value.coursId.surCombien}}</span>
                                     </p>
                                 </div>
                             </td>
@@ -102,16 +102,16 @@
                         {% set dateEval = date(value.evaluation.dateEvaluation) %}
 
                         <td class="text-center periodeEval periodeEval{{value.evaluation.periode.id}}" style="font-size: 0.8em">
-                            <span data-pk="{{value.evaluation.id}}" data-url="{{path('modif_inititule_eval')}}">{{value.evaluation.intitule}}</span>
+                            <span data-pk="{{value.evaluation.id}}" data-url="{{path('modif_inititule_eval')}}"  data-name="{{csrf_token('edit_int_eval')}}">{{value.evaluation.intitule}}</span>
                             <div id="cours" class="collapse">
                                 <p>
-                                    <span data-pk="{{value.evaluation.id}}" data-url="{{path('modif_date_eval')}}">{{dateEval | date('d-m-Y')}}</span>
+                                    <span data-pk="{{value.evaluation.id}}" data-url="{{path('modif_date_eval')}}"  data-name="{{csrf_token('edit_date_eval')}}">{{dateEval | date('d-m-Y')}}</span>
                                 </p>
                                 <p>
-                                    <span data-pk="{{value.evaluation.id}}" data-url="{{path('modif_heures_eval')}}">{{value.evaluation.heuresCompetence}}</span>h
+                                    <span data-pk="{{value.evaluation.id}}" data-url="{{path('modif_heures_eval')}}"  data-name="{{csrf_token('edit_heure_eval')}}">{{value.evaluation.heuresCompetence}}</span>h
                                 </p>
                                 <p>
-                                    <select name="competences" id="competences" class="custom-select" style="width: 70px" onchange="modifCompetence(this)">
+                                    <select name="competences" id="competences" class="custom-select" style="width: 70px" onchange="modifCompetence(this, '{{csrf_token('edit_comp_eval')}}')">
                                         {% for key, val in competences %}
                                             <option value=" {{val.id}}, {{value.evaluation.id}}">{{val.nom}}</option>
                                         {% endfor %}
@@ -119,7 +119,7 @@
                                     </select>
                                 </p>
                                 <p>
-                                    Evalué sur <span data-pk="{{value.evaluation.id}}" data-url="{{path('modif_cote_eval')}}">{{value.evaluation.surCombien}}</span>
+                                    Evalué sur <span data-pk="{{value.evaluation.id}}" data-url="{{path('modif_cote_eval')}}" data-name="{{csrf_token('edit_cote_eval')}}">{{value.evaluation.surCombien}}</span>
                                 </p>
                             </div>
                         </td>
@@ -136,7 +136,7 @@
                         {% for key, value in val.coursGroupes|sort((a, b) => a.coursId.dateCours <=> b.coursId.dateCours) %}
                             <td class="periodeCours periodeCours{{value.coursId.periode.id}}">                           
                                 {% if value.customizedPresences is null %}
-                                    <select name="presence" id="presence" onchange="presenceEleve(this)" class="custom-select" style="width: 60px">
+                                    <select name="presence" id="presence" onchange="presenceEleve(this, '{{csrf_token('edit_presence')}}')" class="custom-select" style="width: 60px">
                                         {% if value.presences.id != 1 %}
                                             <option value="{{value.coursId.id}},{{val.id}},{{value.presences.id}}" selected>{{value.presences.abreviation}}</option>
                                         {% endif %}
@@ -145,7 +145,7 @@
                                         {% endfor %}
                                     </select>
                                 {% else %} 
-                                    <select name="presence" id="presence" onchange="presenceEleveCustomized(this)" class="custom-select" style="width: 60px">
+                                    <select name="presence" id="presence" onchange="presenceEleveCustomized(this, '{{csrf_token('edit_presence')}}')" class="custom-select" style="width: 60px">
 
                                         {% if value.customizedPresences.typePresence.id != 1 %}
                                             <option value="{{value.coursId.id}},{{val.id}},{{value.customizedPresences.id}}" selected>{{value.customizedPresences.abreviationCustomized}}</option>
@@ -158,12 +158,12 @@
                             
                             </td>
                             <td class="periodeCours periodeCours{{value.coursId.periode.id}}">
-                                <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_points_cours')}}" data-name="{{val.id}}">{{value.points}}</span>
+                                <span data-pk="{{value.coursId.id}}" data-url="{{path('modif_points_cours')}}" data-name="{{val.id}},{{csrf_token('edit_pts_cours')}}">{{value.points}}</span>
                             </td>
                         {% endfor %}
                         {% for key, value in val.evaluationGroups|sort((a,b) => a.evaluation.dateEvaluation <=> b.evaluation.dateEvaluation) %}
                             <td class="periodeEval periodeEval{{value.evaluation.periode.id}}" style="text-align: center">
-                                <span data-pk="{{value.evaluation.id}}" data-name="{{val.id}}" data-url="{{path('modif_points_evaluation')}}">{{value.points}}</span>
+                                <span data-pk="{{value.evaluation.id}}" data-name="{{val.id}},{{csrf_token('edit_pts_eval')}}" data-url="{{path('modif_points_evaluation')}}">{{value.points}}</span>
                             </td>
                         {% endfor %}
                     </tr>

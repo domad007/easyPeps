@@ -180,21 +180,22 @@ class parametresController extends AbstractController {
         $manager = $this->getDoctrine()->getManager();
         if($request->isMethod('post')){
             $data = $request->request->all();
+            $csrf = $data['name'];
+
             $getPonderation = $manager
             ->getRepository(Ponderation::class)
             ->findOneById($data['pk']);
 
-            switch($data['name']){
-                case 'cours': 
-                    $getPonderation->setCours($data['value']);
-                    $eval = 100-$data['value'];
-                    $getPonderation->setEvaluation($eval);
-                break;
-                case 'evaluation': 
-                    $getPonderation->setEvaluation($data['value']);
-                    $cours = 100-$data['value'];
-                    $getPonderation->setCours($cours);
-                break;
+            if($this->isCsrfTokenValid('ponderation_cours', $csrf)){
+                $getPonderation->setCours($data['value']);
+                $eval = 100-$data['value'];
+                $getPonderation->setEvaluation($eval);
+            }
+
+            if($this->isCsrfTokenValid('ponderation_evaluation', $csrf)){
+                $getPonderation->setEvaluation($data['value']);
+                $cours = 100-$data['value'];
+                $getPonderation->setCours($cours);
             }
 
             $manager->persist($getPonderation);
@@ -212,17 +213,17 @@ class parametresController extends AbstractController {
         $manager = $this->getDoctrine()->getManager();
         if($request->isMethod('post')){
             $data = $request->request->all();
+            $csrf = $data['name'];
+
             $getAppreciation = $manager
             ->getRepository(Appreciation::class)
             ->findOneById($data['pk']);
 
-            switch($data['name']){
-                case 'intitule': 
-                    $getAppreciation->setIntitule($data['value']);
-                break;
-                case 'cote': 
-                    $getAppreciation->setCote($data['value']);
-                break;
+            if($this->isCsrfTokenValid('modif_appreciation', $csrf)){
+                $getAppreciation->setIntitule($data['value']);
+            }
+            if($this->isCsrfTokenValid('modif_cote', $csrf)){
+                $getAppreciation->setCote($data['value']);
             }
 
             $manager->persist($getAppreciation);
@@ -240,11 +241,15 @@ class parametresController extends AbstractController {
         $manager = $this->getDoctrine()->getManager();
         if($request->isMethod('post')){
             $data = $request->request->all();
+            $csrf = $data['name'];
+
             $parametre = $manager
             ->getRepository(Parametres::class)
             ->findOneById($data['pk']);
 
-            $parametre->setSurCombien($data['value']);
+            if($this->isCsrfTokenValid('modif_points', $csrf)){
+                $parametre->setSurCombien($data['value']);
+            }
 
             $manager->persist($parametre);
             $manager->flush();
@@ -261,11 +266,14 @@ class parametresController extends AbstractController {
         $manager = $this->getDoctrine()->getManager();
         if($request->isMethod('post')){
             $data = $request->request->all();
+            $csrf= $data['csrf'];
             $parametre = $manager
             ->getRepository(Parametres::class)
             ->findOneById($data['id']);
-
-            $parametre->setAppreciation($data['appreciation']);
+            
+            if($this->isCsrfTokenValid('modif_app', $csrf)){
+                $parametre->setAppreciation($data['appreciation']);
+            }
 
             $manager->persist($parametre);
             $manager->flush();

@@ -94,10 +94,10 @@
                                 {% for v in value.userRoles %}
                                     {% if break == false %}
                                         {% if v.title == "ROLE_ADMIN" %}
-                                            <input type="checkbox" name="roleAdmin" id="roleAdmin" onchange="addRole(this, {{value.id}})" checked>
+                                            <input type="checkbox" name="roleAdmin" id="roleAdmin" onchange="addRole(this, {{value.id}}, '{{csrf_token('role')}}')" checked>
                                             {% set break = true %}
                                         {% else %}
-                                            <input type="checkbox" name="roleAdmin" id="roleAdmin" onchange="addRole(this, {{value.id}})">
+                                            <input type="checkbox" name="roleAdmin" id="roleAdmin" onchange="addRole(this, {{value.id}}, '{{csrf_token('role')}}')">
                                         {% endif %}
                                     {% endif %}
                                 {% endfor %}
